@@ -3,7 +3,15 @@
 
 #include "HLASMCompiler.h"
 
-static ITEntry INSTRUCTION_TABLE[] = {
+typedef struct ITEntry ITEntry;
+struct ITEntry{
+    uint16_t opcode;
+    char mnemonic[MAX_MNEMONIC_LEN];
+    uint8_t length;
+    InstructionFormat format;
+};
+
+static const ITEntry INSTRUCTION_TABLE[] = {
     { (uint16_t)0x5A  , "A"       , (uint8_t)0x4, RXa  },
     { (uint16_t)0x6A  , "AD"      , (uint8_t)0x4, RXa  },
     { (uint16_t)0xED1A, "ADB"     , (uint8_t)0x6, RXE  },

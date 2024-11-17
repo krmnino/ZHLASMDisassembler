@@ -77,14 +77,6 @@ enum InstructionFormat{
     VSI, 
 };
 
-typedef struct ITEntry ITEntry;
-struct ITEntry{
-    uint16_t opcode;
-    char mnemonic[MAX_MNEMONIC_LEN];
-    uint8_t length;
-    InstructionFormat format;
-};
-
 typedef struct Instruction Instruction;
 struct Instruction{
     char mnemonic[MAX_MNEMONIC_LEN];
