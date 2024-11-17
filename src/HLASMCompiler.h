@@ -1,5 +1,5 @@
-#ifndef PARSER
-#define PARSER
+#ifndef COMPILER
+#define COMPILER
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -51,7 +51,7 @@ enum InstructionFormat{
     RR,
     RRD,
     RRE,
-    RRFa, RRFc,
+    RRFa, RRFb, RRFc, RRFd, RRFe,
     RRS,
     RSa,RSb,
     RSI,
@@ -77,22 +77,13 @@ enum InstructionFormat{
     VSI, 
 };
 
-typedef struct ATEntry ATEntry;
-struct ATEntry{
+typedef struct ITEntry ITEntry;
+struct ITEntry{
     uint16_t opcode;
     char mnemonic[MAX_MNEMONIC_LEN];
     uint8_t length;
     InstructionFormat format;
 };
-
-static ATEntry arch_table[] = {
-    { (uint16_t)0x5A  , "A"   , (uint8_t)0x4, RXa  },
-    { (uint16_t)0xE308, "AG"  , (uint8_t)0x4, RXYa },
-    { (uint16_t)0x5E  , "AL"  , (uint8_t)0x4, RXa  },
-    { (uint16_t)0xEE  , "PLO" , (uint8_t)0x6, SSe  },
-    { (uint16_t)0x50  , "ST"  , (uint8_t)0x4, RXa  },
-};
-static const size_t n_inst = sizeof(arch_table) / sizeof(ATEntry);
 
 typedef struct Instruction Instruction;
 struct Instruction{
