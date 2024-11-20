@@ -1,4 +1,5 @@
 #include "HLASMCompiler.h"
+#include "InstructionTable.h"
 
 int process_source_file(const char* filename){
     FILE* file = file = fopen(filename, "r");
@@ -88,7 +89,7 @@ int process_source_file(const char* filename){
 
 bool is_valid_mnemonic(const char* mnemonic){
     for(size_t i = 0; i < n_inst; i++){
-        if(strcmp(mnemonic, arch_table[i].mnemonic) == 0){
+        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return true;
         }
     }
@@ -110,8 +111,8 @@ bool is_hex_char(const char* input, size_t length){
 
 InstructionFormat mnemonic_to_format(const char* mnemonic){
     for(size_t i = 0; i < n_inst; i++){
-        if(strcmp(mnemonic, arch_table[i].mnemonic) == 0){
-            return arch_table[i].format;
+        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
+            return INSTRUCTION_TABLE[i].format;
         }
     }
     return NF;
@@ -119,8 +120,8 @@ InstructionFormat mnemonic_to_format(const char* mnemonic){
 
 uint16_t mnemonic_to_opcode(const char* mnemonic){
     for(size_t i = 0; i < n_inst; i++){
-        if(strcmp(mnemonic, arch_table[i].mnemonic) == 0){
-            return arch_table[i].opcode;
+        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
+            return INSTRUCTION_TABLE[i].opcode;
         }
     }
     return 0;
@@ -128,8 +129,8 @@ uint16_t mnemonic_to_opcode(const char* mnemonic){
 
 uint8_t mnemonic_to_length(const char* mnemonic){
     for(size_t i = 0; i < n_inst; i++){
-        if(strcmp(mnemonic, arch_table[i].mnemonic) == 0){
-            return arch_table[i].length;
+        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
+            return INSTRUCTION_TABLE[i].length;
         }
     }
     return 0;
