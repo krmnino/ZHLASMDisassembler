@@ -77,7 +77,6 @@ int process_source_file(const char* filename){
         if(InstructionStream_add_instruction(instr) != 0){
             return -1;
         };
-        display_E(instr);
         instr_offset += mnemonic_to_length(mnemonic_token);
         tp_state = SPACES_PM;
         run = true;
@@ -162,27 +161,38 @@ uint32_t char_2_hex(const char* input){
     return ret;
 }
 
-int hex_2_char(void* input, char* output, size_t n_chars){
+int hex_2_char(void* input, size_t input_len , size_t input_offset, char* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
     if(input == NULL || output == NULL){
         return -1;
     }
-    char buffer[MAX_PRINTOUT_FIELD_LEN];
     uint8_t* input_bytes  = (uint8_t*)input;
     size_t byte_i = 0;
+    size_t output_i = 0;
     uint8_t binary_char = 0;
     // Clear output buffer
-    for(size_t i = 0; i < MAX_PRINTOUT_FIELD_LEN + 1; i++){
+    for(size_t i = 0; i < output_len + 1; i++){
         output[i] = 0;
     }
+    if(little_endian){
+        byte_i = input_len - input_offset - 1;
+    }
+    else{
+        byte_i = input_offset;
+    }
     for(size_t i = 0; i < n_chars; i++){
-        if(i % 2 == 0 && i != 0){
-            byte_i++;
+        if((i + skip) % 2 == 0 && i != 0){
+            if(little_endian){
+                byte_i--;
+            }
+            else{
+                byte_i++;
+            }
         }
-        if(i % 2 == 0){
-            binary_char = input_bytes[byte_i] & 0x0F;
+        if((i + skip) % 2 == 0){
+            binary_char = input_bytes[byte_i] >> 4;
         }
         else{
-            binary_char = input_bytes[byte_i] >> 4;
+            binary_char = input_bytes[byte_i] & 0x0F;
         }
         switch (binary_char)
         {
@@ -192,12 +202,13 @@ int hex_2_char(void* input, char* output, size_t n_chars){
         case 0xD:
         case 0xE:
         case 0xF:
-            output[n_chars - i - 1] = ((binary_char - 1) & 0x07) | 0x40;
+            output[output_i] = ((binary_char - 1) & 0x07) | 0x40;
             break;        
         default:
-            output[n_chars - i - 1] = binary_char | 0x30;
+            output[output_i] = binary_char | 0x30;
             break;
         }
+        output_i++;
     }
     return 0;
 }
@@ -388,14 +399,72 @@ int display_E(Instruction* instr){
     uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
     uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
+    // Print instruction layout
     printf("+----------------+\n");
     printf("|     OPCODE     |\n");
     printf("+----------------+\n");
     printf("0               F \n");
+    // Print general information
     printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_2_char((void*)&ret_opcode, conv_buffer, 4);
+    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    //printf("LENGTH: 0x%x", mnemonic_to_length);
+    printf("LENGTH:   0x%x\n", ret_length);
+    printf("FORMAT:   E\n");
+    printf("OFFSET:   0x%lx\n", instr->offset);
+    return 0;
+}
+
+int display_RX(Instruction* instr){
+    if(instr == NULL){
+        return -1;
+    }
+    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
+    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
+    InstructionFormat ret_format = mnemonic_to_format(instr->mnemonic);
+    char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
+    // Print instruction layout
+    switch (ret_format){
+    case RXa:
+        printf("+--------+----+----+----+------------+\n");
+        printf("| OPCODE | R1 | X2 | B2 |     D2     |\n");
+        printf("+--------+----+----+----+------------+\n");
+        printf("0        8    C    10   14          1F\n");
+        break;
+    case RXb:
+        printf("+--------+----+----+----+------------+\n");
+        printf("| OPCODE | M1 | X2 | B2 |     D2     |\n");
+        printf("+--------+----+----+----+------------+\n");
+        printf("0        8    C    10   14          1F\n");
+        break;
+    default:
+        break;
+    }
+    // Print general information
+    printf("MNEMONIC: %s\n", instr->mnemonic);
+    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    printf("OPCODE:   %s\n", conv_buffer);
+    printf("LENGTH:   0x%x\n", ret_length);
+    printf("FORMAT:   RXa\n");
+    printf("OFFSET:   0x%lx\n", instr->offset);
+    // Print operands
+    switch (ret_format){
+    case RXa:
+        hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        printf("R1:       %s\n", conv_buffer);
+        break;
+    case RXb:
+        hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        printf("M1:       %s\n", conv_buffer);
+        break;
+    default:
+        break;
+    }
+    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+    printf("X2:       %s\n", conv_buffer);
+    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+    printf("B2:       %s\n", conv_buffer);
+    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
+    printf("D2:       %s\n", conv_buffer);
     return 0;
 }
 
@@ -429,5 +498,261 @@ int InstructionStream_add_instruction(Instruction* instr){
     InstructionStream.tail->next = instr;
     InstructionStream.tail = instr;
     InstructionStream.n_instr++;
+    return 0;
+}
+
+int InstructionStream_display(){
+    Instruction* curr = InstructionStream.head;
+    InstructionFormat fmt = NF;
+    int ret;
+    while (curr != NULL){
+        fmt = mnemonic_to_format(curr->mnemonic);
+        switch (fmt) {
+        case E:
+            ret = display_E(curr);
+            break;
+        case I:
+            //ret = display_(curr);
+            break;
+        case IE:
+            //ret = display_(curr);
+            break;
+        case MII:
+            //ret = display_(curr);
+            break;
+        case RIa:
+            //ret = display_(curr); 
+            break;
+        case RIb:
+            //ret = display_(curr); 
+            break;
+        case RIc:
+            //ret = display_(curr);
+            break;
+        case RIEa:
+            //ret = display_(curr); 
+            break;
+        case RIEb:
+            //ret = display_(curr); 
+            break;
+        case RIEc:
+            //ret = display_(curr); 
+            break;
+        case RIEd:
+            //ret = display_(curr); 
+            break;
+        case RIEe:
+            //ret = display_(curr); 
+            break;
+        case RIEf:
+            //ret = display_(curr); 
+            break;
+        case RIEg:
+            //ret = display_(curr);
+            break;
+        case RILa:
+            //ret = display_(curr); 
+            break;
+        case RILb:
+            //ret = display_(curr); 
+            break;
+        case RILc:
+            //ret = display_(curr);
+            break;
+        case RIS:
+            //ret = display_(curr);
+            break;
+        case RR:
+            //ret = display_(curr);
+            break;
+        case RRD:
+            //ret = display_(curr);
+            break;
+        case RRE:
+            //ret = display_(curr);
+            break;
+        case RRFa:
+            //ret = display_(curr); 
+            break;
+        case RRFb:
+            //ret = display_(curr); 
+            break;
+        case RRFc:
+            //ret = display_(curr); 
+            break;
+        case RRFd:
+            //ret = display_(curr); 
+            break;
+        case RRFe:
+            //ret = display_(curr);
+            break;
+        case RRS:
+            //ret = display_(curr);
+            break;
+        case RSa:
+            //ret = display_(curr);
+            break;
+        case RSb:
+            //ret = display_(curr);
+            break;
+        case RSI:
+            //ret = display_(curr);
+            break;
+        case RSLa:
+            //ret = display_(curr); 
+            break;
+        case RSLb:
+            //ret = display_(curr);
+            break;
+        case RSYa:
+            //ret = display_(curr); 
+            break;
+        case RSYb:
+            //ret = display_(curr); 
+            break;
+        case RXa:
+        case RXb:
+            ret = display_RX(curr);  
+            break;
+        case RXE:
+            //ret = display_(curr);
+            break;
+        case RXF:
+            //ret = display_(curr);
+            break;
+        case RXYa:
+            //ret = display_(curr);  
+            break;
+        case RXYb:
+            //ret = display_(curr);
+            break;
+        case S:
+            //ret = display_(curr);
+            break;
+        case SI:
+            //ret = display_(curr);
+            break;
+        case SIL:
+            //ret = display_(curr);
+            break;
+        case SIY:
+            //ret = display_(curr);
+            break;
+        case SMI:
+            //ret = display_(curr);
+            break;
+        case SSa:
+            //ret = display_(curr); 
+            break;
+        case SSb:
+            //ret = display_(curr);
+            break;
+        case SSc:
+            //ret = display_(curr); 
+            break;
+        case SSd:
+            //ret = display_(curr); 
+            break;
+        case SSe:
+            //ret = display_(curr); 
+            break;
+        case SSf:
+            //ret = display_(curr);
+            break;
+        case SSE:
+            //ret = display_(curr);
+            break;
+        case SSF:
+            //ret = display_(curr);
+            break;
+        case VRIa:
+            //ret = display_(curr); 
+            break;
+        case VRIb:
+            //ret = display_(curr); 
+            break;
+        case VRIc:
+            //ret = display_(curr); 
+            break;
+        case VRId:
+            //ret = display_(curr); 
+            break;
+        case VRIe:
+            //ret = display_(curr);
+            break;
+        case VRIf:
+            //ret = display_(curr);
+            break;
+        case VRIg:
+            //ret = display_(curr);
+            break;
+        case VRIh:
+            //ret = display_(curr);
+            break;
+        case VRIi:
+            //ret = display_(curr);
+            break;
+        case VRRa:
+            //ret = display_(curr); 
+            break;
+        case VRRb:
+            //ret = display_(curr); 
+            break;
+        case VRRc:
+            //ret = display_(curr); 
+            break;
+        case VRRd:
+            //ret = display_(curr); 
+            break;
+        case VRRe:
+            //ret = display_(curr);
+            break;
+        case VRRf:
+            //ret = display_(curr);
+            break;
+        case VRRg:
+            //ret = display_(curr);
+            break;
+        case VRRh:
+            //ret = display_(curr);
+            break;
+        case VRRi:
+            //ret = display_(curr);
+            break;
+        case VRRj:
+            //ret = display_(curr);
+            break;
+        case VRRk:
+            //ret = display_(curr); 
+            break;
+        case VRSa:
+            //ret = display_(curr); 
+            break;
+        case VRSb:
+            //ret = display_(curr); 
+            break;
+        case VRSc:
+            //ret = display_(curr); 
+            break;
+        case VRSd:
+            //ret = display_(curr); 
+            break;
+        case VRV:
+            //ret = display_(curr);
+            break;
+        case VRX:
+            //ret = display_(curr);
+            break;
+        case VSI:
+            //ret = display_(curr);
+            break;
+        default:
+            break;
+        }
+        if(ret != 0){
+            return -1;
+        }
+        curr = curr->next;
+    }
     return 0;
 }

@@ -16,6 +16,8 @@
 #define MAX_DISP_LEN 3
 #define MAX_LONG_DISP_LEN 5
 #define MAX_PRINTOUT_FIELD_LEN 9
+#define NO_SKIP 0
+#define SKIP 1
 
 typedef uint64_t Address;
 
@@ -44,34 +46,34 @@ enum InstructionFormat{
     I,
     IE,
     MII,
-    RIa, RIb, RIc,
-    RIEa, RIEb, RIEc, RIEd, RIEe, RIEf, RIEg,
-    RILa, RILb, RILc,
+    RI, RIa, RIb, RIc,
+    RIE, RIEa, RIEb, RIEc, RIEd, RIEe, RIEf, RIEg,
+    RIL, RILa, RILb, RILc,
     RIS,
     RR,
     RRD,
     RRE,
-    RRFa, RRFb, RRFc, RRFd, RRFe,
+    RRF, RRFa, RRFb, RRFc, RRFd, RRFe,
     RRS,
-    RSa,RSb,
+    RS, RSa, RSb,
     RSI,
-    RSLa, RSLb,
-    RSYa, RSYb, 
-    RXa, RXb, 
+    RSL, RSLa, RSLb,
+    RSY, RSYa, RSYb, 
+    RX, RXa, RXb, 
     RXE,
     RXF,
-    RXYa,  RXYb,
+    RXY, RXYa,  RXYb,
     S,
     SI,
     SIL,
     SIY,
     SMI,
-    SSa, SSb, SSc, SSd, SSe, SSf,
+    SS, SSa, SSb, SSc, SSd, SSe, SSf,
     SSE,
     SSF,
-    VRIa, VRIb, VRIc, VRId, VRIe, VRIf, VRIg, VRIh, VRIi,
-    VRRa, VRRb, VRRc, VRRd, VRRe, VRRf, VRRg, VRRh, VRRi, VRRj, VRRk, 
-    VRSa, VRSb, VRSc, VRSd, 
+    VRI, VRIa, VRIb, VRIc, VRId, VRIe, VRIf, VRIg, VRIh, VRIi,
+    VRR, VRRa, VRRb, VRRc, VRRd, VRRe, VRRf, VRRg, VRRh, VRRi, VRRj, VRRk, 
+    VRS, VRSa, VRSb, VRSc, VRSd, 
     VRV,
     VRX,
     VSI, 
@@ -98,17 +100,18 @@ InstructionFormat mnemonic_to_format(const char*);
 uint16_t mnemonic_to_opcode(const char*);
 uint8_t mnemonic_to_length(const char*);
 uint32_t char_2_hex(const char*);
-int hex_2_char(void*, char*, size_t);
+int hex_2_char(void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
 
 Instruction* Instruction_init(const char*, char*, Address);
 int build_E(uint16_t, char*, uint8_t*);
 int build_RXa(uint16_t, char*, uint8_t*);
 
 int display_E(Instruction*);
-int display_RXa(Instruction*);
+int display_RX(Instruction*);
 
 void InstructionStream_init();
 void InstructionStream_free();
 int InstructionStream_add_instruction(Instruction*);
+int InstructionStream_display();
 
 #endif
