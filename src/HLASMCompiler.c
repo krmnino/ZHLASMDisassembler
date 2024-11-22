@@ -31,7 +31,10 @@ int process_source_file(const char* filename){
                 }
                 break;
             case MNEMONIC:
-                if(line[i] == ' '){
+                if(line[i] == '\n'){
+                    tp_state = TPS_DONE;
+                }
+                else if(line[i] == ' '){
                     tp_state = SPACES_PO;
                 }
                 else{
@@ -74,6 +77,7 @@ int process_source_file(const char* filename){
         if(InstructionStream_add_instruction(instr) != 0){
             return -1;
         };
+        display_E(instr);
         instr_offset += mnemonic_to_length(mnemonic_token);
         tp_state = SPACES_PM;
         run = true;
@@ -158,6 +162,46 @@ uint32_t char_2_hex(const char* input){
     return ret;
 }
 
+int hex_2_char(void* input, char* output, size_t n_chars){
+    if(input == NULL || output == NULL){
+        return -1;
+    }
+    char buffer[MAX_PRINTOUT_FIELD_LEN];
+    uint8_t* input_bytes  = (uint8_t*)input;
+    size_t byte_i = 0;
+    uint8_t binary_char = 0;
+    // Clear output buffer
+    for(size_t i = 0; i < MAX_PRINTOUT_FIELD_LEN + 1; i++){
+        output[i] = 0;
+    }
+    for(size_t i = 0; i < n_chars; i++){
+        if(i % 2 == 0 && i != 0){
+            byte_i++;
+        }
+        if(i % 2 == 0){
+            binary_char = input_bytes[byte_i] & 0x0F;
+        }
+        else{
+            binary_char = input_bytes[byte_i] >> 4;
+        }
+        switch (binary_char)
+        {
+        case 0xA:
+        case 0xB:
+        case 0xC:
+        case 0xD:
+        case 0xE:
+        case 0xF:
+            output[n_chars - i - 1] = ((binary_char - 1) & 0x07) | 0x40;
+            break;        
+        default:
+            output[n_chars - i - 1] = binary_char | 0x30;
+            break;
+        }
+    }
+    return 0;
+}
+
 Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, Address offset){
     // Check if mnemonic exists in architecture table
     if(!is_valid_mnemonic(mnemonic_token)){
@@ -187,6 +231,11 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     // Clear binary buffer
     memset(&bin_buffer, 0, sizeof(bin_buffer));
     switch(format) {
+        case E:
+            if(build_E(opcode, NULL, bin_buffer) != 0){
+                return NULL;
+            }
+            break;
         case RXa:
             if(build_RXa(opcode, operands_token, bin_buffer) != 0){
                 return NULL;
@@ -208,6 +257,14 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     instr->offset = offset;
     instr->next = NULL;
     return instr;
+}
+
+int build_E(uint16_t opcode, char* operands_token, uint8_t* bin_buffer){
+     // Opcode: bits(0-8)
+    bin_buffer[0] = opcode >> 8;
+     // Opcode: bits(0-8)
+    bin_buffer[0] = opcode & 0x00FF;
+    return 0;
 }
 
 int build_RXa(uint16_t opcode, char* operands_token, uint8_t* bin_buffer){
@@ -321,8 +378,24 @@ int build_RXa(uint16_t opcode, char* operands_token, uint8_t* bin_buffer){
     // D2: bits(20-31)
     bin_buffer[2] = bin_buffer[2] | (d2 >> 8);
     bin_buffer[3] = d2 & 0x00FF;
-    printf("R1=%x D2=%x X2=%x B2=%x\n", r1, d2, x2, b2);
-    printf("%x%x%x%x\n", bin_buffer[0], bin_buffer[1], bin_buffer[2], bin_buffer[3]);
+    return 0;
+}
+
+int display_E(Instruction* instr){
+    if(instr == NULL){
+        return -1;
+    }
+    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
+    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
+    char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
+    printf("+----------------+\n");
+    printf("|     OPCODE     |\n");
+    printf("+----------------+\n");
+    printf("0               F \n");
+    printf("MNEMONIC: %s\n", instr->mnemonic);
+    hex_2_char((void*)&ret_opcode, conv_buffer, 4);
+    printf("OPCODE:   %s\n", conv_buffer);
+    //printf("LENGTH: 0x%x", mnemonic_to_length);
     return 0;
 }
 

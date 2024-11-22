@@ -15,6 +15,7 @@
 #define MAX_REG_LEN 1
 #define MAX_DISP_LEN 3
 #define MAX_LONG_DISP_LEN 5
+#define MAX_PRINTOUT_FIELD_LEN 9
 
 typedef uint64_t Address;
 
@@ -30,7 +31,6 @@ enum TokensParseState{
 typedef enum OperandsParseState OperandsParseState;
 enum OperandsParseState{
     R1,
-    R1_M1,
     X2,
     B2,
     D2,
@@ -97,9 +97,15 @@ bool is_hex_char(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
 uint16_t mnemonic_to_opcode(const char*);
 uint8_t mnemonic_to_length(const char*);
+uint32_t char_2_hex(const char*);
+int hex_2_char(void*, char*, size_t);
 
 Instruction* Instruction_init(const char*, char*, Address);
+int build_E(uint16_t, char*, uint8_t*);
 int build_RXa(uint16_t, char*, uint8_t*);
+
+int display_E(Instruction*);
+int display_RXa(Instruction*);
 
 void InstructionStream_init();
 void InstructionStream_free();
