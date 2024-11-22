@@ -982,7 +982,7 @@ static const ITEntry INSTRUCTION_TABLE[] = {
     { (uint16_t)0xE350, "STY"     , (uint8_t)0x6, RXYa },
     { (uint16_t)0x7F  , "SU"      , (uint8_t)0x4, RXa  },
     { (uint16_t)0x3F  , "SUR"     , (uint8_t)0x2, RR   },
-    { (uint16_t)0x0A  , "SVC"     , (uint8_t)0x4, I    },
+    { (uint16_t)0x0A  , "SVC"     , (uint8_t)0x2, I    },
     { (uint16_t)0x6F  , "SW"      , (uint8_t)0x4, RXa  },
     { (uint16_t)0x2F  , "SWR"     , (uint8_t)0x2, RR   },
     { (uint16_t)0xB34B, "SXBR"    , (uint8_t)0x4, RRE  },
