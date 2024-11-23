@@ -241,23 +241,233 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     }
     // Clear binary buffer
     memset(&bin_buffer, 0, sizeof(bin_buffer));
-    switch(format) {
-        case E:
-            if(build_E(opcode, NULL, bin_buffer) != 0){
-                return NULL;
-            }
-            break;
-        case RXa:
-            if(build_RXa(opcode, operands_token, bin_buffer) != 0){
-                return NULL;
-            }
-            break;
-        case RXYa:
-            break;
-        case SSe:
-            break;
-        default:
+    switch (format) {
+    case E:
+        if(build_E(opcode, NULL, bin_buffer, format) != 0){
             return NULL;
+        }
+        break;
+    case I:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case IE:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case MII:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RIa:
+    case RIb:
+    case RIc:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RIEa:
+    case RIEb:
+    case RIEc:
+    case RIEd:
+    case RIEe:
+    case RIEf:
+    case RIEg:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RILa:
+    case RILb:
+    case RILc:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RIS:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RR:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RRD:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RRE:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RRFa:
+    case RRFb:
+    case RRFc:
+    case RRFd:
+    case RRFe:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RRS:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RSa:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RSb:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RSI:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RSLa:
+    case RSLb:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RSYa:
+    case RSYb:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //} 
+        break;
+    case RXa:
+    case RXb:
+        if(build_RX(opcode, operands_token, bin_buffer, format) != 0){
+            return NULL;
+        }
+        break;
+    case RXE:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RXF:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case RXYa:
+    case RXYb:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case S:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case SI:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case SIL:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case SIY:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case SMI:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case SSa:
+    case SSb:
+    case SSc:
+    case SSd:
+    case SSe:
+    case SSf:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case SSE:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case SSF:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case VRIa:
+    case VRIb:
+    case VRIc:
+    case VRId:
+    case VRIe:
+    case VRIf:
+    case VRIg:
+    case VRIh:
+    case VRIi:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case VRRa:
+    case VRRb:
+    case VRRc:
+    case VRRd:
+    case VRRe:
+    case VRRf:
+    case VRRg:
+    case VRRh:
+    case VRRi:
+    case VRRj:
+    case VRRk:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //} 
+        break;
+    case VRSa:
+    case VRSb:
+    case VRSc:
+    case VRSd:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //} 
+        break;
+    case VRV:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case VRX:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    case VSI:
+        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //    return NULL;
+        //}
+        break;
+    default:
+        return NULL;
     }
     Instruction* instr = (Instruction*)malloc(sizeof(Instruction));
     if(instr == NULL){
@@ -270,34 +480,45 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     return instr;
 }
 
-int build_E(uint16_t opcode, char* operands_token, uint8_t* bin_buffer){
-     // Opcode: bits(0-8)
+int build_E(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+     // Opcode: bits(0-7)
     bin_buffer[0] = opcode >> 8;
-     // Opcode: bits(0-8)
-    bin_buffer[0] = opcode & 0x00FF;
+     // Opcode: bits(8-16)
+    bin_buffer[1] = opcode & 0x00FF;
     return 0;
 }
 
-int build_RXa(uint16_t opcode, char* operands_token, uint8_t* bin_buffer){
-    uint8_t r1;
+int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+    uint8_t r1_m1;
     uint16_t d2;
     uint8_t x2;
     uint8_t b2;
     uint32_t conv_char;
     char buffer[MAX_OPERANDS_LEN];
-    OperandsParseState state = R1;
     bool run = true;
     size_t b_idx = 0;
+    OperandsParseState state;
+    switch (format){
+    case RXa:
+        state = R1;
+        break;
+    case RXb:
+        state = M1;
+        break;
+    default:
+        return -1;
+    }
     // Clear buffer
     memset(&buffer, 0, sizeof(buffer));
     for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
         switch (state){
         case R1:
+        case M1:
             if(operands_token[i] == ','){
                 if(!is_hex_char(buffer, b_idx)){
                     return -1;
                 }
-                r1 = char_2_hex(buffer);
+                r1_m1 = char_2_hex(buffer);
                 memset(&buffer, 0, sizeof(buffer));
                 b_idx = 0;
                 state = D2;
@@ -376,10 +597,10 @@ int build_RXa(uint16_t opcode, char* operands_token, uint8_t* bin_buffer){
             break;
         }
     }
-    // Opcode: bits(0-8)
+    // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
     // R1/M1: bits(8-11)
-    bin_buffer[1] = r1;
+    bin_buffer[1] = r1_m1;
     bin_buffer[1] = bin_buffer[1] << 4;
     // X2: bits(12-15)
     bin_buffer[1] = bin_buffer[1] | x2;
@@ -408,6 +629,8 @@ int display_E(Instruction* instr){
     printf("MNEMONIC: %s\n", instr->mnemonic);
     hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
+    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+    printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
     printf("FORMAT:   E\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
@@ -443,8 +666,19 @@ int display_RX(Instruction* instr){
     printf("MNEMONIC: %s\n", instr->mnemonic);
     hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
+    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
+    printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
-    printf("FORMAT:   RXa\n");
+    switch (ret_format){
+    case RXa:
+        printf("FORMAT:   RXa\n");
+        break;
+    case RXb:
+        printf("FORMAT:   RXb\n");
+        break;
+    default:
+        break;
+    }
     printf("OFFSET:   0x%lx\n", instr->offset);
     // Print operands
     switch (ret_format){
@@ -503,11 +737,11 @@ int InstructionStream_add_instruction(Instruction* instr){
 
 int InstructionStream_display(){
     Instruction* curr = InstructionStream.head;
-    InstructionFormat fmt = NF;
+    InstructionFormat format;
     int ret;
     while (curr != NULL){
-        fmt = mnemonic_to_format(curr->mnemonic);
-        switch (fmt) {
+        format = mnemonic_to_format(curr->mnemonic);
+        switch (format) {
         case E:
             ret = display_E(curr);
             break;
