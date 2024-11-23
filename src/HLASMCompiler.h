@@ -96,7 +96,7 @@ static struct{
 
 int process_source_file(const char*);
 bool is_valid_mnemonic(const char*);
-bool is_hex_char(const char*, size_t);
+bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
 uint16_t mnemonic_to_opcode(const char*);
 uint8_t mnemonic_to_length(const char*);
@@ -105,9 +105,11 @@ int hex_2_char(void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
 
 Instruction* Instruction_init(const char*, char*, Address);
 int build_E(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_I(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
+int display_I(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();

@@ -99,17 +99,23 @@ bool is_valid_mnemonic(const char* mnemonic){
     return false;
 }
 
-bool is_hex_char(const char* input, size_t length){
+bool is_valid_hex_string(const char* input, size_t length){
     const char* hex_chars = "0123456789ABCDEFabcdef";
     size_t hex_chars_len = strlen(hex_chars);
+    bool found;
     for(size_t i = 0; i < length; i++){
+        found = false;
         for(size_t j = 0; j < hex_chars_len; j++){
             if(input[i] == hex_chars[j]){
-                return true;
+                found = true;
+                break;
             }
         }
+        if(!found){
+            return false;
+        }
     }
-    return false;
+    return true;
 }
 
 InstructionFormat mnemonic_to_format(const char* mnemonic){
@@ -231,7 +237,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
             operands_token[o_idx] = ',';
             o_idx++;
         }
-        else if(is_hex_char(&operands_token[i], 1) || operands_token[i] == ','){
+        else if(is_valid_hex_string(&operands_token[i], 1) || operands_token[i] == ','){
             operands_token[o_idx] = operands_token[i];
             o_idx++;
         }
@@ -248,24 +254,24 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
         }
         break;
     case I:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
-        //    return NULL;
-        //}
+        if(build_I(opcode, operands_token, bin_buffer, format) != 0){
+            return NULL;
+        }
         break;
     case IE:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case MII:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RIa:
     case RIb:
     case RIc:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
@@ -276,34 +282,34 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case RIEe:
     case RIEf:
     case RIEg:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RILa:
     case RILb:
     case RILc:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RIS:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RR:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RRD:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RRE:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
@@ -312,39 +318,39 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case RRFc:
     case RRFd:
     case RRFe:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RRS:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RSa:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RSb:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RSI:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RSLa:
     case RSLb:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RSYa:
     case RSYb:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //} 
         break;
@@ -355,43 +361,43 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
         }
         break;
     case RXE:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RXF:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case RXYa:
     case RXYb:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case S:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case SI:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case SIL:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case SIY:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case SMI:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
@@ -401,17 +407,17 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case SSd:
     case SSe:
     case SSf:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case SSE:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case SSF:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
@@ -424,7 +430,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case VRIg:
     case VRIh:
     case VRIi:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
@@ -439,7 +445,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case VRRi:
     case VRRj:
     case VRRk:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //} 
         break;
@@ -447,22 +453,22 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case VRSb:
     case VRSc:
     case VRSd:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //} 
         break;
     case VRV:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case VRX:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
     case VSI:
-        //if(build_(opcode, operands_token, bin_buffer) != 0){
+        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
         //    return NULL;
         //}
         break;
@@ -485,6 +491,20 @@ int build_E(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruct
     bin_buffer[0] = opcode >> 8;
      // Opcode: bits(8-16)
     bin_buffer[1] = opcode & 0x00FF;
+    return 0;
+}
+
+int build_I(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+    uint8_t i; 
+    char buffer[MAX_OPERANDS_LEN];
+    // Opcode: bits(0-7)
+    bin_buffer[0] = opcode & 0x00FF;
+    // Opcode: bits(8-15)
+    if(!is_valid_hex_string(operands_token, 1)){
+        return -1;
+    }
+    i = char_2_hex(operands_token);
+    bin_buffer[1] = i;
     return 0;
 }
 
@@ -515,7 +535,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
         case R1:
         case M1:
             if(operands_token[i] == ','){
-                if(!is_hex_char(buffer, b_idx)){
+                if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
                 r1_m1 = char_2_hex(buffer);
@@ -535,7 +555,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
             break;
         case D2:
             if(operands_token[i] == ','){
-                if(!is_hex_char(buffer, b_idx)){
+                if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
                 d2 = char_2_hex(buffer);
@@ -555,7 +575,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
             break;
         case X2:
             if(operands_token[i] == ','){
-                if(!is_hex_char(buffer, b_idx)){
+                if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
                 x2 = char_2_hex(buffer);
@@ -575,7 +595,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
             break;
         case B2:
             if(operands_token[i] == 0){
-                if(!is_hex_char(buffer, b_idx)){
+                if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
                 b2 = char_2_hex(buffer);
@@ -633,6 +653,30 @@ int display_E(Instruction* instr){
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
     printf("FORMAT:   E\n");
+    printf("OFFSET:   0x%lx\n", instr->offset);
+    return 0;
+}
+
+int display_I(Instruction* instr){
+    if(instr == NULL){
+        return -1;
+    }
+    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
+    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
+    char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
+    // Print instruction layout
+    printf("+--------+--------+\n");
+    printf("| OPCODE |   I    |\n");
+    printf("+--------+--------+\n");
+    printf("0        8        F\n");
+    // Print general information
+    printf("MNEMONIC: %s\n", instr->mnemonic);
+    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    printf("OPCODE:   %s\n", conv_buffer);
+    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+    printf("BINARY:   %s\n", conv_buffer);
+    printf("LENGTH:   0x%x\n", ret_length);
+    printf("FORMAT:   I\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
     return 0;
 }
@@ -746,7 +790,7 @@ int InstructionStream_display(){
             ret = display_E(curr);
             break;
         case I:
-            //ret = display_(curr);
+            ret = display_I(curr);
             break;
         case IE:
             //ret = display_(curr);
@@ -755,41 +799,21 @@ int InstructionStream_display(){
             //ret = display_(curr);
             break;
         case RIa:
-            //ret = display_(curr); 
-            break;
         case RIb:
-            //ret = display_(curr); 
-            break;
         case RIc:
             //ret = display_(curr);
             break;
         case RIEa:
-            //ret = display_(curr); 
-            break;
         case RIEb:
-            //ret = display_(curr); 
-            break;
         case RIEc:
-            //ret = display_(curr); 
-            break;
         case RIEd:
-            //ret = display_(curr); 
-            break;
         case RIEe:
-            //ret = display_(curr); 
-            break;
         case RIEf:
-            //ret = display_(curr); 
-            break;
         case RIEg:
             //ret = display_(curr);
             break;
         case RILa:
-            //ret = display_(curr); 
-            break;
         case RILb:
-            //ret = display_(curr); 
-            break;
         case RILc:
             //ret = display_(curr);
             break;
@@ -806,17 +830,9 @@ int InstructionStream_display(){
             //ret = display_(curr);
             break;
         case RRFa:
-            //ret = display_(curr); 
-            break;
         case RRFb:
-            //ret = display_(curr); 
-            break;
         case RRFc:
-            //ret = display_(curr); 
-            break;
         case RRFd:
-            //ret = display_(curr); 
-            break;
         case RRFe:
             //ret = display_(curr);
             break;
@@ -824,8 +840,6 @@ int InstructionStream_display(){
             //ret = display_(curr);
             break;
         case RSa:
-            //ret = display_(curr);
-            break;
         case RSb:
             //ret = display_(curr);
             break;
@@ -833,14 +847,10 @@ int InstructionStream_display(){
             //ret = display_(curr);
             break;
         case RSLa:
-            //ret = display_(curr); 
-            break;
         case RSLb:
             //ret = display_(curr);
             break;
         case RSYa:
-            //ret = display_(curr); 
-            break;
         case RSYb:
             //ret = display_(curr); 
             break;
@@ -855,8 +865,6 @@ int InstructionStream_display(){
             //ret = display_(curr);
             break;
         case RXYa:
-            //ret = display_(curr);  
-            break;
         case RXYb:
             //ret = display_(curr);
             break;
@@ -876,20 +884,10 @@ int InstructionStream_display(){
             //ret = display_(curr);
             break;
         case SSa:
-            //ret = display_(curr); 
-            break;
         case SSb:
-            //ret = display_(curr);
-            break;
         case SSc:
-            //ret = display_(curr); 
-            break;
         case SSd:
-            //ret = display_(curr); 
-            break;
         case SSe:
-            //ret = display_(curr); 
-            break;
         case SSf:
             //ret = display_(curr);
             break;
@@ -900,74 +898,32 @@ int InstructionStream_display(){
             //ret = display_(curr);
             break;
         case VRIa:
-            //ret = display_(curr); 
-            break;
         case VRIb:
-            //ret = display_(curr); 
-            break;
         case VRIc:
-            //ret = display_(curr); 
-            break;
         case VRId:
-            //ret = display_(curr); 
-            break;
         case VRIe:
-            //ret = display_(curr);
-            break;
         case VRIf:
-            //ret = display_(curr);
-            break;
         case VRIg:
-            //ret = display_(curr);
-            break;
         case VRIh:
-            //ret = display_(curr);
-            break;
         case VRIi:
             //ret = display_(curr);
             break;
         case VRRa:
-            //ret = display_(curr); 
-            break;
         case VRRb:
-            //ret = display_(curr); 
-            break;
         case VRRc:
-            //ret = display_(curr); 
-            break;
         case VRRd:
-            //ret = display_(curr); 
-            break;
         case VRRe:
-            //ret = display_(curr);
-            break;
         case VRRf:
-            //ret = display_(curr);
-            break;
         case VRRg:
-            //ret = display_(curr);
-            break;
         case VRRh:
-            //ret = display_(curr);
-            break;
         case VRRi:
-            //ret = display_(curr);
-            break;
         case VRRj:
-            //ret = display_(curr);
-            break;
         case VRRk:
             //ret = display_(curr); 
             break;
         case VRSa:
-            //ret = display_(curr); 
-            break;
         case VRSb:
-            //ret = display_(curr); 
-            break;
         case VRSc:
-            //ret = display_(curr); 
-            break;
         case VRSd:
             //ret = display_(curr); 
             break;
