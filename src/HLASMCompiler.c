@@ -228,6 +228,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     uint16_t opcode = mnemonic_to_opcode(mnemonic_token);
     size_t o_idx = 0;
     uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
+    int ret;
     // Remove spaces and replace parenthesis with commas
     for(size_t i = 0; i < MAX_OPERANDS_LEN; i++){
         if(operands_token[i] == ' '){
@@ -249,31 +250,21 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     memset(&bin_buffer, 0, sizeof(bin_buffer));
     switch (format) {
     case E:
-        if(build_E(opcode, NULL, bin_buffer, format) != 0){
-            return NULL;
-        }
+        ret = build_E(opcode, NULL, bin_buffer, format);
         break;
     case I:
-        if(build_I(opcode, operands_token, bin_buffer, format) != 0){
-            return NULL;
-        }
+        ret = build_I(opcode, operands_token, bin_buffer, format);
         break;
     case IE:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        ret = build_IE(opcode, operands_token, bin_buffer, format);
         break;
     case MII:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RIa:
     case RIb:
     case RIc:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RIEa:
     case RIEb:
@@ -282,124 +273,80 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case RIEe:
     case RIEf:
     case RIEg:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RILa:
     case RILb:
     case RILc:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RIS:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RR:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RRD:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RRE:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RRFa:
     case RRFb:
     case RRFc:
     case RRFd:
     case RRFe:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RRS:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RSa:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RSb:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RSI:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RSLa:
     case RSLb:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RSYa:
     case RSYb:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //} 
+        //ret = build_(opcode, operands_token, bin_buffer, format); 
         break;
     case RXa:
     case RXb:
-        if(build_RX(opcode, operands_token, bin_buffer, format) != 0){
-            return NULL;
-        }
+        ret = build_RX(opcode, operands_token, bin_buffer, format);
         break;
     case RXE:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RXF:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case RXYa:
     case RXYb:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case S:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case SI:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case SIL:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case SIY:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case SMI:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case SSa:
     case SSb:
@@ -407,19 +354,13 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case SSd:
     case SSe:
     case SSf:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case SSE:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case SSF:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case VRIa:
     case VRIb:
@@ -430,9 +371,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case VRIg:
     case VRIh:
     case VRIi:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case VRRa:
     case VRRb:
@@ -445,34 +384,27 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case VRRi:
     case VRRj:
     case VRRk:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //} 
+        //ret = build_(opcode, operands_token, bin_buffer, format); 
         break;
     case VRSa:
     case VRSb:
     case VRSc:
     case VRSd:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //} 
+        //ret = build_(opcode, operands_token, bin_buffer, format); 
         break;
     case VRV:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case VRX:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     case VSI:
-        //if(build_(opcode, operands_token, bin_buffer, format) != 0){
-        //    return NULL;
-        //}
+        //ret = build_(opcode, operands_token, bin_buffer, format);
         break;
     default:
+        return NULL;
+    }
+    if(ret != 0){
         return NULL;
     }
     Instruction* instr = (Instruction*)malloc(sizeof(Instruction));
@@ -496,15 +428,83 @@ int build_E(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruct
 
 int build_I(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
     uint8_t i; 
-    char buffer[MAX_OPERANDS_LEN];
-    // Opcode: bits(0-7)
-    bin_buffer[0] = opcode & 0x00FF;
-    // Opcode: bits(8-15)
+     // Opcode: bits(0-7)
+    bin_buffer[0] = opcode;
+    // I: bits(8-15)
     if(!is_valid_hex_string(operands_token, 1)){
         return -1;
     }
     i = char_2_hex(operands_token);
     bin_buffer[1] = i;
+    return 0;
+}
+
+int build_IE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+    uint8_t i1; 
+    uint8_t i2; 
+    char buffer[MAX_OPERANDS_LEN];
+    bool run = true;
+    size_t b_idx = 0;
+    OperandsParseState state = I1;
+    // Clear buffer
+    memset(&buffer, 0, sizeof(buffer));
+    for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
+        switch (state){
+        case I1:
+            if(operands_token[i] == ','){
+                if(!is_valid_hex_string(buffer, b_idx)){
+                    return -1;
+                }
+                i1 = char_2_hex(buffer);
+                memset(&buffer, 0, sizeof(buffer));
+                b_idx = 0;
+                state = I2;
+                i++;
+            }
+            else{
+                if(b_idx > MAX_REG_LEN){
+                    return -1;
+                }
+                buffer[b_idx] = operands_token[i];
+                b_idx++;
+                i++;
+            }
+            break;
+        case I2:
+            if(operands_token[i] == 0){
+                if(!is_valid_hex_string(buffer, b_idx)){
+                    return -1;
+                }
+                i2 = char_2_hex(buffer);
+                memset(&buffer, 0, sizeof(buffer));
+                b_idx = 0;
+                state = OPS_DONE;
+                i++;
+            }
+            else{
+                if(b_idx > MAX_REG_LEN){
+                    return -1;
+                }
+                buffer[b_idx] = operands_token[i];
+                b_idx++;
+                i++;
+            }
+            break;
+        case OPS_DONE:
+            run = false;
+        default:
+            break;
+        }
+    }
+     // Opcode: bits(0-7)
+    bin_buffer[0] = opcode >> 8;
+     // Opcode: bits(8-16)
+    bin_buffer[1] = opcode & 0x00FF;
+    // I1: bits(24-27)
+    bin_buffer[3] = i1;
+    bin_buffer[3] = bin_buffer[3] << 4;
+    // I2: bits(28-31)
+    bin_buffer[3] = bin_buffer[3] | i2;
     return 0;
 }
 
@@ -644,7 +644,7 @@ int display_E(Instruction* instr){
     printf("+----------------+\n");
     printf("|     OPCODE     |\n");
     printf("+----------------+\n");
-    printf("0               F \n");
+    printf("0                F\n");
     // Print general information
     printf("MNEMONIC: %s\n", instr->mnemonic);
     hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
@@ -677,6 +677,32 @@ int display_I(Instruction* instr){
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
     printf("FORMAT:   I\n");
+    printf("OFFSET:   0x%lx\n", instr->offset);
+    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, false);
+    printf("I:        %s\n", conv_buffer);
+    return 0;
+}
+
+int display_IE(Instruction* instr){
+    if(instr == NULL){
+        return -1;
+    }
+    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
+    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
+    char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
+    // Print instruction layout
+    printf("+----------------+--------+----+----+\n");
+    printf("|     OPCODE     | ////// | I1 | I2 |\n");
+    printf("+----------------+--------+----+----+\n");
+    printf("0                1A       18   1C  1F\n");
+    // Print general information
+    printf("MNEMONIC: %s\n", instr->mnemonic);
+    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
+    printf("OPCODE:   %s\n", conv_buffer);
+    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
+    printf("BINARY:   %s\n", conv_buffer);
+    printf("LENGTH:   0x%x\n", ret_length);
+    printf("FORMAT:   IE\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
     return 0;
 }
@@ -793,7 +819,7 @@ int InstructionStream_display(){
             ret = display_I(curr);
             break;
         case IE:
-            //ret = display_(curr);
+            ret = display_IE(curr);
             break;
         case MII:
             //ret = display_(curr);

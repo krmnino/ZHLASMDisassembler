@@ -32,6 +32,8 @@ enum TokensParseState{
 
 typedef enum OperandsParseState OperandsParseState;
 enum OperandsParseState{
+    I1,
+    I2,
     M1,
     R1,
     D2,
@@ -106,10 +108,12 @@ int hex_2_char(void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
 Instruction* Instruction_init(const char*, char*, Address);
 int build_E(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_I(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_IE(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
 int display_I(Instruction*);
+int display_IE(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
