@@ -145,35 +145,71 @@ uint8_t mnemonic_to_length(const char* mnemonic){
     return 0;
 }
 
-uint32_t char_2_hex(const char* input){
-    uint8_t b1;
-    uint8_t b2;
-    size_t length = strlen(input);
-    uint32_t ret = 0;
-    uint8_t byte;
-    uint8_t eval;
-    for(size_t i = 0; i < length; i++){
-        byte = input[i];
-        eval = byte & 0x40;
-        if(eval != 0){
-            ret = ret << 4;
-            ret = ret | ((byte & 0x0F | 0x08) + 1);
-        }
-        else{
-            ret = ret << 4;
-            ret = ret | (byte & 0x0F);
-        }
-    }
-    return ret;
-}
-
-int hex_2_char(void* input, size_t input_len , size_t input_offset, char* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
+int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
     if(input == NULL || output == NULL){
         return -1;
     }
-    uint8_t* input_bytes  = (uint8_t*)input;
+    uint8_t* output_bytes = (uint8_t*)output;
     size_t byte_i = 0;
-    size_t output_i = 0;
+    uint8_t str_char = 0;
+    uint8_t skipper = 0;
+    if(little_endian){
+        skipper = skip || (n_chars % 2);
+    }
+    // Clear output buffer
+    for(size_t i = 0; i < output_len; i++){
+        output_bytes[i] = 0;
+    }
+    if(little_endian){
+        byte_i = output_len - 1 - (output_len - ((n_chars + 1) / 2));
+    }
+    else{
+        byte_i = 0;
+    }
+    for(size_t i = 0; i < n_chars; i++){
+        if((i + skipper) % 2 == 0 && i != 0){
+            if(little_endian){
+                byte_i--;
+            }
+            else{
+                byte_i++;
+            }
+        }
+        str_char = input[i];
+        switch (str_char) {
+        case 'A':
+        case 'B':
+        case 'C':
+        case 'D':
+        case 'E':
+        case 'F':
+        case 'a':
+        case 'b':
+        case 'c':
+        case 'd':
+        case 'e':
+        case 'f':
+            str_char = ((str_char & 0x0F) | 0x08) + 1;
+            break;        
+        default:
+            str_char = str_char & 0x0F;
+            break;
+        }
+        if((i + skipper) % 2 == 0){
+            output_bytes[byte_i] = (output_bytes[byte_i] | str_char) << 4;
+        }
+        else{
+            output_bytes[byte_i] = output_bytes[byte_i] | str_char;
+        }
+    }
+    return 0;
+}
+int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset, char* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
+    if(input == NULL || output == NULL){
+        return -1;
+    }
+    uint8_t* input_bytes = (uint8_t*)input;
+    size_t byte_i = 0;
     uint8_t binary_char = 0;
     // Clear output buffer
     for(size_t i = 0; i < output_len + 1; i++){
@@ -200,21 +236,19 @@ int hex_2_char(void* input, size_t input_len , size_t input_offset, char* output
         else{
             binary_char = input_bytes[byte_i] & 0x0F;
         }
-        switch (binary_char)
-        {
+        switch (binary_char){
         case 0xA:
         case 0xB:
         case 0xC:
         case 0xD:
         case 0xE:
         case 0xF:
-            output[output_i] = ((binary_char - 1) & 0x07) | 0x40;
+            output[i] = ((binary_char - 1) & 0x07) | 0x40;
             break;        
         default:
-            output[output_i] = binary_char | 0x30;
+            output[i] = binary_char | 0x30;
             break;
         }
-        output_i++;
     }
     return 0;
 }
@@ -259,7 +293,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
         ret = build_IE(opcode, operands_token, bin_buffer, format);
         break;
     case MII:
-        //ret = build_(opcode, operands_token, bin_buffer, format);
+        ret = build_MII(opcode, operands_token, bin_buffer, format);
         break;
     case RIa:
     case RIb:
@@ -428,13 +462,13 @@ int build_E(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruct
 
 int build_I(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
     uint8_t i; 
-     // Opcode: bits(0-7)
-    bin_buffer[0] = opcode;
-    // I: bits(8-15)
     if(!is_valid_hex_string(operands_token, 1)){
         return -1;
     }
-    i = char_2_hex(operands_token);
+    char_str_2_hex_str(operands_token, MAX_OPERANDS_LEN, (void*)&i, sizeof(i), 2, NO_SKIP, true);
+     // Opcode: bits(0-7)
+    bin_buffer[0] = opcode;
+    // I: bits(8-15)
     bin_buffer[1] = i;
     return 0;
 }
@@ -455,14 +489,14 @@ int build_IE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
-                i1 = char_2_hex(buffer);
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i1, sizeof(i1), 1, NO_SKIP, true);
                 memset(&buffer, 0, sizeof(buffer));
                 b_idx = 0;
                 state = I2;
                 i++;
             }
             else{
-                if(b_idx > MAX_REG_LEN){
+                if(b_idx > MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -475,14 +509,14 @@ int build_IE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
-                i2 = char_2_hex(buffer);
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i2, sizeof(i2), 1, NO_SKIP, true);
                 memset(&buffer, 0, sizeof(buffer));
                 b_idx = 0;
                 state = OPS_DONE;
                 i++;
             }
             else{
-                if(b_idx > MAX_REG_LEN){
+                if(b_idx > MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -508,12 +542,103 @@ int build_IE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
     return 0;
 }
 
+int build_MII(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+    uint8_t m1; 
+    uint16_t ri2; 
+    uint32_t ri3; 
+    char buffer[MAX_OPERANDS_LEN];
+    bool run = true;
+    size_t b_idx = 0;
+    OperandsParseState state = M1;
+    // Clear buffer
+    memset(&buffer, 0, sizeof(buffer));
+    for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
+        switch (state){
+        case M1:
+            if(operands_token[i] == ','){
+                if(!is_valid_hex_string(buffer, b_idx)){
+                    return -1;
+                }
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&m1, sizeof(m1), b_idx, NO_SKIP, true);
+                memset(&buffer, 0, sizeof(buffer));
+                b_idx = 0;
+                state = RI2;
+                i++;
+            }
+            else{
+                if(b_idx > MAX_1CHR_LEN){
+                    return -1;
+                }
+                buffer[b_idx] = operands_token[i];
+                b_idx++;
+                i++;
+            }
+            break;
+        case RI2:
+            if(operands_token[i] == ','){
+                if(!is_valid_hex_string(buffer, b_idx)){
+                    return -1;
+                }
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&ri2, sizeof(ri2), b_idx, NO_SKIP, true);
+                memset(&buffer, 0, sizeof(buffer));
+                b_idx = 0;
+                state = RI3;
+                i++;
+            }
+            else{
+                if(b_idx > MAX_3CHR_LEN){
+                    return -1;
+                }
+                buffer[b_idx] = operands_token[i];
+                b_idx++;
+                i++;
+            }
+            break;
+        case RI3:
+            if(operands_token[i] == 0){
+                if(!is_valid_hex_string(buffer, b_idx)){
+                    return -1;
+                }
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&ri3, sizeof(ri3), b_idx, NO_SKIP, true);
+                memset(&buffer, 0, sizeof(buffer));
+                b_idx = 0;
+                state = OPS_DONE;
+                i++;
+            }
+            else{
+                if(b_idx > MAX_6CHR_LEN){
+                    return -1;
+                }
+                buffer[b_idx] = operands_token[i];
+                b_idx++;
+                i++;
+            }
+            break;
+        case OPS_DONE:
+            run = false;
+        default:
+            break;
+        }
+    }
+     // Opcode: bits(0-7)
+    bin_buffer[0] = opcode;
+    // M1: bits(8-11)
+    bin_buffer[1] = m1 << 4;
+    // RI2: bits(12-23)
+    bin_buffer[1] = bin_buffer[1] | (ri2 >> 8);
+    bin_buffer[2] = ri2 & 0x00FF;
+    // RI3: bits(24-47)
+    bin_buffer[3] = ri3 >> 16;
+    bin_buffer[4] = (ri3 >> 8) & 0x0000FF;
+    bin_buffer[5] = ri3 & 0x0000FF;
+    return 0;
+}
+
 int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
     uint8_t r1_m1;
     uint16_t d2;
     uint8_t x2;
     uint8_t b2;
-    uint32_t conv_char;
     char buffer[MAX_OPERANDS_LEN];
     bool run = true;
     size_t b_idx = 0;
@@ -538,14 +663,14 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
-                r1_m1 = char_2_hex(buffer);
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r1_m1, sizeof(r1_m1), b_idx, NO_SKIP, true);
                 memset(&buffer, 0, sizeof(buffer));
                 b_idx = 0;
                 state = D2;
                 i++;
             }
             else{
-                if(b_idx > MAX_REG_LEN){
+                if(b_idx > MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -558,7 +683,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
-                d2 = char_2_hex(buffer);
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&d2, sizeof(d2), b_idx, NO_SKIP, true);
                 memset(&buffer, 0, sizeof(buffer));
                 b_idx = 0;
                 state = X2;
@@ -578,14 +703,14 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
-                x2 = char_2_hex(buffer);
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&x2, sizeof(x2), b_idx, NO_SKIP, true);
                 memset(&buffer, 0, sizeof(buffer));
                 b_idx = 0;
                 state = B2;
                 i++;
             }
             else{
-                if(b_idx > MAX_REG_LEN){
+                if(b_idx > MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -598,12 +723,12 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
-                b2 = char_2_hex(buffer);
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&b2, sizeof(b2), b_idx, NO_SKIP, true);
                 state = OPS_DONE;
                 i++;
             }
             else{
-                if(b_idx > MAX_REG_LEN){
+                if(b_idx > MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -647,9 +772,9 @@ int display_E(Instruction* instr){
     printf("0                F\n");
     // Print general information
     printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
+    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
     printf("FORMAT:   E\n");
@@ -671,14 +796,14 @@ int display_I(Instruction* instr){
     printf("0        8        F\n");
     // Print general information
     printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
     printf("FORMAT:   I\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
-    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, false);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, false);
     printf("I:        %s\n", conv_buffer);
     return 0;
 }
@@ -697,13 +822,47 @@ int display_IE(Instruction* instr){
     printf("0                1A       18   1C  1F\n");
     // Print general information
     printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
+    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
     printf("FORMAT:   IE\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 3, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+    printf("I1:       %s\n", conv_buffer);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 3, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+    printf("I2:       %s\n", conv_buffer);
+    return 0;
+}
+
+int display_MII(Instruction* instr){
+    if(instr == NULL){
+        return -1;
+    }
+    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
+    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
+    char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
+    // Print instruction layout
+    printf("+--------+----+------------+------------------------+\n");
+    printf("| OPCODE | M1 |    RI2     |          RI3           |\n");
+    printf("+--------+----+------------+------------------------+\n");
+    printf("0        8    C            18                      2F\n");
+    // Print general information
+    printf("MNEMONIC: %s\n", instr->mnemonic);
+    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    printf("OPCODE:   %s\n", conv_buffer);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 12, NO_SKIP, false);
+    printf("BINARY:   %s\n", conv_buffer);
+    printf("LENGTH:   0x%x\n", ret_length);
+    printf("FORMAT:   MII\n");
+    printf("OFFSET:   0x%lx\n", instr->offset);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+    printf("M1:       %s\n", conv_buffer);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
+    printf("RI2:      %s\n", conv_buffer);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 3, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 6, NO_SKIP, false);
+    printf("RI3:      %s\n", conv_buffer);
     return 0;
 }
 
@@ -734,9 +893,9 @@ int display_RX(Instruction* instr){
     }
     // Print general information
     printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_2_char((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    hex_2_char((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", ret_length);
     switch (ret_format){
@@ -753,21 +912,21 @@ int display_RX(Instruction* instr){
     // Print operands
     switch (ret_format){
     case RXa:
-        hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
         printf("R1:       %s\n", conv_buffer);
         break;
     case RXb:
-        hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
         printf("M1:       %s\n", conv_buffer);
         break;
     default:
         break;
     }
-    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
     printf("X2:       %s\n", conv_buffer);
-    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
     printf("B2:       %s\n", conv_buffer);
-    hex_2_char(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
     printf("D2:       %s\n", conv_buffer);
     return 0;
 }
@@ -822,7 +981,7 @@ int InstructionStream_display(){
             ret = display_IE(curr);
             break;
         case MII:
-            //ret = display_(curr);
+            ret = display_MII(curr);
             break;
         case RIa:
         case RIb:

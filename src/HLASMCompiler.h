@@ -12,10 +12,13 @@
 #define MAX_OPCODE_LEN 2
 #define MAX_INSTRUCTION_LEN 6
 #define MAX_OPERANDS_LEN 32
-#define MAX_REG_LEN 1
+#define MAX_1CHR_LEN 1
+#define MAX_3CHR_LEN 3
+#define MAX_6CHR_LEN 6
+#define MAX_RI_LEN 1
 #define MAX_DISP_LEN 3
 #define MAX_LONG_DISP_LEN 5
-#define MAX_PRINTOUT_FIELD_LEN 9
+#define MAX_PRINTOUT_FIELD_LEN 13
 #define NO_SKIP 0
 #define SKIP 1
 
@@ -32,10 +35,10 @@ enum TokensParseState{
 
 typedef enum OperandsParseState OperandsParseState;
 enum OperandsParseState{
-    I1,
-    I2,
+    I1, I2,
     M1,
     R1,
+    RI2, RI3,
     D2,
     B2,
     X2,
@@ -102,18 +105,20 @@ bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
 uint16_t mnemonic_to_opcode(const char*);
 uint8_t mnemonic_to_length(const char*);
-uint32_t char_2_hex(const char*);
-int hex_2_char(void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
+int char_str_2_hex_str(const char*, size_t, void*, size_t, size_t, size_t, bool);
+int hex_str_2_char_str(const void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
 
 Instruction* Instruction_init(const char*, char*, Address);
 int build_E(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_I(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_IE(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_MII(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
 int display_I(Instruction*);
 int display_IE(Instruction*);
+int display_MII(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
