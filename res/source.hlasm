@@ -1,3 +1,9 @@
-ST   1,89F(2,3)
-A    A,BBB(C,D)
-AL   9,CCC(8,7)
+AL     9,CCC(8,7)
+BC     F,123(5,A)
+PFPO 
+SVC    86
+NIAI   1,2
+BPRP   D,234,ABCDEF
+AHI    1,4567
+BRCTG  F,ABCD
+BRC    6,9888

@@ -113,12 +113,14 @@ int build_E(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_I(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_IE(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_MII(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_RI(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
 int display_I(Instruction*);
 int display_IE(Instruction*);
 int display_MII(Instruction*);
+int display_RI(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
