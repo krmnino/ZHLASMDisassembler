@@ -17,6 +17,7 @@
 #define MAX_3CHR_LEN 3
 #define MAX_4CHR_LEN 4
 #define MAX_6CHR_LEN 6
+#define MAX_8CHR_LEN 8
 #define MAX_RI_LEN 1
 #define MAX_DISP_LEN 3
 #define MAX_LONG_DISP_LEN 5
@@ -117,6 +118,7 @@ int build_IE(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_MII(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RI(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RIE(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_RIL(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
@@ -125,6 +127,7 @@ int display_IE(Instruction*);
 int display_MII(Instruction*);
 int display_RI(Instruction*);
 int display_RIE(Instruction*);
+int display_RIL(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
