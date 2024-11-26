@@ -13,7 +13,9 @@
 #define MAX_INSTRUCTION_LEN 6
 #define MAX_OPERANDS_LEN 32
 #define MAX_1CHR_LEN 1
+#define MAX_2CHR_LEN 2
 #define MAX_3CHR_LEN 3
+#define MAX_4CHR_LEN 4
 #define MAX_6CHR_LEN 6
 #define MAX_RI_LEN 1
 #define MAX_DISP_LEN 3
@@ -35,10 +37,10 @@ enum TokensParseState{
 
 typedef enum OperandsParseState OperandsParseState;
 enum OperandsParseState{
-    I1, I2,
-    M1,
-    R1,
-    RI2, RI3,
+    I1, I2, I3, I4, I5,
+    M1, M3,
+    R1, R2, R3,
+    RI2, RI3, RI4,
     D2,
     B2,
     X2,
@@ -114,6 +116,7 @@ int build_I(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_IE(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_MII(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RI(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_RIE(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
@@ -121,6 +124,7 @@ int display_I(Instruction*);
 int display_IE(Instruction*);
 int display_MII(Instruction*);
 int display_RI(Instruction*);
+int display_RIE(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
