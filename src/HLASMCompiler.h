@@ -42,8 +42,8 @@ enum OperandsParseState{
     M1, M3,
     R1, R2, R3,
     RI2, RI3, RI4,
-    D2,
-    B2,
+    D2, D4,
+    B2, B4,
     X2,
     OPS_DONE,
 };
@@ -119,6 +119,7 @@ int build_MII(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RI(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RIE(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RIL(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_RIS(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
@@ -128,6 +129,7 @@ int display_MII(Instruction*);
 int display_RI(Instruction*);
 int display_RIE(Instruction*);
 int display_RIL(Instruction*);
+int display_RIS(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();

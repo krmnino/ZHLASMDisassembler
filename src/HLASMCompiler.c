@@ -318,7 +318,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
         ret = build_RIL(opcode, operands_token, bin_buffer, format);
         break;
     case RIS:
-        //ret = build_(opcode, operands_token, bin_buffer, format);
+        ret = build_RIS(opcode, operands_token, bin_buffer, format);
         break;
     case RR:
         //ret = build_(opcode, operands_token, bin_buffer, format);
@@ -455,9 +455,6 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     return instr;
 }
 
-
-
-
 void InstructionStream_init(){
     InstructionStream.head = NULL;
     InstructionStream.tail = NULL;
@@ -530,7 +527,7 @@ int InstructionStream_display(){
             ret = display_RIL(curr);
             break;
         case RIS:
-            //ret = display_(curr);
+            ret = display_RIS(curr);
             break;
         case RR:
             //ret = display_(curr);
