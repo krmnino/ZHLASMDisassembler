@@ -124,7 +124,6 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
     return 0;
 }
 
-
 int display_RX(Instruction* instr){
     if(instr == NULL){
         return -1;
