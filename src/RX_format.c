@@ -56,7 +56,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 i++;
             }
             else{
-                if(b_idx > MAX_DISP_LEN){
+                if(b_idx > MAX_3CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];

@@ -34,6 +34,7 @@ int display_I(Instruction* instr){
     printf("LENGTH:   0x%x\n", ret_length);
     printf("FORMAT:   I\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
+    // Print operands
     hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, false);
     printf("I:        %s\n", conv_buffer);
     return 0;

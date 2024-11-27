@@ -144,6 +144,7 @@ int display_RI(Instruction* instr){
         return -1;
     }
     printf("OFFSET:   0x%lx\n", instr->offset);
+    // Print operands
     switch (ret_format){
     case RIa:
         hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);

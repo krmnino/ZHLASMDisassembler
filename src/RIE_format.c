@@ -303,7 +303,7 @@ int build_RIE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     case RIEd:        
     case RIEe:        
     case RIEg:        
-        // R3/M3: Bits(1-35)
+        // R3/M3: Bits(12-15)
         bin_buffer[1] = bin_buffer[1] | r3_m3;
         break;
     case RIEf:        
