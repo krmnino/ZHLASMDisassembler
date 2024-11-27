@@ -18,9 +18,6 @@
 #define MAX_4CHR_LEN 4
 #define MAX_6CHR_LEN 6
 #define MAX_8CHR_LEN 8
-#define MAX_RI_LEN 1
-#define MAX_DISP_LEN 3
-#define MAX_LONG_DISP_LEN 5
 #define MAX_PRINTOUT_FIELD_LEN 13
 #define NO_SKIP 0
 #define SKIP 1
