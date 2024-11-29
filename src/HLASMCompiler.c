@@ -334,7 +334,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case RRFc:
     case RRFd:
     case RRFe:
-        //ret = build_(opcode, operands_token, bin_buffer, format);
+        ret = build_RRF(opcode, operands_token, bin_buffer, format);
         break;
     case RRS:
         //ret = build_(opcode, operands_token, bin_buffer, format);
@@ -543,7 +543,7 @@ int InstructionStream_display(){
         case RRFc:
         case RRFd:
         case RRFe:
-            //ret = display_(curr);
+            ret = display_RRF(curr);
             break;
         case RRS:
             //ret = display_(curr);
