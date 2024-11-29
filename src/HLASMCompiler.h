@@ -119,6 +119,7 @@ int build_RIL(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RIS(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RR(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RRD(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_RRE(uint16_t, char*, uint8_t*, InstructionFormat);
 int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
 
 int display_E(Instruction*);
@@ -131,6 +132,7 @@ int display_RIL(Instruction*);
 int display_RIS(Instruction*);
 int display_RR(Instruction*);
 int display_RRD(Instruction*);
+int display_RRE(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
