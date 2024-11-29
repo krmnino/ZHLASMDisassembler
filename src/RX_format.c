@@ -111,13 +111,11 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
     // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
     // R1/M1: bits(8-11)
-    bin_buffer[1] = r1_m1;
-    bin_buffer[1] = bin_buffer[1] << 4;
+    bin_buffer[1] = r1_m1 << 4;
     // X2: bits(12-15)
     bin_buffer[1] = bin_buffer[1] | x2;
     // B2: bits(16-19)
-    bin_buffer[2] = b2;
-    bin_buffer[2] = bin_buffer[2] << 4;
+    bin_buffer[2] = b2 << 4;
     // D2: bits(20-31)
     bin_buffer[2] = bin_buffer[2] | (d2 >> 8);
     bin_buffer[3] = d2 & 0x00FF;
