@@ -1,15 +1,45 @@
 #include "HLASMCompiler.h"
 
 int build_I(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
-    uint8_t i; 
-    if(!is_valid_hex_string(operands_token, 1)){
-        return -1;
+    uint8_t i1;
+    char buffer[MAX_OPERANDS_LEN];
+    bool run = true;
+    size_t b_idx = 0;
+    OperandsParseState state = I1;
+    // Clear buffer
+    memset(&buffer, 0, sizeof(buffer));
+    for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
+        switch (state){
+        case I1:
+            if(operands_token[i] == 0){
+                if(!is_valid_hex_string(buffer, b_idx)){
+                    return -1;
+                }
+                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i1, sizeof(i1), b_idx, NO_SKIP, true);
+                memset(&buffer, 0, sizeof(buffer));
+                b_idx = 0;
+                state = OPS_DONE;
+                i++;
+            }
+            else{
+                if(b_idx > MAX_2CHR_LEN){
+                    return -1;
+                }
+                buffer[b_idx] = operands_token[i];
+                b_idx++;
+                i++;
+            }
+            break;
+        case OPS_DONE:
+            run = false;
+        default:
+            break;
+        }
     }
-    char_str_2_hex_str(operands_token, MAX_OPERANDS_LEN, (void*)&i, sizeof(i), 2, NO_SKIP, true);
-     // Opcode: bits(0-7)
+    // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
     // I: bits(8-15)
-    bin_buffer[1] = i;
+    bin_buffer[1] = i1;
     return 0;
 }
 
