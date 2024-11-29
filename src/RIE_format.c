@@ -276,17 +276,17 @@ int build_RIE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     case RIEd:        
     case RIEe:        
     case RIEg:        
-        // I2: Bits(16-31)
+        // I2: bits(16-31)
         bin_buffer[2] = i2_ri2_ri4 >> 8;
         bin_buffer[3] = bin_buffer[3] | (i2_ri2_ri4 & 0x00FF);
         break;
     case RIEb:
     case RIEf:
-        // R2: Bits(12-15)
+        // R2: bits(12-15)
         bin_buffer[1] = bin_buffer[1] | r2;
         break;
     case RIEc:
-        // I2: Bits(32-39)
+        // I2: bits(32-39)
         bin_buffer[4] = i2;
         break;        
     default:
@@ -296,18 +296,18 @@ int build_RIE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     switch (format){
     case RIEa:        
     case RIEb:        
-        // M3: Bits(32-35)
+        // M3: bits(32-35)
         bin_buffer[4] = r3_m3 << 4;
         break;
     case RIEc:        
     case RIEd:        
     case RIEe:        
     case RIEg:        
-        // R3/M3: Bits(12-15)
+        // R3/M3: bits(12-15)
         bin_buffer[1] = bin_buffer[1] | r3_m3;
         break;
     case RIEf:        
-        // I3: Bits(16-23)
+        // I3: bits(16-23)
         bin_buffer[2] = i3;
         break;
     default:
@@ -317,12 +317,12 @@ int build_RIE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     switch (format){
     case RIEb:        
     case RIEc:        
-        // RI4: Bits(32-35)
+        // RI4: bits(32-35)
         bin_buffer[2] = i2_ri2_ri4 >> 8;
         bin_buffer[3] = bin_buffer[3] | (i2_ri2_ri4 & 0x00FF);
         break;
     case RIEf:        
-        // I4: Bits(24-31)
+        // I4: bits(24-31)
         bin_buffer[3] = i4;
         break;
     default:
@@ -331,7 +331,7 @@ int build_RIE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     // I5:  
     switch (format){
     case RIEf:        
-        // I4: Bits(32-39)
+        // I4: bits(32-39)
         bin_buffer[4] = i5;
         break;
     default:

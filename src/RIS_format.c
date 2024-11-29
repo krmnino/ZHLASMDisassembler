@@ -124,7 +124,7 @@ int build_RIS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     bin_buffer[0] = opcode >> 8;
     // R1: bits(8-11)
     bin_buffer[1] = r1 << 4;
-    // M3: Bits(12-15)
+    // M3: bits(12-15)
     bin_buffer[1] = bin_buffer[1] | m3;
     // B4: bits(8-11)
     bin_buffer[2] = b4 << 4;

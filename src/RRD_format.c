@@ -81,11 +81,11 @@ int build_RRD(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     // Opcode: bits(0-15)
     bin_buffer[0] = opcode >> 8;
     bin_buffer[1] = opcode & 0x00FF;
-    // R1: bits(8-11)
+    // R1: bits(16-19)
     bin_buffer[2] = r1 << 4;
-    // R3: Bits(12-15)
+    // R3: bits(24-27)
     bin_buffer[3] = r3 << 4;
-    // R2: bits(8-11)
+    // R2: bits(28-31)
     bin_buffer[3] = bin_buffer[3] | r2;
     return 0;
 }
