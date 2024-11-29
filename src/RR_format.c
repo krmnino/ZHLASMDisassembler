@@ -66,7 +66,6 @@ int build_RR(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
     return 0;
 }
 
-
 int display_RR(Instruction* instr){
     if(instr == NULL){
         return -1;
