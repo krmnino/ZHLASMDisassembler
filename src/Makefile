@@ -1,28 +1,30 @@
-SRC_FILES = InstructionTable.h	\
-			HLASMCompiler.c 	\
-			E_format.c			\
-			I_format.c			\
-			IE_format.c			\
-			MII_format.c		\
-			RI_format.c			\
-			RIE_format.c		\
-			RIL_format.c		\
-			RIS_format.c		\
-			RR_format.c			\
-			RX_format.c			\
+SRC_FILES = InstructionTable.h		\
+			HLASMCompiler.c 		\
+			E_format.c				\
+			I_format.c				\
+			IE_format.c				\
+			MII_format.c			\
+			RI_format.c				\
+			RIE_format.c			\
+			RIL_format.c			\
+			RIS_format.c			\
+			RR_format.c				\
+			RRD_format.c			\
+			RX_format.c				\
 			Main.c
 
-OBJ_FILES = HLASMCompiler.o 	\
-			E_format.o			\
-			I_format.o			\
-			IE_format.o			\
-			MII_format.o		\
-			RI_format.o			\
-			RIE_format.o		\
-			RIL_format.o		\
-			RIS_format.o		\
-			RR_format.o			\
-			RX_format.o			\
+OBJ_FILES = HLASMCompiler.o 		\
+			E_format.o				\
+			I_format.o				\
+			IE_format.o				\
+			MII_format.o			\
+			RI_format.o				\
+			RIE_format.o			\
+			RIL_format.o			\
+			RIS_format.o			\
+			RR_format.o				\
+			RRD_format.o			\
+			RX_format.o				\
 			Main.o
 
 FILE=""
