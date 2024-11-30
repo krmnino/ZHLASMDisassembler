@@ -1,9 +1,9 @@
 #include "HLASMCompiler.h"
 
 int build_RRD(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
-    uint8_t r1;
-    uint8_t r2;
-    uint8_t r3;
+    uint8_t r1 = 0;
+    uint8_t r2 = 0;
+    uint8_t r3 = 0;
     char buffer[MAX_OPERANDS_LEN];
     bool run = true;
     size_t b_idx = 0;

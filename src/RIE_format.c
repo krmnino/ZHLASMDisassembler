@@ -1,14 +1,14 @@
 #include "HLASMCompiler.h"
 
 int build_RIE(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
-    uint8_t r1; 
-    uint8_t r2; 
-    uint8_t r3_m3; 
-    uint8_t i2; 
-    uint8_t i3; 
-    uint8_t i4; 
-    uint8_t i5; 
-    uint16_t i2_ri2_ri4; 
+    uint8_t r1 = 0; 
+    uint8_t r2 = 0; 
+    uint8_t r3_m3 = 0; 
+    uint8_t i2 = 0; 
+    uint8_t i3 = 0; 
+    uint8_t i4 = 0; 
+    uint8_t i5 = 0; 
+    uint16_t i2_ri2_ri4 = 0; 
     char buffer[MAX_OPERANDS_LEN];
     bool run = true;
     size_t b_idx = 0;

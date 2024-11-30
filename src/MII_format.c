@@ -1,9 +1,9 @@
 #include "HLASMCompiler.h"
 
 int build_MII(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
-    uint8_t m1; 
-    uint16_t ri2; 
-    uint32_t ri3; 
+    uint8_t m1 = 0; 
+    uint16_t ri2 = 0; 
+    uint32_t ri3 = 0; 
     char buffer[MAX_OPERANDS_LEN];
     bool run = true;
     size_t b_idx = 0;

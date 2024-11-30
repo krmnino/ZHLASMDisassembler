@@ -1,8 +1,8 @@
 #include "HLASMCompiler.h"
 
 int build_RIL(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
-    uint8_t r1_m1; 
-    uint32_t i2_ri2; 
+    uint8_t r1_m1 = 0; 
+    uint32_t i2_ri2 = 0; 
     char buffer[MAX_OPERANDS_LEN];
     bool run = true;
     size_t b_idx = 0;

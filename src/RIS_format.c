@@ -1,11 +1,11 @@
 #include "HLASMCompiler.h"
 
 int build_RIS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
-    uint8_t r1;
-    uint8_t i2;
-    uint8_t m3;
-    uint8_t b4;
-    uint16_t d4;
+    uint8_t r1 = 0;
+    uint8_t i2 = 0;
+    uint8_t m3 = 0;
+    uint8_t b4 = 0;
+    uint16_t d4 = 0;
     char buffer[MAX_OPERANDS_LEN];
     bool run = true;
     size_t b_idx = 0;
