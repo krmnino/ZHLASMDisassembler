@@ -340,10 +340,8 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
         ret = build_RRS(opcode, operands_token, bin_buffer, format);
         break;
     case RSa:
-        //ret = build_(opcode, operands_token, bin_buffer, format);
-        break;
     case RSb:
-        //ret = build_(opcode, operands_token, bin_buffer, format);
+        ret = build_RS(opcode, operands_token, bin_buffer, format);
         break;
     case RSI:
         //ret = build_(opcode, operands_token, bin_buffer, format);
@@ -550,7 +548,7 @@ int InstructionStream_display(){
             break;
         case RSa:
         case RSb:
-            //ret = display_(curr);
+            ret = display_RS(curr);
             break;
         case RSI:
             //ret = display_(curr);
