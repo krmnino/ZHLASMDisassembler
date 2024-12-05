@@ -22,6 +22,18 @@
 #define NO_SKIP 0
 #define SKIP 1
 
+#define USE_ALL   0x0000
+#define B2_UNUSED 0x0001
+#define M3_UNUSED 0x0002
+#define M4_UNUSED 0x0004
+#define M5_UNUSED 0x0008
+#define M6_UNUSED 0x0010
+#define R1_UNUSED 0x0020
+#define R2_UNUSED 0x0040
+#define R3_UNUSED 0x0080
+#define D2_UNUSED 0x0100
+#define I2_UNUSED 0x0200
+
 typedef uint64_t Address;
 
 typedef enum TokensParseState TokensParseState;
@@ -88,7 +100,8 @@ enum InstructionFormat{
 
 typedef struct Instruction Instruction;
 struct Instruction{
-    char mnemonic[MAX_MNEMONIC_LEN];
+    char mnemonic[MAX_MNEMONIC_LEN]; // TODO: REMOVE
+    size_t it_index;
     uint8_t binary[MAX_INSTRUCTION_LEN];
     Address offset;
     Instruction* next;
@@ -106,25 +119,26 @@ bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
 uint16_t mnemonic_to_opcode(const char*);
 uint8_t mnemonic_to_length(const char*);
+size_t mnemonic_to_table_index(const char*);
 int char_str_2_hex_str(const char*, size_t, void*, size_t, size_t, size_t, bool);
 int hex_str_2_char_str(const void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
 
 Instruction* Instruction_init(const char*, char*, Address);
-int build_E(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_I(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_IE(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_MII(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RI(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RIE(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RIL(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RIS(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RR(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RRD(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RRE(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RRF(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RRS(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RS(uint16_t, char*, uint8_t*, InstructionFormat);
-int build_RX(uint16_t, char*, uint8_t*, InstructionFormat);
+int build_E(size_t, const char*, uint8_t*);
+int build_I(size_t, const char*, uint8_t*);
+int build_IE(size_t, const char*, uint8_t*);
+int build_MII(size_t, const char*, uint8_t*);
+int build_RI(size_t, const char*, uint8_t*);
+int build_RIE(size_t, const char*, uint8_t*);
+int build_RIL(size_t, const char*, uint8_t*);
+int build_RIS(size_t, const char*, uint8_t*);
+int build_RR(size_t, const char*, uint8_t*);
+int build_RRD(size_t, const char*, uint8_t*);
+int build_RRE(size_t, const char*, uint8_t*);
+int build_RRF(size_t, const char*, uint8_t*);
+int build_RRS(size_t, const char*, uint8_t*);
+int build_RS(size_t, const char*, uint8_t*);
+int build_RX(size_t, const char*, uint8_t*);
 
 int display_E(Instruction*);
 int display_I(Instruction*);

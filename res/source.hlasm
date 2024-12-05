@@ -1,5 +1,3 @@
-AL      9,CCC(8,7)
-BC      F,123(5,A)
 PFPO 
 SVC     86
 NIAI    1,2
@@ -18,15 +16,24 @@ MSFI    F,12345678
 STGRL   5,98765432
 BRCL    9,AABBCCDD
 CGIB    1,AB,F,E8E(2)
+SPM     F
 MVCL    1,3
 MADBR   A,1,C
-LPDBR   9,D
+NNPA
+IAC     2
+KDSA    3,4
 ADTRA   6,7,8,F
+ADTR    6,7,8
 CRDTE   1,3,2,4
+KMA     A,C,B
 TRTRE   A,B,C
 CSDTR   5,8,C
 CXLGTR  1,3,2,4
+TBEDR   1,3,2
 CRB     1,A,F,6B8,5
 LM      1,2,ABC(D)
 SLDA    3,A12(4)
 STCM    A,F,123(2)
+
+AL      9,CCC(8,7)
+BC      F,123(5,A)

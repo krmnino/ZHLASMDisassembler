@@ -1,18 +1,24 @@
+#include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_RS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+
+int build_RS(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+    uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
+    InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
+    bool r3_unused = INSTRUCTION_TABLE[table_index].unused_operands & R3_UNUSED;
     uint8_t r1 = 0;
     uint8_t r3_m3 = 0;
     uint8_t b2 = 0;
     uint16_t d2 = 0;
     char buffer[MAX_OPERANDS_LEN];
+    size_t i;
+    size_t operands_token_len = strlen(operands_token) + 1;
     bool run = true;
-    bool redirect = false;
     size_t b_idx = 0;
     OperandsParseState state = R1;
     // Clear buffer
     memset(&buffer, 0, sizeof(buffer));
-    for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
+    for(i = 0; i < operands_token_len && run;){
         switch (state){
         case R1:
             if(operands_token[i] == ','){
@@ -24,7 +30,12 @@ int build_RS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 b_idx = 0;
                 switch (format){
                 case RSa:
-                    state = RSa_R3_D2;
+                    if(r3_unused){
+                        state = D2;
+                    }
+                    else{
+                        state = R3;
+                    }
                     break;
                 case RSb:
                     state = M3;
@@ -35,26 +46,7 @@ int build_RS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 i++;
             }
             else{
-                if(b_idx > MAX_1CHR_LEN){
-                    return -1;
-                }
-                buffer[b_idx] = operands_token[i];
-                b_idx++;
-                i++;
-            }
-            break;
-        case RSa_R3_D2:
-            if(operands_token[i] == ','){
-                if(b_idx == MAX_1CHR_LEN){
-                    state = R3;
-                }
-                else{
-                    state = D2;
-                }
-                redirect = true;
-            }
-            else{
-                if(b_idx > MAX_3CHR_LEN){
+                if(b_idx >= MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -64,19 +56,18 @@ int build_RS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
             break;
         case M3:
         case R3:
-            if(operands_token[i] == ',' || redirect == true){
+            if(operands_token[i] == ','){
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
                 char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r3_m3, sizeof(r3_m3), b_idx, NO_SKIP, true);
                 memset(&buffer, 0, sizeof(buffer));
-                redirect = false;
                 b_idx = 0;
                 state = D2;
                 i++;
             }
             else{
-                if(b_idx > MAX_3CHR_LEN){
+                if(b_idx >= MAX_3CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -85,22 +76,20 @@ int build_RS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
             }
             break;
         case D2:
-            if(operands_token[i] == ',' || redirect == true){
+            if(operands_token[i] == ','){
                 if(!is_valid_hex_string(buffer, b_idx)){
                     return -1;
                 }
                 char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&d2, sizeof(d2), b_idx, NO_SKIP, true);
                 memset(&buffer, 0, sizeof(buffer));
-                redirect = false;
                 b_idx = 0;
                 state = B2;
                 i++;
             }
             else{
-                if(b_idx > MAX_3CHR_LEN){
+                if(b_idx >= MAX_3CHR_LEN){
                     return -1;
                 }
-                redirect = false;
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
                 i++;
@@ -116,7 +105,7 @@ int build_RS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 i++;
             }
             else{
-                if(b_idx > MAX_1CHR_LEN){
+                if(b_idx >= MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -129,6 +118,12 @@ int build_RS(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
         default:
             break;
         }
+    }
+    if(i != operands_token_len){
+        return -1;
+    }
+    if(state != OPS_DONE){
+        return -1;
     }
     // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
@@ -148,17 +143,26 @@ int display_RS(Instruction* instr){
     if(instr == NULL){
         return -1;
     }
-    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
-    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
-    InstructionFormat ret_format = mnemonic_to_format(instr->mnemonic);
+    uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
+    uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
+    InstructionFormat format = INSTRUCTION_TABLE[instr->it_index].format;
+    bool r3_unused = INSTRUCTION_TABLE[instr->it_index].unused_operands & R3_UNUSED;
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
     // Print instruction layout
-    switch (ret_format){
+    switch (format){
     case RSa:
-        printf("+--------+----+----+----+------------+\n");
-        printf("| OPCODE | R1 | R3 | B2 |     D2     |\n");
-        printf("+--------+----+----+----+------------+\n");
-        printf("0        8    C    10   14          1F\n");
+        if(r3_unused){
+            printf("+--------+----+----+----+------------+\n");
+            printf("| OPCODE | R1 | // | B2 |     D2     |\n");
+            printf("+--------+----+----+----+------------+\n");
+            printf("0        8    C    10   14          1F\n");
+        }
+        else{
+            printf("+--------+----+----+----+------------+\n");
+            printf("| OPCODE | R1 | R3 | B2 |     D2     |\n");
+            printf("+--------+----+----+----+------------+\n");
+            printf("0        8    C    10   14          1F\n");
+        }
         break;
     case RSb:
         printf("+--------+----+----+----+------------+\n");
@@ -170,13 +174,13 @@ int display_RS(Instruction* instr){
         return -1;
     }
     // Print general information
-    printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
+    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
     hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
-    printf("LENGTH:   0x%x\n", ret_length);
-    switch (ret_format){
+    printf("LENGTH:   0x%x\n", length);
+    switch (format){
     case RSa:
         printf("FORMAT:   RSa\n");
         break;
@@ -190,10 +194,12 @@ int display_RS(Instruction* instr){
     // Print operands
     hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
     printf("R1:       %s\n", conv_buffer);
-    switch (ret_format){
+    switch (format){
     case RSa:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
-        printf("R3:       %s\n", conv_buffer);
+        if(!r3_unused){
+            hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+            printf("R3:       %s\n", conv_buffer);
+        }
         break;
     case RSb:
         hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);

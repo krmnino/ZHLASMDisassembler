@@ -148,6 +148,15 @@ uint8_t mnemonic_to_length(const char* mnemonic){
     return 0;
 }
 
+size_t mnemonic_to_table_index(const char* mnemonic){
+    for(size_t i = 0; i < n_inst; i++){
+        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
+            return i;
+        }
+    }
+    return 0;
+}
+
 int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
     if(input == NULL || output == NULL){
         return -1;
@@ -261,8 +270,9 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     if(!is_valid_mnemonic(mnemonic_token)){
         return NULL;
     }
-    InstructionFormat format = mnemonic_to_format(mnemonic_token);
-    uint16_t opcode = mnemonic_to_opcode(mnemonic_token);
+    InstructionFormat format = mnemonic_to_format(mnemonic_token); // TODO: REMOVE
+    uint16_t opcode = mnemonic_to_opcode(mnemonic_token); // TODO: REMOVE
+    size_t it_index = mnemonic_to_table_index(mnemonic_token);
     size_t o_idx = 0;
     uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
     int ret;
@@ -287,21 +297,21 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     memset(&bin_buffer, 0, sizeof(bin_buffer));
     switch (format) {
     case E:
-        ret = build_E(opcode, NULL, bin_buffer, format);
+        ret = build_E(it_index, NULL, bin_buffer);
         break;
     case I:
-        ret = build_I(opcode, operands_token, bin_buffer, format);
+        ret = build_I(it_index, operands_token, bin_buffer);
         break;
     case IE:
-        ret = build_IE(opcode, operands_token, bin_buffer, format);
+        ret = build_IE(it_index, operands_token, bin_buffer);
         break;
     case MII:
-        ret = build_MII(opcode, operands_token, bin_buffer, format);
+        ret = build_MII(it_index, operands_token, bin_buffer);
         break;
     case RIa:
     case RIb:
     case RIc:
-        ret = build_RI(opcode, operands_token, bin_buffer, format);
+        ret = build_RI(it_index, operands_token, bin_buffer);
         break;
     case RIEa:
     case RIEb:
@@ -310,38 +320,38 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     case RIEe:
     case RIEf:
     case RIEg:
-        ret = build_RIE(opcode, operands_token, bin_buffer, format);
+        ret = build_RIE(it_index, operands_token, bin_buffer);
         break;
     case RILa:
     case RILb:
     case RILc:
-        ret = build_RIL(opcode, operands_token, bin_buffer, format);
+        ret = build_RIL(it_index, operands_token, bin_buffer);
         break;
     case RIS:
-        ret = build_RIS(opcode, operands_token, bin_buffer, format);
+        ret = build_RIS(it_index, operands_token, bin_buffer);
         break;
     case RR:
-        ret = build_RR(opcode, operands_token, bin_buffer, format);
+        ret = build_RR(it_index, operands_token, bin_buffer);
         break;
     case RRD:
-        ret = build_RRD(opcode, operands_token, bin_buffer, format);
+        ret = build_RRD(it_index, operands_token, bin_buffer);
         break;
     case RRE:
-        ret = build_RRE(opcode, operands_token, bin_buffer, format);
+        ret = build_RRE(it_index, operands_token, bin_buffer);
         break;
     case RRFa:
     case RRFb:
     case RRFc:
     case RRFd:
     case RRFe:
-        ret = build_RRF(opcode, operands_token, bin_buffer, format);
+        ret = build_RRF(it_index, operands_token, bin_buffer);
         break;
     case RRS:
-        ret = build_RRS(opcode, operands_token, bin_buffer, format);
+        ret = build_RRS(it_index, operands_token, bin_buffer);
         break;
     case RSa:
     case RSb:
-        ret = build_RS(opcode, operands_token, bin_buffer, format);
+        ret = build_RS(it_index, operands_token, bin_buffer);
         break;
     case RSI:
         //ret = build_(opcode, operands_token, bin_buffer, format);
@@ -356,7 +366,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
         break;
     case RXa:
     case RXb:
-        ret = build_RX(opcode, operands_token, bin_buffer, format);
+        ret = build_RX(it_index, operands_token, bin_buffer);
         break;
     case RXE:
         //ret = build_(opcode, operands_token, bin_buffer, format);
@@ -446,8 +456,9 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     if(instr == NULL){
         return NULL;
     }
-    memcpy(&instr->mnemonic, mnemonic_token, MAX_MNEMONIC_LEN);
+    memcpy(&instr->mnemonic, mnemonic_token, MAX_MNEMONIC_LEN); // TODO: REMOVE THIS
     memcpy(&instr->binary, bin_buffer, MAX_INSTRUCTION_LEN);
+    instr->it_index = it_index;
     instr->offset = offset;
     instr->next = NULL;
     return instr;

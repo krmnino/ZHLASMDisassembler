@@ -1,9 +1,14 @@
+#include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_RIL(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+int build_RIL(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+    uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
+    InstructionFormat format = INSTRUCTION_TABLE[table_index].format;    
     uint8_t r1_m1 = 0; 
     uint32_t i2_ri2 = 0; 
     char buffer[MAX_OPERANDS_LEN];
+    size_t i;
+    size_t operands_token_len = strlen(operands_token) + 1;
     bool run = true;
     size_t b_idx = 0;
     OperandsParseState state;
@@ -20,7 +25,7 @@ int build_RIL(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
     }
     // Clear buffer
     memset(&buffer, 0, sizeof(buffer));
-    for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
+    for(i = 0; i < operands_token_len && run;){
         switch (state){
         case R1:
         case M1:
@@ -45,7 +50,7 @@ int build_RIL(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
                 i++;
             }
             else{
-                if(b_idx > MAX_1CHR_LEN){
+                if(b_idx >= MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -66,7 +71,7 @@ int build_RIL(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
                 i++;
             }
             else{
-                if(b_idx > MAX_8CHR_LEN){
+                if(b_idx >= MAX_8CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -79,6 +84,12 @@ int build_RIL(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instru
         default:
             break;
         }
+    }
+    if(state != OPS_DONE){
+        return -1;
+    }
+    if(i != operands_token_len){
+        return -1;
     }
      // Opcode (part 1): bits(0-7)
     bin_buffer[0] = opcode >> 4;
@@ -98,12 +109,12 @@ int display_RIL(Instruction* instr){
     if(instr == NULL){
         return -1;
     }
-    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
-    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
-    InstructionFormat ret_format = mnemonic_to_format(instr->mnemonic);
+    uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
+    uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
+    InstructionFormat format = INSTRUCTION_TABLE[instr->it_index].format;
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
     // Print instruction layout
-    switch (ret_format){
+    switch (format){
     case RILa:
         printf("+--------+----+----+--------------------------------+\n");
         printf("| OPCODE | R1 | OP |               I2               |\n");
@@ -126,13 +137,13 @@ int display_RIL(Instruction* instr){
         return -1;
     }
     // Print general information
-    printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, true);
+    printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
+    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
     hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 12, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
-    printf("LENGTH:   0x%x\n", ret_length);
-    switch (ret_format){
+    printf("LENGTH:   0x%x\n", length);
+    switch (format){
     case RILa:
         printf("FORMAT:   RILa\n");
         break;
@@ -146,7 +157,7 @@ int display_RIL(Instruction* instr){
         return -1;
     }
     printf("OFFSET:   0x%lx\n", instr->offset);
-    switch (ret_format){
+    switch (format){
     case RILa:
         hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
         printf("R1:       %s\n", conv_buffer);

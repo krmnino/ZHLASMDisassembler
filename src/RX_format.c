@@ -1,11 +1,16 @@
+#include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, InstructionFormat format){
+int build_RX(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+    uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
+    InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     uint8_t r1_m1 = 0;
     uint16_t d2 = 0;
     uint8_t x2 = 0;
     uint8_t b2 = 0;
     char buffer[MAX_OPERANDS_LEN];
+    size_t i;
+    size_t operands_token_len = strlen(operands_token) + 1;
     bool run = true;
     size_t b_idx = 0;
     OperandsParseState state;
@@ -21,7 +26,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
     }
     // Clear buffer
     memset(&buffer, 0, sizeof(buffer));
-    for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
+    for(i = 0; i < operands_token_len && run;){
         switch (state){
         case R1:
         case M1:
@@ -36,7 +41,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 i++;
             }
             else{
-                if(b_idx > MAX_1CHR_LEN){
+                if(b_idx >= MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -56,7 +61,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 i++;
             }
             else{
-                if(b_idx > MAX_3CHR_LEN){
+                if(b_idx >= MAX_3CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -76,7 +81,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 i++;
             }
             else{
-                if(b_idx > MAX_1CHR_LEN){
+                if(b_idx >= MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -94,7 +99,7 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
                 i++;
             }
             else{
-                if(b_idx > MAX_1CHR_LEN){
+                if(b_idx >= MAX_1CHR_LEN){
                     return -1;
                 }
                 buffer[b_idx] = operands_token[i];
@@ -107,6 +112,12 @@ int build_RX(uint16_t opcode, char* operands_token, uint8_t* bin_buffer, Instruc
         default:
             break;
         }
+    }
+    if(state != OPS_DONE){
+        return -1;
+    }
+    if(i != operands_token_len){
+        return -1;
     }
     // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
@@ -126,12 +137,12 @@ int display_RX(Instruction* instr){
     if(instr == NULL){
         return -1;
     }
-    uint16_t ret_opcode = mnemonic_to_opcode(instr->mnemonic);
-    uint8_t ret_length = mnemonic_to_length(instr->mnemonic);
-    InstructionFormat ret_format = mnemonic_to_format(instr->mnemonic);
+    uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
+    uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
+    InstructionFormat format = INSTRUCTION_TABLE[instr->it_index].format;
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
     // Print instruction layout
-    switch (ret_format){
+    switch (format){
     case RXa:
         printf("+--------+----+----+----+------------+\n");
         printf("| OPCODE | R1 | X2 | B2 |     D2     |\n");
@@ -148,13 +159,13 @@ int display_RX(Instruction* instr){
         return -1;
     }
     // Print general information
-    printf("MNEMONIC: %s\n", instr->mnemonic);
-    hex_str_2_char_str((void*)&ret_opcode, sizeof(ret_opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
+    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
     hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
-    printf("LENGTH:   0x%x\n", ret_length);
-    switch (ret_format){
+    printf("LENGTH:   0x%x\n", length);
+    switch (format){
     case RXa:
         printf("FORMAT:   RXa\n");
         break;
@@ -166,7 +177,7 @@ int display_RX(Instruction* instr){
     }
     printf("OFFSET:   0x%lx\n", instr->offset);
     // Print operands
-    switch (ret_format){
+    switch (format){
     case RXa:
         hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
         printf("R1:       %s\n", conv_buffer);
