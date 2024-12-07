@@ -399,7 +399,7 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
         break;
     case RSLa:
     case RSLb:
-        //ret = build_(opcode, operands_token, bin_buffer, format);
+        ret = build_RSL(it_index, operands_token, bin_buffer);
         break;
     case RSYa:
     case RSYb:
@@ -606,7 +606,7 @@ int InstructionStream_display(){
             break;
         case RSLa:
         case RSLb:
-            //ret = display_(curr);
+            ret = display_RSL(curr);
             break;
         case RSYa:
         case RSYb:

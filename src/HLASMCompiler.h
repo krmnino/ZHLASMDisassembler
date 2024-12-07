@@ -49,12 +49,13 @@ enum TokensParseState{
 
 typedef enum OperandsParseState OperandsParseState;
 enum OperandsParseState{
+    B1, B2, B4,
+    D1, D2, D4,
     I1, I2, I3, I4, I5,
+    L1, L2,
     M1, M3, M4,
     R1, R2, R3,
     RI2, RI3, RI4,
-    D2, D4,
-    B2, B4,
     X2,
     RSa_R3_D2,
     OPS_DONE,
@@ -140,6 +141,7 @@ int build_RRF(size_t, const char*, uint8_t*);
 int build_RRS(size_t, const char*, uint8_t*);
 int build_RS(size_t, const char*, uint8_t*);
 int build_RSI(size_t, const char*, uint8_t*);
+int build_RSL(size_t, const char*, uint8_t*);
 int build_RX(size_t, const char*, uint8_t*);
 
 int display_E(Instruction*);
@@ -157,6 +159,7 @@ int display_RRF(Instruction*);
 int display_RRS(Instruction*);
 int display_RS(Instruction*);
 int display_RSI(Instruction*);
+int display_RSL(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
