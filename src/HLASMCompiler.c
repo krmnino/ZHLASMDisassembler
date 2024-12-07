@@ -136,10 +136,8 @@ int process_source_file(const char* filename){
 }
 
 bool is_valid_mnemonic(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
-        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
-            return true;
-        }
+    if(mnemonic_to_table_index(mnemonic) != 0){
+        return true;
     }
     return false;
 }
@@ -164,7 +162,7 @@ bool is_valid_hex_string(const char* input, size_t length){
 }
 
 InstructionFormat mnemonic_to_format(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
+    for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return INSTRUCTION_TABLE[i].format;
         }
@@ -173,7 +171,7 @@ InstructionFormat mnemonic_to_format(const char* mnemonic){
 }
 
 uint16_t mnemonic_to_opcode(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
+    for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return INSTRUCTION_TABLE[i].opcode;
         }
@@ -182,7 +180,7 @@ uint16_t mnemonic_to_opcode(const char* mnemonic){
 }
 
 uint8_t mnemonic_to_length(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
+    for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return INSTRUCTION_TABLE[i].length;
         }
@@ -191,7 +189,7 @@ uint8_t mnemonic_to_length(const char* mnemonic){
 }
 
 size_t mnemonic_to_table_index(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
+    for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return i;
         }

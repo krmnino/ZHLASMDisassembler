@@ -13,6 +13,7 @@ struct ITEntry{
 };
 
 static const ITEntry INSTRUCTION_TABLE[] = {
+    { (uint16_t)0x0000  , "INVALID" , (uint8_t)0x0, NF  , 0       }, 
     { (uint16_t)0x5A    , "A"       , (uint8_t)0x4, RXa , USE_ALL }, 
     { (uint16_t)0x6A    , "AD"      , (uint8_t)0x4, RXa , USE_ALL }, 
     { (uint16_t)0xED1A  , "ADB"     , (uint8_t)0x6, RXE , M3_UNUSED }, 
@@ -1259,6 +1260,6 @@ static const ITEntry INSTRUCTION_TABLE[] = {
     { (uint16_t)0xE357  , "XY"      , (uint8_t)0x6, RXYa, USE_ALL }, 
     { (uint16_t)0xF8    , "ZAP"     , (uint8_t)0x6, SSb , USE_ALL }, 
 };
-static const size_t n_inst = sizeof(INSTRUCTION_TABLE) / sizeof(ITEntry);
+static const size_t N_INST = sizeof(INSTRUCTION_TABLE) / sizeof(ITEntry);
 
 #endif
