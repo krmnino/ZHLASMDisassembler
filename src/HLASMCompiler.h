@@ -102,7 +102,6 @@ enum InstructionFormat{
 
 typedef struct Instruction Instruction;
 struct Instruction{
-    char mnemonic[MAX_MNEMONIC_LEN]; // TODO: REMOVE
     size_t it_index;
     uint8_t binary[MAX_INSTRUCTION_LEN];
     Address offset;

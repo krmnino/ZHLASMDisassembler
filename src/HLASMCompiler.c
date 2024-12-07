@@ -312,9 +312,8 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     if(!is_valid_mnemonic(mnemonic_token)){
         return NULL;
     }
-    InstructionFormat format = mnemonic_to_format(mnemonic_token); // TODO: REMOVE
-    uint16_t opcode = mnemonic_to_opcode(mnemonic_token); // TODO: REMOVE
     size_t it_index = mnemonic_to_table_index(mnemonic_token);
+    InstructionFormat format = INSTRUCTION_TABLE[it_index].format;
     size_t o_idx = 0;
     uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
     int ret;
@@ -498,7 +497,6 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     if(instr == NULL){
         return NULL;
     }
-    memcpy(&instr->mnemonic, mnemonic_token, MAX_MNEMONIC_LEN); // TODO: REMOVE THIS
     memcpy(&instr->binary, bin_buffer, MAX_INSTRUCTION_LEN);
     instr->it_index = it_index;
     instr->offset = offset;
@@ -544,7 +542,7 @@ int InstructionStream_display(){
     InstructionFormat format;
     int ret;
     while (curr != NULL){
-        format = mnemonic_to_format(curr->mnemonic);
+        format = INSTRUCTION_TABLE[curr->it_index].format;
         switch (format) {
         case E:
             ret = display_E(curr);
