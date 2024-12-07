@@ -37,5 +37,7 @@ STCM    A,F,123(2)      ! RSb format
 BRXH    1,3,ABCD        ! RSI format
 CDPT    5,987(FE,2),1   ! RSLb format
 TP      123(F,A)        ! RSLa format
+CDSG    1,2,ABCDE(5)    ! RSYa format
+CLGT    A,B,12345(6)    ! RSYb format
 AL      9,CCC(8,7)      ! RXa format
 BC      F,123(5,A)      ! RXb format
