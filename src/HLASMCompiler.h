@@ -139,6 +139,7 @@ int build_RRE(size_t, const char*, uint8_t*);
 int build_RRF(size_t, const char*, uint8_t*);
 int build_RRS(size_t, const char*, uint8_t*);
 int build_RS(size_t, const char*, uint8_t*);
+int build_RSI(size_t, const char*, uint8_t*);
 int build_RX(size_t, const char*, uint8_t*);
 
 int display_E(Instruction*);
@@ -155,6 +156,7 @@ int display_RRE(Instruction*);
 int display_RRF(Instruction*);
 int display_RRS(Instruction*);
 int display_RS(Instruction*);
+int display_RSI(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
