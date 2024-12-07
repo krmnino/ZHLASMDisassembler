@@ -312,7 +312,6 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     int ret;
     // Remove spaces and replace parenthesis with commas
     for(size_t i = 0; i < MAX_OPERANDS_LEN; i++){
-        //printf("%c => idx:%ld\n", operands_token[i], i);
         if(operands_token[i] == ' ' || operands_token[i] == ')'){
             continue;
         }
