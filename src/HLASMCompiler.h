@@ -39,6 +39,8 @@ typedef uint64_t Address;
 typedef enum TokensParseState TokensParseState;
 enum TokensParseState{
     SPACES_PM,
+    LINE_COMMENT,
+    INLINE_COMMENT,
     MNEMONIC,
     SPACES_PO,
     OPERANDS,

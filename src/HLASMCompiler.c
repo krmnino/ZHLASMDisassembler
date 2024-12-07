@@ -29,6 +29,9 @@ int process_source_file(const char* filename){
                     skip_line = true;
                     tp_state = TPS_DONE;
                 }
+                else if(line[i] == '!'){
+                    tp_state = LINE_COMMENT;
+                }
                 else if(line[i] != ' '){
                     tp_state = MNEMONIC;
                 }
@@ -36,8 +39,28 @@ int process_source_file(const char* filename){
                     i++;
                 }
                 break;
+            case LINE_COMMENT:
+                if(line[i] == 0 || line[i] == '\n'){
+                    skip_line = true;
+                    tp_state = TPS_DONE;
+                }
+                else{
+                    i++;
+                }
+                break;
+            case INLINE_COMMENT:
+                if(line[i] == 0 || line[i] == '\n'){
+                    tp_state = TPS_DONE;
+                }
+                else{
+                    i++;
+                }
+                break;
             case MNEMONIC:
-                if(line[i] == '\n'){
+                if(line[i] == '!'){
+                    tp_state = INLINE_COMMENT;
+                }
+                else if(line[i] == '\n'){
                     tp_state = TPS_DONE;
                 }
                 else if(line[i] == ' '){
@@ -50,7 +73,10 @@ int process_source_file(const char* filename){
                 }
                 break;
             case SPACES_PO:
-                if(line[i] != ' '){
+                if(line[i] == '!'){
+                    tp_state = INLINE_COMMENT;
+                }
+                else if(line[i] != ' '){
                     tp_state = OPERANDS;
                 }
                 else{
@@ -58,7 +84,10 @@ int process_source_file(const char* filename){
                 }
                 break;
             case OPERANDS:
-                if(line[i] == 0 || line[i] == '\n'){
+                if(line[i] == '!'){
+                    tp_state = INLINE_COMMENT;
+                }
+                else if(line[i] == 0 || line[i] == '\n'){
                     tp_state = TPS_DONE;
                 }
                 else if(line[i] == ' '){
