@@ -16,6 +16,7 @@ SRC_FILES = InstructionTable.h		\
 			RS_format.c				\
 			RSI_format.c			\
 			RSL_format.c			\
+			RSY_format.c			\
 			RX_format.c				\
 			Main.c
 
@@ -36,6 +37,7 @@ OBJ_FILES = HLASMCompiler.o 		\
 			RS_format.o				\
 			RSI_format.o			\
 			RSL_format.o			\
+			RSY_format.o			\
 			RX_format.o				\
 			Main.o
 

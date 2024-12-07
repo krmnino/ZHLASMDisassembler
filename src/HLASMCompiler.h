@@ -16,6 +16,7 @@
 #define MAX_2CHR_LEN 2
 #define MAX_3CHR_LEN 3
 #define MAX_4CHR_LEN 4
+#define MAX_5CHR_LEN 5
 #define MAX_6CHR_LEN 6
 #define MAX_8CHR_LEN 8
 #define MAX_PRINTOUT_FIELD_LEN 13
@@ -142,6 +143,7 @@ int build_RRS(size_t, const char*, uint8_t*);
 int build_RS(size_t, const char*, uint8_t*);
 int build_RSI(size_t, const char*, uint8_t*);
 int build_RSL(size_t, const char*, uint8_t*);
+int build_RSY(size_t, const char*, uint8_t*);
 int build_RX(size_t, const char*, uint8_t*);
 
 int display_E(Instruction*);
@@ -160,6 +162,7 @@ int display_RRS(Instruction*);
 int display_RS(Instruction*);
 int display_RSI(Instruction*);
 int display_RSL(Instruction*);
+int display_RSY(Instruction*);
 int display_RX(Instruction*);
 
 void InstructionStream_init();
