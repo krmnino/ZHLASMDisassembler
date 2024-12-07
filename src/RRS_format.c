@@ -143,7 +143,7 @@ int build_RRS(size_t table_index, const char* operands_token, uint8_t* bin_buffe
     bin_buffer[3] = d4 & 0x0FF;
     // M3: bits(32-35)
     bin_buffer[4] = m3 << 4;
-     // Opcode (part 2): bits(40-47)
+    // Opcode (part 2): bits(40-47)
     bin_buffer[5] = opcode & 0x00FF;
     return 0;
 }
