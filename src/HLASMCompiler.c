@@ -14,16 +14,22 @@ int process_source_file(const char* filename){
     size_t o_idx;
     TokensParseState tp_state;
     bool run;
+    bool skip_line;
     instr_offset = 0;
     tp_state = SPACES_PM;
     run = true;
     m_idx = 0;
     o_idx = 0;
     while(fgets(line, sizeof(line), file)){
+        skip_line = false;
         for(size_t i = 0; i < MAX_LINE_LEN && run;){
             switch (tp_state){
             case SPACES_PM:
-                if(line[i] != ' '){
+                if(line[i] == 0 || line[i] == '\n'){
+                    skip_line = true;
+                    tp_state = TPS_DONE;
+                }
+                else if(line[i] != ' '){
                     tp_state = MNEMONIC;
                 }
                 else{
@@ -71,6 +77,13 @@ int process_source_file(const char* filename){
                 i++;
                 break;
             }
+        }
+        if(skip_line){
+            tp_state = SPACES_PM;
+            run = true;
+            m_idx = 0;
+            o_idx = 0;
+            continue;
         }
         Instruction* instr = Instruction_init(mnemonic_token, operands_token, instr_offset);
         if(instr == NULL){
