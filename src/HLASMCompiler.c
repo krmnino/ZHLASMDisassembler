@@ -145,20 +145,15 @@ bool is_valid_mnemonic(const char* mnemonic){
 bool is_valid_hex_string(const char* input, size_t length){
     const char* hex_chars = "0123456789ABCDEFabcdef";
     size_t hex_chars_len = strlen(hex_chars);
-    bool found;
-    for(size_t i = 0; i < length; i++){
-        found = false;
-        for(size_t j = 0; j < hex_chars_len; j++){
-            if(input[i] == hex_chars[j]){
-                found = true;
-                break;
-            }
-        }
-        if(!found){
-            return false;
+    bool valid = true;
+    for(size_t i = 0; i < length && valid; i++){
+        if(!((input[i] >= '0' && input[i] <= '9') || 
+             (input[i] >= 'A' && input[i] <= 'F') || 
+             (input[i] >= 'a' && input[i] <= 'f'))){
+            valid = false;
         }
     }
-    return true;
+    return valid;
 }
 
 InstructionFormat mnemonic_to_format(const char* mnemonic){
@@ -317,14 +312,15 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     int ret;
     // Remove spaces and replace parenthesis with commas
     for(size_t i = 0; i < MAX_OPERANDS_LEN; i++){
-        if(operands_token[i] == ' '){
+        //printf("%c => idx:%ld\n", operands_token[i], i);
+        if(operands_token[i] == ' ' || operands_token[i] == ')'){
             continue;
         }
-        if(operands_token[i] == '('){
+        else if(operands_token[i] == '('){
             operands_token[o_idx] = ',';
             o_idx++;
         }
-        else if(is_valid_hex_string(&operands_token[i], 1) || operands_token[i] == ','){
+        else{
             operands_token[o_idx] = operands_token[i];
             o_idx++;
         }
