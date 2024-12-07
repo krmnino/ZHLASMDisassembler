@@ -1,39 +1,39 @@
-PFPO 
-SVC     86
-NIAI    1,2
-BPRP    D,234,ABCDEF
-AHI     1,4567
-BRCTG   F,ABCD
-BRC     6,9888
-CGIT    1,F1F2,4
-CGRJ    1,2,3,ABCD
-CGIJ    9,AB,1,5678
-AGHIK   1,2,FEDC
-BRXHG   8,F,1234
-RISBG   1,2,EF,CD,AB
-LOCGHI  3,5678,4
-MSFI    F,12345678
-STGRL   5,98765432
-BRCL    9,AABBCCDD
-CGIB    1,AB,F,E8E(2)
-SPM     F
-MVCL    1,3
-MADBR   A,1,C
-NNPA
-IAC     2
-KDSA    3,4
-ADTRA   6,7,8,F
-ADTR    6,7,8
-CRDTE   1,3,2,4
-KMA     A,C,B
-TRTRE   A,B,C
-CSDTR   5,8,C
-CXLGTR  1,3,2,4
-TBEDR   1,3,2
-CRB     1,A,F,6B8,5
-LM      1,2,ABC(D)
-SLDA    3,A12(4)
-STCM    A,F,123(2)
+PFPO                    ! E format 
+SVC     86              ! I format
+NIAI    1,2             ! IE format
+BPRP    D,234,ABCDEF    ! MII format
+AHI     1,4567          ! RIa format
+BRCTG   F,ABCD          ! RIb format
+BRC     6,9888          ! RIc format
+CGIT    1,F1F2,4        ! RIEa format
+CGRJ    1,2,3,ABCD      ! RIEb format
+CGIJ    9,AB,1,5678     ! RIEc format
+AGHIK   1,2,FEDC        ! RIEd format
+BRXHG   8,F,1234        ! RIEe format
+RISBG   1,2,EF,CD,AB    ! RIEf format
+LOCGHI  3,5678,4        ! RIEg format
+MSFI    F,12345678      ! RILa format
+STGRL   5,98765432      ! RILb format
+BRCL    9,AABBCCDD      ! RILc format
+CGIB    1,AB,F,E8E(2)   ! RIS format
+SPM     F               ! RR format
+MVCL    1,3             ! RR format
+MADBR   A,1,C           ! RRD format
+NNPA                    ! RRE format
+IAC     2               ! RRE format
+KDSA    3,4             ! RRE format
+ADTRA   6,7,8,F         ! RRFa format
+ADTR    6,7,8           ! RRFa format
+CRDTE   1,3,2,4         ! RRFb format
+KMA     A,C,B           ! RRFb format
+TRTRE   A,B,C           ! RRFc format
+CSDTR   5,8,C           ! RRFd format
+CXLGTR  1,3,2,4         ! RRFe format
+TBEDR   1,3,2           ! RRFe format
+CRB     1,A,F,6B8,5     ! RRS format
+LM      1,2,ABC(D)      ! RSa format
+SLDA    3,A12(4)        ! RSa format
+STCM    A,F,123(2)      ! RSb format
 
-AL      9,CCC(8,7)
-BC      F,123(5,A)
+AL      9,CCC(8,7)      ! RXa format
+BC      F,123(5,A)      ! RXb format
