@@ -18,6 +18,21 @@ SRC_FILES = InstructionTable.h		\
 			RSL_format.c			\
 			RSY_format.c			\
 			RX_format.c				\
+			RXE_format.c			\
+			RXF_format.c			\
+			RXY_format.c			\
+			S_format.c				\
+			SI_format.c				\
+			SIL_format.c			\
+			SIY_format.c			\
+			SMI_format.c			\
+			SS_format.c				\
+			VRI_format.c			\
+			VRR_format.c			\
+			VRS_format.c			\
+			VRV_format.c			\
+			VRX_format.c			\
+			VSI_format.c			\
 			Main.c
 
 OBJ_FILES = HLASMCompiler.o 		\
@@ -39,6 +54,21 @@ OBJ_FILES = HLASMCompiler.o 		\
 			RSL_format.o			\
 			RSY_format.o			\
 			RX_format.o				\
+			RXE_format.o			\
+			RXF_format.o			\
+			RXY_format.o			\
+			S_format.o				\
+			SI_format.o				\
+			SIL_format.o			\
+			SIY_format.o			\
+			SMI_format.o			\
+			SS_format.o				\
+			VRI_format.o			\
+			VRR_format.o			\
+			VRS_format.o			\
+			VRV_format.o			\
+			VRX_format.o			\
+			VSI_format.o			\
 			Main.o
 
 FILE=""
