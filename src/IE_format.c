@@ -106,3 +106,7 @@ int display_IE(Instruction* instr){
     printf("I2:       %s\n", conv_buffer);
     return 0;
 }
+
+int decode_IE(){
+    return 0;
+}

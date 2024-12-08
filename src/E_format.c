@@ -33,3 +33,7 @@ int display_E(Instruction* instr){
     printf("OFFSET:   0x%lx\n", instr->offset);
     return 0;
 }
+
+int decode_E(){
+    return 0;
+}

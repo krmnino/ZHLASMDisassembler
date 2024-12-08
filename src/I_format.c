@@ -79,3 +79,7 @@ int display_I(Instruction* instr){
     printf("I:        %s\n", conv_buffer);
     return 0;
 }
+
+int decode_I(){
+    return 0;
+}

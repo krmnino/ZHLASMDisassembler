@@ -277,3 +277,7 @@ int display_RSL(Instruction* instr){
     }
     return 0;
 }
+
+int decode_RSL(){
+    return 0;
+}

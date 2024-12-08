@@ -182,3 +182,7 @@ int display_RRS(Instruction* instr){
     printf("M3:       %s\n", conv_buffer);
     return 0;
 }
+
+int decode_RRS(){
+    return 0;
+}

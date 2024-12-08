@@ -501,3 +501,8 @@ int display_RIE(Instruction* instr){
     }
     return 0;
 }
+
+
+int decode_RIE(){
+    return 0;
+}

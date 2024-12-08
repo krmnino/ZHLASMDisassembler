@@ -130,3 +130,7 @@ int display_RRD(Instruction* instr){
     printf("R2:       %s\n", conv_buffer);
     return 0;
 }
+
+int decode_RRD(){
+    return 0;
+}

@@ -214,3 +214,7 @@ int display_RS(Instruction* instr){
     printf("D2:       %s\n", conv_buffer);
     return 0;
 }
+
+int decode_RS(){
+    return 0;
+}

@@ -122,3 +122,7 @@ int display_RR(Instruction* instr){
     }
     return 0;
 }
+
+int decode_RR(){
+    return 0;
+}

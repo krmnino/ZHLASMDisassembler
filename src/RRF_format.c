@@ -313,3 +313,7 @@ int display_RRF(Instruction* instr){
     printf("R2:       %s\n", conv_buffer);
     return 0;
 }
+
+int decode_RRF(){
+    return 0;
+}

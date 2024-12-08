@@ -195,3 +195,11 @@ int display_RSY(Instruction* instr){
     printf("DH2:      %s\n", conv_buffer);
     return 0;
 }
+
+int decode_RSY(){
+    return 0;
+}
+
+int decode_RX(){
+    return 0;
+}

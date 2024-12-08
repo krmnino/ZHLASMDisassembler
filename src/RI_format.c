@@ -180,3 +180,7 @@ int display_RI(Instruction* instr){
     }
     return 0;
 }
+
+int decode_RI(){
+    return 0;
+}

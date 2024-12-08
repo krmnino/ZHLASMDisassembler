@@ -181,3 +181,7 @@ int display_RIL(Instruction* instr){
     }
     return 0;
 }
+
+int decode_RIL(){
+    return 0;
+}

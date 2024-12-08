@@ -143,3 +143,7 @@ int display_RRE(Instruction* instr){
     }
     return 0;
 }
+
+int decode_RRE(){
+    return 0;
+}

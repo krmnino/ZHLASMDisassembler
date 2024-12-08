@@ -132,3 +132,7 @@ int display_MII(Instruction* instr){
     printf("RI3:      %s\n", conv_buffer);
     return 0;
 }
+
+int decode_MII(){
+    return 0;
+}

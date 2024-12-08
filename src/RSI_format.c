@@ -130,3 +130,7 @@ int display_RSI(Instruction* instr){
     printf("RI2:      %s\n", conv_buffer);
     return 0;
 }
+
+int decode_RSI(){
+    return 0;
+}
