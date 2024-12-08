@@ -41,3 +41,5 @@ CDSG    1,2,ABCDE(5)    ! RSYa format
 CLGT    A,B,12345(6)    ! RSYb format
 AL      9,CCC(8,7)      ! RXa format
 BC      F,123(5,A)      ! RXb format
+LCBB    4,123(C,B),F    ! RXE format
+LDE     A,F6F(1,5)      ! RXE format
