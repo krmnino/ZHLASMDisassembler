@@ -139,7 +139,7 @@ int build_RXE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
     }
     // Opcode (part 1): bits(0-7)
     bin_buffer[0] = opcode >> 8;
-    // R1/M1: bits(8-11)
+    // R1: bits(8-11)
     bin_buffer[1] = r1 << 4;
     // X2: bits(12-15)
     bin_buffer[1] = bin_buffer[1] | x2;
