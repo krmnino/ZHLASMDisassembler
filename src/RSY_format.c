@@ -4,10 +4,10 @@
 int build_RSY(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
-    uint8_t r1;
-    uint8_t r3_m3;
-    uint8_t b2;
-    uint32_t d2;
+    uint8_t r1 = 0;
+    uint8_t r3_m3 = 0;
+    uint8_t b2 = 0;
+    uint32_t d2 = 0;
     char buffer[MAX_OPERANDS_LEN];
     size_t i;
     size_t operands_token_len = strlen(operands_token) + 1;
@@ -131,7 +131,7 @@ int build_RSY(size_t table_index, const char* operands_token, uint8_t* bin_buffe
     // DL2: bits(20-31)
     bin_buffer[2] = bin_buffer[2] | ((d2 >> 8) & 0x0000F);
     bin_buffer[3] = d2 & 0x0FF;
-    // M3: bits(32-35)
+    // DH2: bits(32-35)
     bin_buffer[4] = d2 >> 12;
     // Opcode (part 2): bits(40-47)
     bin_buffer[5] = opcode & 0x00FF;
@@ -197,9 +197,5 @@ int display_RSY(Instruction* instr){
 }
 
 int decode_RSY(){
-    return 0;
-}
-
-int decode_RX(){
     return 0;
 }

@@ -3,11 +3,11 @@
 
 int build_RRS(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
-    uint8_t r1;
-    uint8_t r2;
-    uint8_t m3;
-    uint8_t b4;
-    uint16_t d4;
+    uint8_t r1 = 0;
+    uint8_t r2 = 0;
+    uint8_t m3 = 0;
+    uint8_t b4 = 0;
+    uint16_t d4 = 0;
     char buffer[MAX_OPERANDS_LEN];
     size_t i;
     size_t operands_token_len = strlen(operands_token) + 1;

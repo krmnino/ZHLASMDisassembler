@@ -4,11 +4,11 @@
 int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
-    uint16_t d1_d2;
-    uint8_t l1_l2;
-    uint8_t b1_b2;
-    uint8_t r1;
-    uint8_t m3;
+    uint16_t d1_d2 = 0;
+    uint8_t l1_l2 = 0;
+    uint8_t b1_b2 = 0;
+    uint8_t r1 = 0;
+    uint8_t m3 = 0;
     char buffer[MAX_OPERANDS_LEN];
     size_t i;
     size_t operands_token_len = strlen(operands_token) + 1;

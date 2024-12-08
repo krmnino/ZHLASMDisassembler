@@ -197,3 +197,7 @@ int display_RX(Instruction* instr){
     printf("D2:       %s\n", conv_buffer);
     return 0;
 }
+
+int decode_RX(){
+    return 0;
+}
