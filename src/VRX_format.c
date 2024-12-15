@@ -1,14 +1,14 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_VRX(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
-    return 0;
+ErrorCode build_VRX(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+    return OK;
 }
 
-int display_VRX(Instruction* instr){
-    return 0;
+ErrorCode display_VRX(Context* c, Instruction* instr){
+    return OK;
 }
 
-int decode_VRX(){
-    return 0;
+ErrorCode decode_VRX(){
+    return OK;
 }

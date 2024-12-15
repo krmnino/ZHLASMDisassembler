@@ -1,14 +1,14 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_S(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
-    return 0;
+ErrorCode build_S(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+    return OK;
 }
 
-int display_S(Instruction* instr){
-    return 0;
+ErrorCode display_S(Context* c, Instruction* instr){
+    return OK;
 }
 
-int decode_S(){
-    return 0;
+ErrorCode decode_S(){
+    return OK;
 }

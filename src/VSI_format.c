@@ -1,14 +1,14 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_VSI(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
-    return 0;
+ErrorCode build_VSI(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+    return OK;
 }
 
-int display_VSI(Instruction* instr){
-    return 0;
+ErrorCode display_VSI(Context* c, Instruction* instr){
+    return OK;
 }
 
-int decode_VSI(){
-    return 0;
+ErrorCode decode_VSI(){
+    return OK;
 }
