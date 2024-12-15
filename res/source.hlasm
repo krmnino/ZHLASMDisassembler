@@ -44,3 +44,5 @@ BC      F,123(5,A)      ! RXb format
 LCBB    4,123(C,B),F    ! RXE format
 LDE     A,F6F(1,5)      ! RXE format
 MAD     1,F,ABC(3,4)    ! RXF format
+STCH    F,12345(A,B)    ! RXY format
+BIC     1,ABCDE(6,7)    ! RXY format
