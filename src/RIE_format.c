@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode build_RIE(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     uint8_t r1 = 0; 
@@ -24,34 +24,46 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         switch (state){
         case R1:
             if(operands_token[i] == ','){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r1, sizeof(r1), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                switch (format){
-                case RIEa:
-                case RIEc:
-                case RIEg:
-                    state = I2;
-                    break;
-                case RIEb:
-                case RIEf:
-                    state = R2;
-                    break;
-                case RIEd:
-                case RIEe:
-                    state = R3;
-                    break;
-                default:
-                    break;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
                 }
-                i++;
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r1, sizeof(r1), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    switch (format){
+                    case RIEa:
+                    case RIEc:
+                    case RIEg:
+                        state = I2;
+                        break;
+                    case RIEb:
+                    case RIEf:
+                        state = R2;
+                        break;
+                    case RIEd:
+                    case RIEe:
+                        state = R3;
+                        break;
+                    default:
+                        break;
+                    }
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "R1");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -60,27 +72,39 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             break;
         case R2:
             if(operands_token[i] == ','){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r2, sizeof(r2), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                switch (format){
-                case RIEb:
-                    state = M3;
-                    break;
-                case RIEf:
-                    state = I3;
-                    break;
-                default:
-                    break;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
                 }
-                i++;
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r2, sizeof(r2), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    switch (format){
+                    case RIEb:
+                        state = M3;
+                        break;
+                    case RIEf:
+                        state = I3;
+                        break;
+                    default:
+                        break;
+                    }
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "R2");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -91,71 +115,100 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         case RI2:
         case RI4:
             if(operands_token[i] == ',' || operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                switch (format){
-                case RIEa:
-                case RIEb:
-                case RIEd:
-                case RIEe:
-                case RIEg:
-                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i2_ri2_ri4, sizeof(i2_ri2_ri4), b_idx, NO_SKIP, true);
-                    break;
-                case RIEc:
-                    if(state == RI4){
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    switch (format){
+                    case RIEa:
+                    case RIEb:
+                    case RIEd:
+                    case RIEe:
+                    case RIEg:
                         char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i2_ri2_ri4, sizeof(i2_ri2_ri4), b_idx, NO_SKIP, true);
+                        break;
+                    case RIEc:
+                        if(state == RI4){
+                            char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i2_ri2_ri4, sizeof(i2_ri2_ri4), b_idx, NO_SKIP, true);
+                        }
+                        else{
+                            char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i2, sizeof(i2), b_idx, NO_SKIP, true);
+                        }
+                        break;
+                    default:
+                        break;
                     }
-                    else{
-                        char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i2, sizeof(i2), b_idx, NO_SKIP, true);
-                    }
-                    break;
-                default:
-                    break;
-                }
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                switch (format){
-                case RIEa:
-                case RIEg:
-                    state = M3;
-                    break;
-                case RIEc:
-                    if(state == RI4){
-                        state = OPS_DONE;
-                    }
-                    else{
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    switch (format){
+                    case RIEa:
+                    case RIEg:
                         state = M3;
+                        break;
+                    case RIEc:
+                        if(state == RI4){
+                            state = OPS_DONE;
+                        }
+                        else{
+                            state = M3;
+                        }
+                        break;
+                    case RIEb:
+                    case RIEd:
+                    case RIEe:
+                        state = OPS_DONE;
+                        break;
+                    default:
+                        break;
                     }
-                    break;
-                case RIEb:
-                case RIEd:
-                case RIEe:
-                    state = OPS_DONE;
-                    break;
-                default:
-                    break;
+                    i++;
                 }
-                i++;
             }
             else{
                 switch (format){
                 case RIEa:
                 case RIEd:
+                case RIEe:
                 case RIEg:
                     if(b_idx >= MAX_4CHR_LEN){
-                        return -1;
+                        c->error_code = INVALID_OPERAND_LENGTH;
+                        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                        switch(format){
+                        case RIEe:
+                            strcpy((char*)&c->msg_extras[1], "RI2");
+                            break;
+                        default:
+                            strcpy((char*)&c->msg_extras[1], "I2");
+                            break;
+                        }
+                        sprintf((char*)&c->msg_extras[2], "%d", MAX_4CHR_LEN);
+                        return c->error_code;
                     }
                     break;
+                case RIEb:
                 case RIEc:
                     if(state == RI4){ 
                         if(b_idx >= MAX_4CHR_LEN){
-                            return -1;
+                            c->error_code = INVALID_OPERAND_LENGTH;
+                            sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                            strcpy((char*)&c->msg_extras[1], "RI4");
+                            sprintf((char*)&c->msg_extras[2], "%d", MAX_4CHR_LEN);
+                            return c->error_code;
                         }
                     }
                     else{
                         if(b_idx >= MAX_2CHR_LEN){
-                            return -1;
+                            c->error_code = INVALID_OPERAND_LENGTH;
+                            sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                            strcpy((char*)&c->msg_extras[1], "I2");
+                            sprintf((char*)&c->msg_extras[2], "%d", MAX_2CHR_LEN);
+                            return c->error_code;
                         }
                     }
                     break;
@@ -170,35 +223,60 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         case R3:
         case M3:
             if(operands_token[i] == ',' || operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r3_m3, sizeof(r3_m3), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                switch (format){
-                case RIEa:
-                case RIEg:
-                    state = OPS_DONE;
-                    break;
-                case RIEb:
-                case RIEc:
-                    state = RI4;
-                    break;
-                case RIEd:
-                    state = I2;
-                    break;
-                case RIEe:
-                    state = RI2;
-                    break;
-                default:
-                    break;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
                 }
-                i++;
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r3_m3, sizeof(r3_m3), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    switch (format){
+                    case RIEa:
+                    case RIEg:
+                        state = OPS_DONE;
+                        break;
+                    case RIEb:
+                    case RIEc:
+                        state = RI4;
+                        break;
+                    case RIEd:
+                        state = I2;
+                        break;
+                    case RIEe:
+                        state = RI2;
+                        break;
+                    default:
+                        break;
+                    }
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    switch(format){
+                    case RIEa:
+                    case RIEb:
+                    case RIEc:
+                    case RIEg:
+                        strcpy((char*)&c->msg_extras[1], "M3");
+                        break;
+                    case RIEd:
+                    case RIEe:
+                        strcpy((char*)&c->msg_extras[1], "R3");
+                        break;
+                    default:
+                        break;
+                    }
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -206,19 +284,31 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             }
             break;
         case I3:
-            if(operands_token[i] == ',' || operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+            if(operands_token[i] == ','){
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i3, sizeof(i3), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = I4;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i3, sizeof(i3), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = I4;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_2CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "I3");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_2CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -226,19 +316,31 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             }
             break;
         case I4:
-            if(operands_token[i] == ',' || operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+            if(operands_token[i] == ','){
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i4, sizeof(i4), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = I5;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i4, sizeof(i4), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = I5;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_2CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "I4");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_2CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -246,19 +348,31 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             }
             break;
         case I5:
-            if(operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+            if(operands_token[i] == ',' || operands_token[i] == 0){
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i5, sizeof(i5), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = OPS_DONE;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i5, sizeof(i5), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = OPS_DONE;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_2CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "I5");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_2CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -271,11 +385,17 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             break;
         }
     }
-    if(i != operands_token_len){
-        return -1;
-    }
     if(state != OPS_DONE){
-        return -1;
+        c->error_code = MISSING_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
+    }
+    if(i != operands_token_len){
+        c->error_code = TOO_MANY_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
     }
     // Opcode (part 1): bits(0-7)
     bin_buffer[0] = opcode >> 8;
@@ -350,12 +470,13 @@ int build_RIE(size_t table_index, const char* operands_token, uint8_t* bin_buffe
     }
     // Opcode (part 2): bits(40-47)
     bin_buffer[5] = opcode & 0x00FF;
-    return 0;
+    return OK;
 }
 
-int display_RIE(Instruction* instr){
+ErrorCode display_RIE(Context* c, Instruction* instr){
     if(instr == NULL){
-        return -1;
+        c->error_code = NULL_POINTER_TO_OBJECT;
+        return c->error_code;
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
@@ -406,7 +527,7 @@ int display_RIE(Instruction* instr){
         printf("0        8    C    10               20       28      2F\n");
         break;
     default:
-        return -1;
+        break;
     }
     // Print general information
     printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
@@ -438,7 +559,7 @@ int display_RIE(Instruction* instr){
         printf("FORMAT:   RIEg\n");
         break;
     default:
-        return -1;
+        break;
     }
     printf("OFFSET:   0x%lx\n", instr->offset);
     // Print operands
@@ -497,12 +618,12 @@ int display_RIE(Instruction* instr){
         break;
         break;
     default:
-        return -1;
+        break;
     }
-    return 0;
+    return OK;
 }
 
 
-int decode_RIE(){
-    return 0;
+ErrorCode decode_RIE(){
+    return OK;
 }

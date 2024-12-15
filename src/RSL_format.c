@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode build_RSL(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     uint16_t d1_d2 = 0;
@@ -31,18 +31,30 @@ int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         switch (state){
         case R1:
             if(operands_token[i] == ','){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r1, sizeof(r1), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = D2;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r1, sizeof(r1), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = D2;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "R1");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -52,27 +64,48 @@ int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         case D1:
         case D2:
             if(operands_token[i] == ','){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&d1_d2, sizeof(d1_d2), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                switch (format){
-                case RSLa:
-                    state = L1;
-                    break;
-                case RSLb:
-                    state = L2;
-                    break;
-                default:
-                    break;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
                 }
-                i++;
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&d1_d2, sizeof(d1_d2), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    switch (format){
+                    case RSLa:
+                        state = L1;
+                        break;
+                    case RSLb:
+                        state = L2;
+                        break;
+                    default:
+                        break;
+                    }
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_3CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    switch(format){
+                    case RSLa:
+                        strcpy((char*)&c->msg_extras[1], "D1");
+                        break;
+                    case RSLb:
+                        strcpy((char*)&c->msg_extras[1], "D2");
+                        break;
+                    default:
+                        break;
+                    }
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_3CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -82,34 +115,50 @@ int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         case L1:
         case L2:
             if(operands_token[i] == ','){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&l1_l2, sizeof(l1_l2), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                switch (format){
-                case RSLa:
-                    state = B1;
-                    break;
-                case RSLb:
-                    state = B2;
-                    break;
-                default:
-                    break;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
                 }
-                i++;
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&l1_l2, sizeof(l1_l2), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    switch (format){
+                    case RSLa:
+                        state = B1;
+                        break;
+                    case RSLb:
+                        state = B2;
+                        break;
+                    default:
+                        break;
+                    }
+                    i++;
+                }
             }
             else{
                 switch (format){
                 case RSLa:
                     if(b_idx >= MAX_1CHR_LEN){
-                        return -1;
+                        c->error_code = INVALID_OPERAND_LENGTH;
+                        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                        strcpy((char*)&c->msg_extras[1], "L1");
+                        sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
+                        return c->error_code;
                     }
                     break;
                 case RSLb:
                     if(b_idx >= MAX_2CHR_LEN){
-                        return -1;
+                        c->error_code = INVALID_OPERAND_LENGTH;
+                        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                        strcpy((char*)&c->msg_extras[1], "L2");
+                        sprintf((char*)&c->msg_extras[2], "%d", MAX_2CHR_LEN);
+                        return c->error_code;
                     }
                     break;
                 default:
@@ -123,27 +172,48 @@ int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         case B1:
         case B2:
             if(operands_token[i] == ',' || operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&b1_b2, sizeof(b1_b2), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                switch (format){
-                case RSLa:
-                    state = OPS_DONE;
-                    break;
-                case RSLb:
-                    state = M3;
-                    break;
-                default:
-                    break;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
                 }
-                i++;
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&b1_b2, sizeof(b1_b2), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    switch (format){
+                    case RSLa:
+                        state = OPS_DONE;
+                        break;
+                    case RSLb:
+                        state = M3;
+                        break;
+                    default:
+                        break;
+                    }
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    switch(format){
+                    case RSLa:
+                        strcpy((char*)&c->msg_extras[1], "B1");
+                        break;
+                    case RSLb:
+                        strcpy((char*)&c->msg_extras[1], "B2");
+                        break;
+                    default:
+                        break;
+                    }
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_3CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -151,19 +221,31 @@ int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             }
             break;
         case M3:
-            if(operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+            if(operands_token[i] == ',' || operands_token[i] == 0){
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&m3, sizeof(m3), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = OPS_DONE;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&m3, sizeof(m3), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = OPS_DONE;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "M3");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -177,10 +259,16 @@ int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         }
     }
     if(state != OPS_DONE){
-        return -1;
+        c->error_code = MISSING_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
     }
     if(i != operands_token_len){
-        return -1;
+        c->error_code = TOO_MANY_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
     }
     // Opcode (part 1): bits(0-7)
     bin_buffer[0] = opcode >> 8;
@@ -211,14 +299,15 @@ int build_RSL(size_t table_index, const char* operands_token, uint8_t* bin_buffe
     default:
         break;
     }
-     // Opcode (part 2): bits(40-47)
+    // Opcode (part 2): bits(40-47)
     bin_buffer[5] = opcode & 0x00FF;
-    return 0;
+    return OK;
 }
 
-int display_RSL(Instruction* instr){
+ErrorCode display_RSL(Context* c, Instruction* instr){
     if(instr == NULL){
-        return -1;
+        c->error_code = NULL_POINTER_TO_OBJECT;
+        return c->error_code;
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
@@ -275,9 +364,9 @@ int display_RSL(Instruction* instr){
     default:
         break;
     }
-    return 0;
+    return OK;
 }
 
-int decode_RSL(){
-    return 0;
+ErrorCode decode_RSL(){
+    return OK;
 }

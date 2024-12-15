@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_I(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode build_I(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     uint8_t i1;
     char buffer[MAX_OPERANDS_LEN];
@@ -16,18 +16,29 @@ int build_I(size_t table_index, const char* operands_token, uint8_t* bin_buffer)
         switch (state){
         case I1:
             if(operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i1, sizeof(i1), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = OPS_DONE;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&i1, sizeof(i1), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = OPS_DONE;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_2CHR_LEN){
-                    return -1;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "I1");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_2CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -40,22 +51,29 @@ int build_I(size_t table_index, const char* operands_token, uint8_t* bin_buffer)
             break;
         }
     }
-    if(i != operands_token_len){
-        return -1;
-    }
     if(state != OPS_DONE){
-        return -1;
+        c->error_code = MISSING_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
+    }
+    if(i != operands_token_len){
+        c->error_code = TOO_MANY_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
     }
     // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
     // I: bits(8-15)
     bin_buffer[1] = i1;
-    return 0;
+    return OK;
 }
 
-int display_I(Instruction* instr){
+ErrorCode display_I(Context* c, Instruction* instr){
     if(instr == NULL){
-        return -1;
+        c->error_code = NULL_POINTER_TO_OBJECT;
+        return c->error_code;
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
@@ -77,9 +95,9 @@ int display_I(Instruction* instr){
     // Print operands
     hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, false);
     printf("I:        %s\n", conv_buffer);
-    return 0;
+    return OK;
 }
 
-int decode_I(){
-    return 0;
+ErrorCode decode_I(){
+    return OK;
 }

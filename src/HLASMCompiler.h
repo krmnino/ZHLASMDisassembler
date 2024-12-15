@@ -1,6 +1,7 @@
 #ifndef COMPILER
 #define COMPILER
 
+#include <stdarg.h> 
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -20,6 +21,8 @@
 #define MAX_6CHR_LEN 6
 #define MAX_8CHR_LEN 8
 #define MAX_PRINTOUT_FIELD_LEN 13
+#define MAX_MSG_EXTRAS 16
+#define MAX_MSG_EXTRA_LEN 128
 #define NO_SKIP 0
 #define SKIP 1
 
@@ -36,6 +39,20 @@
 #define I2_UNUSED 0x0200
 
 typedef uint64_t Address;
+
+typedef enum ErrorCode ErrorCode;
+enum ErrorCode{
+    OK,
+    SRC_FILE_NOT_FOUND,
+    CANNOT_OPEN_SRC_FILE,
+    INVALID_MNEMONIC,
+    INVALID_OPERAND_LENGTH,
+    OPERAND_NON_HEX_FOUND,
+    MALLOC_UNSUCCESSUL,
+    NULL_POINTER_TO_OBJECT,
+    TOO_MANY_OPERANDS,
+    MISSING_OPERANDS,
+};
 
 typedef enum TokensParseState TokensParseState;
 enum TokensParseState{
@@ -110,13 +127,18 @@ struct Instruction{
     Instruction* next;
 };
 
-static struct{
+typedef struct Context Context;
+struct Context{
+    ErrorCode error_code;
+    char msg_extras[MAX_MSG_EXTRAS][MAX_MSG_EXTRA_LEN];
+    size_t n_line;
     size_t n_instr;
-    Instruction* head;
-    Instruction* tail;
-} InstructionStream;
+    Instruction* instr_head;
+    Instruction* instr_tail;
+};
+static Context context;
 
-int process_source_file(const char*);
+ErrorCode process_source_file(Context* c, const char*);
 bool is_valid_mnemonic(const char*);
 bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
@@ -126,112 +148,115 @@ size_t mnemonic_to_table_index(const char*);
 int char_str_2_hex_str(const char*, size_t, void*, size_t, size_t, size_t, bool);
 int hex_str_2_char_str(const void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
 
-Instruction* Instruction_init(const char*, char*, Address);
-int build_E(size_t, const char*, uint8_t*);
-int build_I(size_t, const char*, uint8_t*);
-int build_IE(size_t, const char*, uint8_t*);
-int build_MII(size_t, const char*, uint8_t*);
-int build_RI(size_t, const char*, uint8_t*);
-int build_RIE(size_t, const char*, uint8_t*);
-int build_RIL(size_t, const char*, uint8_t*);
-int build_RIS(size_t, const char*, uint8_t*);
-int build_RR(size_t, const char*, uint8_t*);
-int build_RRD(size_t, const char*, uint8_t*);
-int build_RRE(size_t, const char*, uint8_t*);
-int build_RRF(size_t, const char*, uint8_t*);
-int build_RRS(size_t, const char*, uint8_t*);
-int build_RS(size_t, const char*, uint8_t*);
-int build_RSI(size_t, const char*, uint8_t*);
-int build_RSL(size_t, const char*, uint8_t*);
-int build_RSY(size_t, const char*, uint8_t*);
-int build_RX(size_t, const char*, uint8_t*);
-int build_RXE(size_t, const char*, uint8_t*);
-int build_RXF(size_t, const char*, uint8_t*);
-int build_RXY(size_t, const char*, uint8_t*);
-int build_S(size_t, const char*, uint8_t*);
-int build_SI(size_t, const char*, uint8_t*);
-int build_SIL(size_t, const char*, uint8_t*);
-int build_SIY(size_t, const char*, uint8_t*);
-int build_SMI(size_t, const char*, uint8_t*);
-int build_SS(size_t, const char*, uint8_t*);
-int build_VRI(size_t, const char*, uint8_t*);
-int build_VRR(size_t, const char*, uint8_t*);
-int build_VRS(size_t, const char*, uint8_t*);
-int build_VRV(size_t, const char*, uint8_t*);
-int build_VRX(size_t, const char*, uint8_t*);
-int build_VSI(size_t, const char*, uint8_t*);
+Instruction* Instruction_init(Context* c, ErrorCode*, const char*, char*, Address);
+ErrorCode build_E(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_I(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_IE(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_MII(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RI(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RIE(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RIL(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RIS(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RR(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RRD(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RRE(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RRF(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RRS(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RS(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RSI(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RSL(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RSY(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RX(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RXE(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RXF(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_RXY(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_S(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_SI(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_SIL(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_SIY(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_SMI(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_SS(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_VRI(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_VRR(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_VRS(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_VRV(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_VRX(Context*, size_t, const char*, uint8_t*);
+ErrorCode build_VSI(Context*, size_t, const char*, uint8_t*);
 
-int display_E(Instruction*);
-int display_I(Instruction*);
-int display_IE(Instruction*);
-int display_MII(Instruction*);
-int display_RI(Instruction*);
-int display_RIE(Instruction*);
-int display_RIL(Instruction*);
-int display_RIS(Instruction*);
-int display_RR(Instruction*);
-int display_RRD(Instruction*);
-int display_RRE(Instruction*);
-int display_RRF(Instruction*);
-int display_RRS(Instruction*);
-int display_RS(Instruction*);
-int display_RSI(Instruction*);
-int display_RSL(Instruction*);
-int display_RSY(Instruction*);
-int display_RX(Instruction*);
-int display_RXE(Instruction*);
-int display_RXF(Instruction*);
-int display_RXY(Instruction*);
-int display_S(Instruction*);
-int display_SI(Instruction*);
-int display_SIL(Instruction*);
-int display_SIY(Instruction*);
-int display_SMI(Instruction*);
-int display_SS(Instruction*);
-int display_VRI(Instruction*);
-int display_VRR(Instruction*);
-int display_VRS(Instruction*);
-int display_VRV(Instruction*);
-int display_VRX(Instruction*);
-int display_VSI(Instruction*);
+ErrorCode display_E(Context*, Instruction*);
+ErrorCode display_I(Context*, Instruction*);
+ErrorCode display_IE(Context*, Instruction*);
+ErrorCode display_MII(Context*, Instruction*);
+ErrorCode display_RI(Context*, Instruction*);
+ErrorCode display_RIE(Context*, Instruction*);
+ErrorCode display_RIL(Context*, Instruction*);
+ErrorCode display_RIS(Context*, Instruction*);
+ErrorCode display_RR(Context*, Instruction*);
+ErrorCode display_RRD(Context*, Instruction*);
+ErrorCode display_RRE(Context*, Instruction*);
+ErrorCode display_RRF(Context*, Instruction*);
+ErrorCode display_RRS(Context*, Instruction*);
+ErrorCode display_RS(Context*, Instruction*);
+ErrorCode display_RSI(Context*, Instruction*);
+ErrorCode display_RSL(Context*, Instruction*);
+ErrorCode display_RSY(Context*, Instruction*);
+ErrorCode display_RX(Context*, Instruction*);
+ErrorCode display_RXE(Context*, Instruction*);
+ErrorCode display_RXF(Context*, Instruction*);
+ErrorCode display_RXY(Context*, Instruction*);
+ErrorCode display_S(Context*, Instruction*);
+ErrorCode display_SI(Context*, Instruction*);
+ErrorCode display_SIL(Context*, Instruction*);
+ErrorCode display_SIY(Context*, Instruction*);
+ErrorCode display_SMI(Context*, Instruction*);
+ErrorCode display_SS(Context*, Instruction*);
+ErrorCode display_VRI(Context*, Instruction*);
+ErrorCode display_VRR(Context*, Instruction*);
+ErrorCode display_VRS(Context*, Instruction*);
+ErrorCode display_VRV(Context*, Instruction*);
+ErrorCode display_VRX(Context*, Instruction*);
+ErrorCode display_VSI(Context*, Instruction*);
 
-int decode_E();
-int decode_I();
-int decode_IE();
-int decode_MII();
-int decode_RI();
-int decode_RIE();
-int decode_RIL();
-int decode_RIS();
-int decode_RR();
-int decode_RRD();
-int decode_RRE();
-int decode_RRF();
-int decode_RRS();
-int decode_RS();
-int decode_RSI();
-int decode_RSL();
-int decode_RSY();
-int decode_RX();
-int decode_RXE();
-int decode_RXF();
-int decode_RXY();
-int decode_S();
-int decode_SI();
-int decode_SIL();
-int decode_SIY();
-int decode_SMI();
-int decode_SS();
-int decode_VRI();
-int decode_VRR();
-int decode_VRS();
-int decode_VRV();
-int decode_VRX();
-int decode_VSI();
+ErrorCode decode_E();
+ErrorCode decode_I();
+ErrorCode decode_IE();
+ErrorCode decode_MII();
+ErrorCode decode_RI();
+ErrorCode decode_RIE();
+ErrorCode decode_RIL();
+ErrorCode decode_RIS();
+ErrorCode decode_RR();
+ErrorCode decode_RRD();
+ErrorCode decode_RRE();
+ErrorCode decode_RRF();
+ErrorCode decode_RRS();
+ErrorCode decode_RS();
+ErrorCode decode_RSI();
+ErrorCode decode_RSL();
+ErrorCode decode_RSY();
+ErrorCode decode_RX();
+ErrorCode decode_RXE();
+ErrorCode decode_RXF();
+ErrorCode decode_RXY();
+ErrorCode decode_S();
+ErrorCode decode_SI();
+ErrorCode decode_SIL();
+ErrorCode decode_SIY();
+ErrorCode decode_SMI();
+ErrorCode decode_SS();
+ErrorCode decode_VRI();
+ErrorCode decode_VRR();
+ErrorCode decode_VRS();
+ErrorCode decode_VRV();
+ErrorCode decode_VRX();
+ErrorCode decode_VSI();
 
-void InstructionStream_init();
-void InstructionStream_free();
-int InstructionStream_add_instruction(Instruction*);
-int InstructionStream_display();
+void Context_init(Context* c);
+void Context_free(Context* c);
+int add_instruction(Context* c, Instruction*);
+int display_stream(Context* c);
+void display_error(Context* c);
+
+//void ErrorHandler_init();
 
 #endif

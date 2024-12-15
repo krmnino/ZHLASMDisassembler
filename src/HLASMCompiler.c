@@ -1,10 +1,11 @@
 #include "HLASMCompiler.h"
 #include "InstructionTable.h"
 
-int process_source_file(const char* filename){
+ErrorCode process_source_file(Context* c, const char* filename){
     FILE* file = file = fopen(filename, "r");
     if(file == NULL){
-        return -1;
+        // TODO:
+        return CANNOT_OPEN_SRC_FILE;
     }
     char line[MAX_LINE_LEN];
     char mnemonic_token[MAX_MNEMONIC_LEN];
@@ -15,11 +16,14 @@ int process_source_file(const char* filename){
     TokensParseState tp_state;
     bool run;
     bool skip_line;
+    ErrorCode ret_ec;
+    Instruction* instr;
     instr_offset = 0;
     tp_state = SPACES_PM;
     run = true;
     m_idx = 0;
     o_idx = 0;
+    c->n_line = 1;
     while(fgets(line, sizeof(line), file)){
         skip_line = false;
         for(size_t i = 0; i < MAX_LINE_LEN && run;){
@@ -114,12 +118,11 @@ int process_source_file(const char* filename){
             o_idx = 0;
             continue;
         }
-        Instruction* instr = Instruction_init(mnemonic_token, operands_token, instr_offset);
-        if(instr == NULL){
-            printf("%s\n", "ERROR!");
-            return -1;
+        instr = Instruction_init(c, &ret_ec, mnemonic_token, operands_token, instr_offset);
+        if(ret_ec != OK){
+            return ret_ec;
         }
-        if(InstructionStream_add_instruction(instr) != 0){
+        if(add_instruction(c, instr) != 0){
             return -1;
         };
         instr_offset += mnemonic_to_length(mnemonic_token);
@@ -130,9 +133,10 @@ int process_source_file(const char* filename){
         memset(&line, 0, sizeof(line));
         memset(&mnemonic_token, 0, sizeof(mnemonic_token));
         memset(&operands_token, 0, sizeof(operands_token));
+        c->n_line++;
     }
     fclose(file);
-    return 0;
+    return OK;
 }
 
 bool is_valid_mnemonic(const char* mnemonic){
@@ -171,7 +175,7 @@ uint16_t mnemonic_to_opcode(const char* mnemonic){
             return INSTRUCTION_TABLE[i].opcode;
         }
     }
-    return 0;
+    return OK;
 }
 
 uint8_t mnemonic_to_length(const char* mnemonic){
@@ -180,7 +184,7 @@ uint8_t mnemonic_to_length(const char* mnemonic){
             return INSTRUCTION_TABLE[i].length;
         }
     }
-    return 0;
+    return OK;
 }
 
 size_t mnemonic_to_table_index(const char* mnemonic){
@@ -189,13 +193,10 @@ size_t mnemonic_to_table_index(const char* mnemonic){
             return i;
         }
     }
-    return 0;
+    return OK;
 }
 
 int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
-    if(input == NULL || output == NULL){
-        return -1;
-    }
     uint8_t* output_bytes = (uint8_t*)output;
     size_t byte_i = 0;
     uint8_t str_char = 0;
@@ -252,9 +253,6 @@ int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t
     return 0;
 }
 int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset, char* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
-    if(input == NULL || output == NULL){
-        return -1;
-    }
     uint8_t* input_bytes = (uint8_t*)input;
     size_t byte_i = 0;
     uint8_t binary_char = 0;
@@ -300,16 +298,20 @@ int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset
     return 0;
 }
 
-Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, Address offset){
+Instruction* Instruction_init(Context* c, ErrorCode* ec, const char* mnemonic_token, char* operands_token, Address offset){
     // Check if mnemonic exists in architecture table
     if(!is_valid_mnemonic(mnemonic_token)){
+        c->error_code = INVALID_MNEMONIC;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], mnemonic_token);
+        *ec = c->error_code;
         return NULL;
     }
     size_t it_index = mnemonic_to_table_index(mnemonic_token);
     InstructionFormat format = INSTRUCTION_TABLE[it_index].format;
     size_t o_idx = 0;
     uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
-    int ret;
+    ErrorCode ret_ec;
     // Remove spaces and replace parenthesis with commas
     for(size_t i = 0; i < MAX_OPERANDS_LEN; i++){
         if(operands_token[i] == ' ' || operands_token[i] == ')'){
@@ -329,12 +331,16 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     }
     // Clear binary buffer
     memset(&bin_buffer, 0, sizeof(bin_buffer));
-    ret = INSTRUCTION_TABLE[it_index].build_fn(it_index, operands_token, bin_buffer);
-    if(ret != 0){
+    ret_ec = INSTRUCTION_TABLE[it_index].build_fn(c, it_index, operands_token, bin_buffer);
+    if(ret_ec != 0){
+        *ec = ret_ec;
         return NULL;
     }
     Instruction* instr = (Instruction*)malloc(sizeof(Instruction));
     if(instr == NULL){
+        c->error_code = MALLOC_UNSUCCESSUL;
+        strcpy((char*)&c->msg_extras[0], mnemonic_token);
+        *ec = c->error_code;
         return NULL;
     }
     memcpy(&instr->binary, bin_buffer, MAX_INSTRUCTION_LEN);
@@ -344,16 +350,20 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     return instr;
 }
 
-void InstructionStream_init(){
-    InstructionStream.head = NULL;
-    InstructionStream.tail = NULL;
-    InstructionStream.n_instr = 0;
+void Context_init(Context* c){
+    c->instr_head = NULL;
+    c->instr_tail = NULL;
+    c->n_instr = 0;
+    c->error_code = OK;
+    for(size_t i = 0; i < MAX_MSG_EXTRAS; i++){
+        memset(&c->msg_extras[i], 0, sizeof(MAX_MSG_EXTRA_LEN));
+    }
 }
 
-void InstructionStream_free(){
+void Context_free(Context* c){
     Instruction* curr;
     Instruction* next;
-    curr = InstructionStream.head;
+    curr = c->instr_head;
     while(curr != NULL){
         next = curr->next;
         free(curr);
@@ -361,32 +371,69 @@ void InstructionStream_free(){
     }
 }
 
-int InstructionStream_add_instruction(Instruction* instr){
+int add_instruction(Context* c, Instruction* instr){
     if(instr == NULL){
         return -1;
     }
-    if(InstructionStream.n_instr == 0){
-        InstructionStream.head = instr;
-        InstructionStream.tail = instr;
-        InstructionStream.n_instr++;
-        return 0;
+    if(c->n_instr == 0){
+        c->instr_head = instr;
+        c->instr_tail = instr;
+        c->n_instr++;
+        return OK;
     }
-    InstructionStream.tail->next = instr;
-    InstructionStream.tail = instr;
-    InstructionStream.n_instr++;
-    return 0;
+    c->instr_tail->next = instr;
+    c->instr_tail = instr;
+    c->n_instr++;
+    return OK;
 }
 
-int InstructionStream_display(){
-    Instruction* curr = InstructionStream.head;
+int display_stream(Context* c){
+    Instruction* curr = c->instr_head;
     InstructionFormat format;
     int ret;
     while (curr != NULL){
-        ret = INSTRUCTION_TABLE[curr->it_index].display_fn(curr);
+        ret = INSTRUCTION_TABLE[curr->it_index].display_fn(c, curr);
         if(ret != 0){
             return -1;
         }
         curr = curr->next;
     }
-    return 0;
+    return OK;
+}
+
+void display_error(Context* c){
+    switch (c->error_code){
+    case OK:
+        printf("OK: No error was encountered.\n");
+        break;
+    case SRC_FILE_NOT_FOUND:
+        printf("ERROR: SRC_FILE_NOT_FOUND -> Input source file \"%s\" cannot be found.\n", c->msg_extras[0]);
+        break;
+    case CANNOT_OPEN_SRC_FILE:
+        printf("ERROR: CANNOT_OPEN_SRC_FILE -> Cannot open source file \"%s\".\n", c->msg_extras[0]);
+        break;
+    case INVALID_MNEMONIC:
+        printf("ERROR @ line %s: INVALID_MNEMONIC -> The mnemonic \"%s\" is not valid.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    case OPERAND_NON_HEX_FOUND:
+        printf("ERROR @ line %s: OPERAND_NON_HEX_FOUND -> Operand fields \"%s\" contain non-hexidecimal characters.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    case INVALID_OPERAND_LENGTH:
+        printf("ERROR @ line %s: INVALID_OPERAND_LENGTH -> The operand \"%s\" must have a maximum length of %s character(s).\n", c->msg_extras[0], c->msg_extras[1], c->msg_extras[2]);
+        break;
+    case MALLOC_UNSUCCESSUL:
+        printf("ERROR: MALLOC_UNSUCCESSUL -> Could not allocate memory for instruction instance.\n");
+        break;
+    case NULL_POINTER_TO_OBJECT:
+        printf("ERROR: NULL_POINTER_TO_OBJECT -> Attempted to reference an object with a null pointer.\n");
+        break;
+    case TOO_MANY_OPERANDS:
+        printf("ERROR @ line %s: TOO_MANY_OPERANDS -> The instruction \"%s\" has been assigned too many operands.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    case MISSING_OPERANDS:
+        printf("ERROR @ line %s: MISSING_OPERANDS -> The instruction \"%s\" is missing some required operands.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    default:
+        break;
+    }
 }

@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_MII(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode build_MII(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     uint8_t m1 = 0; 
     uint16_t ri2 = 0; 
@@ -18,18 +18,30 @@ int build_MII(size_t table_index, const char* operands_token, uint8_t* bin_buffe
         switch (state){
         case M1:
             if(operands_token[i] == ','){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&m1, sizeof(m1), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = RI2;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&m1, sizeof(m1), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = RI2;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "M1");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -38,18 +50,30 @@ int build_MII(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             break;
         case RI2:
             if(operands_token[i] == ','){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&ri2, sizeof(ri2), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = RI3;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&ri2, sizeof(ri2), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = RI3;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_3CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "RI2");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_3CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -57,19 +81,31 @@ int build_MII(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             }
             break;
         case RI3:
-            if(operands_token[i] == 0){
-                if(!is_valid_hex_string(buffer, b_idx)){
-                    return -1;
+            if(operands_token[i] == ',' || operands_token[i] == 0){
+                if(b_idx == 0){
+                    run = false;
                 }
-                char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&ri3, sizeof(ri3), b_idx, NO_SKIP, true);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = OPS_DONE;
-                i++;
+                else if(!is_valid_hex_string(buffer, b_idx)){
+                    c->error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], operands_token);
+                    return c->error_code;
+                }
+                else{
+                    char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&ri3, sizeof(ri3), b_idx, NO_SKIP, true);
+                    memset(&buffer, 0, sizeof(buffer));
+                    b_idx = 0;
+                    state = OPS_DONE;
+                    i++;
+                }
             }
             else{
                 if(b_idx >= MAX_6CHR_LEN){
-                    return -1;
+                    c->error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    strcpy((char*)&c->msg_extras[1], "RI3");
+                    sprintf((char*)&c->msg_extras[2], "%d", MAX_6CHR_LEN);
+                    return c->error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -82,13 +118,19 @@ int build_MII(size_t table_index, const char* operands_token, uint8_t* bin_buffe
             break;
         }
     }
-    if(i != operands_token_len){
-        return -1;
-    }
     if(state != OPS_DONE){
-        return -1;
+        c->error_code = MISSING_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
     }
-     // Opcode: bits(0-7)
+    if(i != operands_token_len){
+        c->error_code = TOO_MANY_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
+    }
+    // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
     // M1: bits(8-11)
     bin_buffer[1] = m1 << 4;
@@ -99,12 +141,13 @@ int build_MII(size_t table_index, const char* operands_token, uint8_t* bin_buffe
     bin_buffer[3] = ri3 >> 16;
     bin_buffer[4] = (ri3 >> 8) & 0x0000FF;
     bin_buffer[5] = ri3 & 0x0000FF;
-    return 0;
+    return OK;
 }
 
-int display_MII(Instruction* instr){
+ErrorCode display_MII(Context* c, Instruction* instr){
     if(instr == NULL){
-        return -1;
+        c->error_code = NULL_POINTER_TO_OBJECT;
+        return c->error_code;
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
@@ -130,9 +173,9 @@ int display_MII(Instruction* instr){
     printf("RI2:      %s\n", conv_buffer);
     hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 3, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 6, NO_SKIP, false);
     printf("RI3:      %s\n", conv_buffer);
-    return 0;
+    return OK;
 }
 
-int decode_MII(){
-    return 0;
+ErrorCode decode_MII(){
+    return OK;
 }

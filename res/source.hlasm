@@ -43,4 +43,4 @@ AL      9,CCC(8,7)      ! RXa format
 BC      F,123(5,A)      ! RXb format
 LCBB    4,123(C,B),F    ! RXE format
 LDE     A,F6F(1,5)      ! RXE format
-MAD   1,F,ABC(3,4)      ! RXF format
+MAD     1,F,ABC(3,4)    ! RXF format

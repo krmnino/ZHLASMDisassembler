@@ -1,18 +1,19 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-int build_E(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode build_E(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode; 
     // Opcode: bits(0-7)
     bin_buffer[0] = opcode >> 8;
     // Opcode: bits(8-16)
     bin_buffer[1] = opcode & 0x00FF;
-    return 0;
+    return OK;
 }
 
-int display_E(Instruction* instr){
+ErrorCode display_E(Context* c, Instruction* instr){
     if(instr == NULL){
-        return -1;
+        c->error_code = NULL_POINTER_TO_OBJECT;
+        return c->error_code;
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
@@ -31,9 +32,9 @@ int display_E(Instruction* instr){
     printf("LENGTH:   0x%x\n", length);
     printf("FORMAT:   E\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
-    return 0;
+    return OK;
 }
 
-int decode_E(){
-    return 0;
+ErrorCode decode_E(){
+    return OK;
 }
