@@ -46,3 +46,5 @@ LDE     A,F6F(1,5)      ! RXE format
 MAD     1,F,ABC(3,4)    ! RXF format
 STCH    F,12345(A,B)    ! RXY format
 BIC     1,ABCDE(6,7)    ! RXY format
+TEND                    ! S format
+STCPS  ABC(1)           ! S format
