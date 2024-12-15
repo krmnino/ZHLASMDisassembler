@@ -337,7 +337,16 @@ ErrorCode display_RSL(Context* c, Instruction* instr){
     hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 12, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", length);
-    printf("FORMAT:   RRS\n");
+    switch (format){
+    case RSLa:
+        printf("FORMAT:   RSLa\n");
+        break;
+    case RSLb:
+        printf("FORMAT:   RSLa\n");
+        break;
+    default:
+        break;
+    }
     printf("OFFSET:   0x%lx\n", instr->offset);
     // Print operands
     switch (format){

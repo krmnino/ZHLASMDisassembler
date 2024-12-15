@@ -192,7 +192,7 @@ ErrorCode display_RIL(Context* c, Instruction* instr){
         printf("FORMAT:   RILb\n");
         break;
     case RILc:
-        printf("FORMAT:   RIc\n");
+        printf("FORMAT:   RILc\n");
         break;
     default:
         break;

@@ -186,7 +186,7 @@ ErrorCode build_RSY(Context* c, size_t table_index, const char* operands_token, 
     bin_buffer[1] = r1 << 4;
     // R3/M3: bits(12-15)
     bin_buffer[1] = bin_buffer[1] | r3_m3;
-    // B2: bits(8-11)
+    // B2: bits(16-19)
     bin_buffer[2] = b2 << 4;
     // DL2: bits(20-31)
     bin_buffer[2] = bin_buffer[2] | ((d2 >> 8) & 0x0000F);
@@ -231,7 +231,16 @@ ErrorCode display_RSY(Context* c, Instruction* instr){
     hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 12, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", length);
-    printf("FORMAT:   RRS\n");
+    switch (format){
+    case RSYa:
+        printf("FORMAT:   RSYa\n");
+        break;
+    case RSYb:
+        printf("FORMAT:   RSYb\n");
+        break;
+    default:
+        break;
+    }
     printf("OFFSET:   0x%lx\n", instr->offset);
     // Print operands
     hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
