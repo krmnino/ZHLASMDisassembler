@@ -48,3 +48,5 @@ STCH    F,12345(A,B)    ! RXY format
 BIC     1,ABCDE(6,7)    ! RXY format
 TEND                    ! S format
 STCPS  ABC(1)           ! S format
+NI  123(C),15           ! SI format
+TS  567(9)              ! SI format
