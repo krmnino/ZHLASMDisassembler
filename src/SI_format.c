@@ -162,7 +162,7 @@ ErrorCode display_SI(Context* c, Instruction* instr){
     // Print instruction layout
     if(i2_unused){
         printf("+--------+--------+----+------------+\n");
-        printf("| OPCODE | ////// | B2 |     D1     |\n");
+        printf("| OPCODE | ////// | B1 |     D1     |\n");
         printf("+--------+--------+----+------------+\n");
         printf("0        8        10   14          1F\n");
     }
