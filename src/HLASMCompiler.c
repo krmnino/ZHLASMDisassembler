@@ -4,7 +4,6 @@
 ErrorCode process_source_file(Context* c, const char* filename){
     FILE* file = file = fopen(filename, "r");
     if(file == NULL){
-        // TODO:
         return CANNOT_OPEN_SRC_FILE;
     }
     char line[MAX_LINE_LEN];
