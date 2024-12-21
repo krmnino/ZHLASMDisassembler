@@ -114,6 +114,7 @@ ErrorCode build_RSI(Context* c, size_t table_index, const char* operands_token, 
             break;
         case OPS_DONE:
             run = false;
+            break;
         default:
             break;
         }

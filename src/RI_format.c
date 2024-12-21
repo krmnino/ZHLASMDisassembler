@@ -115,6 +115,7 @@ ErrorCode build_RI(Context* c, size_t table_index, const char* operands_token, u
             break;
         case OPS_DONE:
             run = false;
+            break;
         default:
             break;
         }

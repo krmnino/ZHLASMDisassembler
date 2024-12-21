@@ -47,6 +47,7 @@ ErrorCode build_I(Context* c, size_t table_index, const char* operands_token, ui
             break;
         case OPS_DONE:
             run = false;
+            break;
         default:
             break;
         }
