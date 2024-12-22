@@ -67,8 +67,8 @@ enum TokensParseState{
 
 typedef enum OperandsParseState OperandsParseState;
 enum OperandsParseState{
-    B1, B2, B4,
-    D1, D2, D4,
+    B1, B2, B3, B4,
+    D1, D2, D3, D4,
     I1, I2, I3, I4, I5,
     L1, L2,
     M1, M3, M4,
