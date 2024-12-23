@@ -171,7 +171,7 @@ ErrorCode build_SMI(Context* c, size_t table_index, const char* operands_token, 
     // B3: bits(16-19)
     bin_buffer[2] = b3 << 4;
     // D3: bits(20-31)
-    bin_buffer[2] = bin_buffer[2] | ((d3 >> 8) & 0x0000F);
+    bin_buffer[2] = bin_buffer[2] | (d3 >> 8);
     bin_buffer[3] = d3 & 0x0FF;
     // RI2: bits(32-47)
     bin_buffer[4] = bin_buffer[4] | (ri2 >> 8);
