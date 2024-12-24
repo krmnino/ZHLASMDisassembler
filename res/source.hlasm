@@ -60,3 +60,5 @@ SRP     456(F,1),789(2),3    ! SSc format
 MVCP    147(1,F),258(E),6    ! SSd format
 LMD     1,3,FED(5),CBA(6)    ! SSe format
 PKA     369(2),581(78,A)     ! SSf format
+LASP    123(A),BCD(4)        ! SSE format
+LPD     3,ABC(6),987(F)      ! SSF format
