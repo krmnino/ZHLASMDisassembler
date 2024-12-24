@@ -27,6 +27,8 @@ SRC_FILES = InstructionTable.h		\
 			SIY_format.c			\
 			SMI_format.c			\
 			SS_format.c				\
+			SSE_format.c			\
+			SSF_format.c			\
 			VRI_format.c			\
 			VRR_format.c			\
 			VRS_format.c			\
@@ -63,6 +65,8 @@ OBJ_FILES = HLASMCompiler.o 		\
 			SIY_format.o			\
 			SMI_format.o			\
 			SS_format.o				\
+			SSE_format.o			\
+			SSF_format.o			\
 			VRI_format.o			\
 			VRR_format.o			\
 			VRS_format.o			\
