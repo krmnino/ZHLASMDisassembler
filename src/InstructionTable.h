@@ -1200,7 +1200,7 @@ static const ITEntry INSTRUCTION_TABLE[] = {
     { build_VRV , display_VRV , decode_VRV , VRV , (uint16_t)0xE71B  , USE_ALL                           , (uint8_t)0x6, "VSCEF"    }, 
     { build_VRV , display_VRV , decode_VRV , VRV , (uint16_t)0xE71A  , USE_ALL                           , (uint8_t)0x6, "VSCEG"    }, 
     { build_VRR , display_VRR , decode_VRR , VRRb, (uint16_t)0xE674  , USE_ALL                           , (uint8_t)0x6, "VSCHP"    }, 
-    { build_VRR , display_VRR , decode_VRR , VRRb, (uint16_t)0xE67C  , M4_UNUSED                         , (uint8_t)0x6, "VSCSHP"   }, 
+    { build_VRR , display_VRR , decode_VRR , VRRb, (uint16_t)0xE67C  , M4_UNUSED | M5_UNUSED             , (uint8_t)0x6, "VSCSHP"   }, 
     { build_VRI , display_VRI , decode_VRI , VRIf, (uint16_t)0xE67E  , USE_ALL                           , (uint8_t)0x6, "VSDP"     }, 
     { build_VRR , display_VRR , decode_VRR , VRRa, (uint16_t)0xE75F  , M4_UNUSED | M5_UNUSED             , (uint8_t)0x6, "VSEG"     }, 
     { build_VRR , display_VRR , decode_VRR , VRRe, (uint16_t)0xE78D  , M5_UNUSED | M6_UNUSED             , (uint8_t)0x6, "VSEL"     }, 
