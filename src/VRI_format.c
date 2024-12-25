@@ -383,14 +383,11 @@ ErrorCode build_VRI(Context* c, size_t table_index, const char* operands_token, 
                 if(b_idx >= MAX_1CHR_LEN){
                     c->error_code = INVALID_OPERAND_LENGTH;
                     sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    switch (format){
-                    case VRIa:
+                    switch (state){
+                    case M3:
                         strcpy((char*)&c->msg_extras[1], "M3");
                         break;                
-                    case VRIb:
-                    case VRIc:
-                    case VRIe:
-                    case VRIi:
+                    case M4:
                         strcpy((char*)&c->msg_extras[1], "M4");
                         break;                
                     default:
@@ -443,6 +440,18 @@ ErrorCode build_VRI(Context* c, size_t table_index, const char* operands_token, 
             break;
         }
     }
+    if(state != OPS_DONE){
+        c->error_code = MISSING_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
+    }
+    if(i != operands_token_len){
+        c->error_code = TOO_MANY_OPERANDS;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return c->error_code;
+    }
     // Opcode (part 1): bits(0-7)
     bin_buffer[0] = opcode >> 8;
     // V1: bits(8-11)
@@ -454,7 +463,7 @@ ErrorCode build_VRI(Context* c, size_t table_index, const char* operands_token, 
     case VRIf:
     case VRIg:
     case VRIi:
-        // V2/2: bits(12-15)
+        // V2/R2: bits(12-15)
         bin_buffer[1] = bin_buffer[1] | v2_r2;
         break;
     default:
@@ -649,7 +658,7 @@ ErrorCode display_VRI(Context* c, Instruction* instr){
         break;
     case VRIi:
         printf("+--------+----+----+--------+----+--------+----+--------+\n");
-        printf("| OPCODE | V1 | R2 |   //   | M4 |   I3   | RX | OPCODE |\n");
+        printf("| OPCODE | V1 | R2 | ////// | M4 |   I3   | RX | OPCODE |\n");
         printf("+--------+----+----+--------+----+--------+----+--------+\n");
         printf("0        8    C    10       18   1C       24   28      2F\n");
         break;
