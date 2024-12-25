@@ -5,7 +5,7 @@ ErrorCode build_VRI(Context* c, size_t table_index, const char* operands_token, 
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     bool m3_unused = INSTRUCTION_TABLE[table_index].unused_operands & M3_UNUSED;
-    bool m5_unused = INSTRUCTION_TABLE[table_index].unused_operands & M3_UNUSED;
+    bool m5_unused = INSTRUCTION_TABLE[table_index].unused_operands & M5_UNUSED;
     uint8_t v1 = 0;
     uint8_t v2_r2 = 0;
     uint8_t v3 = 0;
