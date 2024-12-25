@@ -120,8 +120,7 @@ ErrorCode display_RR(Context* c, Instruction* instr){
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
-    uint16_t unused_operands = INSTRUCTION_TABLE[instr->it_index].unused_operands;
-    bool r2_unused = unused_operands & R2_UNUSED;
+    bool r2_unused = INSTRUCTION_TABLE[instr->it_index].unused_operands & R2_UNUSED;
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
     // Print instruction layout
     if(r2_unused){
