@@ -286,7 +286,7 @@ ErrorCode build_VRS(Context* c, size_t table_index, const char* operands_token, 
     case VRSa:
     case VRSb:
     case VRSc:
-        // V1/R1: bits(32-35)
+        // M4: bits(32-35)
         if(!m4_unused){
             bin_buffer[4] = m4 << 4;
         }
