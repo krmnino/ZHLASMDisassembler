@@ -3,7 +3,7 @@
 
 ErrorCode build_VRV(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
-    bool m4_unused = INSTRUCTION_TABLE[table_index].unused_operands & M4_UNUSED;
+    bool m3_unused = INSTRUCTION_TABLE[table_index].unused_operands & M3_UNUSED;
     uint8_t v1 = 0;
     uint8_t v2 = 0;
     uint16_t d2 = 0;
@@ -116,7 +116,7 @@ ErrorCode build_VRV(Context* c, size_t table_index, const char* operands_token, 
             }
             break;
         case B2:
-            if(operands_token[i] == ','){
+            if(operands_token[i] == ',' || operands_token[i] == 0){
                 if(b_idx == 0){
                     run = false;
                 }
@@ -130,7 +130,12 @@ ErrorCode build_VRV(Context* c, size_t table_index, const char* operands_token, 
                     char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&b2, sizeof(b2), b_idx, NO_SKIP, true);
                     memset(&buffer, 0, sizeof(buffer));
                     b_idx = 0;
-                    state = M3;
+                    if(m3_unused){
+                        state = OPS_DONE;
+                    }
+                    else{
+                        state = M3;
+                    }
                     i++;
                 }
             }
@@ -222,14 +227,21 @@ ErrorCode display_VRV(Context* c, Instruction* instr){
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
-    InstructionFormat format = INSTRUCTION_TABLE[instr->it_index].format;
-    bool m4_unused = INSTRUCTION_TABLE[instr->it_index].unused_operands & M4_UNUSED;
+    bool m3_unused = INSTRUCTION_TABLE[instr->it_index].unused_operands & M3_UNUSED;
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
     // Print instruction layout
-    printf("+--------+----+----+----+------------+----+----+--------+\n");
-    printf("| OPCODE | V1 | V2 | B2 |     D2     | M3 | RX | OPCODE |\n");
-    printf("+--------+----+----+----+------------+----+----+--------+\n");
-    printf("0        8    C    10   14           20   24   28      2F\n");
+    if(m3_unused){
+        printf("+--------+----+----+----+------------+----+----+--------+\n");
+        printf("| OPCODE | V1 | V2 | B2 |     D2     | // | RX | OPCODE |\n");
+        printf("+--------+----+----+----+------------+----+----+--------+\n");
+        printf("0        8    C    10   14           20   24   28      2F\n");
+    }
+    else{
+        printf("+--------+----+----+----+------------+----+----+--------+\n");
+        printf("| OPCODE | V1 | V2 | B2 |     D2     | M3 | RX | OPCODE |\n");
+        printf("+--------+----+----+----+------------+----+----+--------+\n");
+        printf("0        8    C    10   14           20   24   28      2F\n");
+    }
     // Print general information
     printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
     hex_str_2_char_str((void*)&opcode, sizeof(opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, true);
@@ -247,8 +259,10 @@ ErrorCode display_VRV(Context* c, Instruction* instr){
     printf("B2:       %s\n", conv_buffer);
     hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
     printf("D2:       %s\n", conv_buffer);
-    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
-    printf("M3:       %s\n", conv_buffer);
+    if(!m3_unused){
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        printf("M3:       %s\n", conv_buffer);
+    }
     return OK;
 }
 

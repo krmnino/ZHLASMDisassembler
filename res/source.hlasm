@@ -99,3 +99,4 @@ VLVG   A,B,CDE(F),1          ! VRSb format
 VLL    3,6,ACD(9)            ! VRSb format        
 VLGV   9,8,A12(3),6          ! VRSc format            
 VLRLR  6,7,852(4)            ! VRSd format        
+VGEF   1,ABC(F,2),3          ! VRV format
