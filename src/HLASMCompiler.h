@@ -139,7 +139,7 @@ struct Context{
 };
 static Context context;
 
-ErrorCode process_source_file(Context* c, const char*);
+ErrorCode assemble(Context* c, const char*);
 bool is_valid_mnemonic(const char*);
 bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
@@ -260,10 +260,8 @@ ErrorCode decode_VSI();
 
 void Context_init(Context* c);
 void Context_free(Context* c);
-int add_instruction(Context* c, Instruction*);
-int display_stream(Context* c);
+ErrorCode add_instruction(Context* c, Instruction*);
+ErrorCode display_stream(Context* c);
 void display_error(Context* c);
-
-//void ErrorHandler_init();
 
 #endif

@@ -1,7 +1,7 @@
 #include "HLASMCompiler.h"
 #include "InstructionTable.h"
 
-ErrorCode process_source_file(Context* c, const char* filename){
+ErrorCode assemble(Context* c, const char* filename){
     FILE* file = file = fopen(filename, "r");
     if(file == NULL){
         return CANNOT_OPEN_SRC_FILE;
@@ -115,14 +115,16 @@ ErrorCode process_source_file(Context* c, const char* filename){
             run = true;
             m_idx = 0;
             o_idx = 0;
+            c->n_line++;
             continue;
         }
         instr = Instruction_init(c, &ret_ec, mnemonic_token, operands_token, instr_offset);
         if(ret_ec != OK){
             return ret_ec;
         }
-        if(add_instruction(c, instr) != 0){
-            return -1;
+        ret_ec = add_instruction(c, instr); 
+        if(ret_ec != OK){
+            return ret_ec;
         };
         instr_offset += mnemonic_to_length(mnemonic_token);
         tp_state = SPACES_PM;
@@ -146,8 +148,6 @@ bool is_valid_mnemonic(const char* mnemonic){
 }
 
 bool is_valid_hex_string(const char* input, size_t length){
-    const char* hex_chars = "0123456789ABCDEFabcdef";
-    size_t hex_chars_len = strlen(hex_chars);
     bool valid = true;
     for(size_t i = 0; i < length && valid; i++){
         if(!((input[i] >= '0' && input[i] <= '9') || 
@@ -346,6 +346,7 @@ Instruction* Instruction_init(Context* c, ErrorCode* ec, const char* mnemonic_to
     instr->it_index = it_index;
     instr->offset = offset;
     instr->next = NULL;
+    *ec = OK;
     return instr;
 }
 
@@ -370,9 +371,10 @@ void Context_free(Context* c){
     }
 }
 
-int add_instruction(Context* c, Instruction* instr){
+ErrorCode add_instruction(Context* c, Instruction* instr){
     if(instr == NULL){
-        return -1;
+        c->error_code = NULL_POINTER_TO_OBJECT;
+        return c->error_code;
     }
     if(c->n_instr == 0){
         c->instr_head = instr;
@@ -386,14 +388,14 @@ int add_instruction(Context* c, Instruction* instr){
     return OK;
 }
 
-int display_stream(Context* c){
+ErrorCode display_stream(Context* c){
     Instruction* curr = c->instr_head;
     InstructionFormat format;
     int ret;
     while (curr != NULL){
         ret = INSTRUCTION_TABLE[curr->it_index].display_fn(c, curr);
         if(ret != 0){
-            return -1;
+            return ret;
         }
         curr = curr->next;
     }
