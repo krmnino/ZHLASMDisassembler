@@ -1,10 +1,10 @@
 #include "HLASMCompiler.h"
 #include "InstructionTable.h"
 
-int process_source_file(const char* filename){
+ErrorCode assemble(Context* c, const char* filename){
     FILE* file = file = fopen(filename, "r");
     if(file == NULL){
-        return -1;
+        return CANNOT_OPEN_SRC_FILE;
     }
     char line[MAX_LINE_LEN];
     char mnemonic_token[MAX_MNEMONIC_LEN];
@@ -14,24 +14,59 @@ int process_source_file(const char* filename){
     size_t o_idx;
     TokensParseState tp_state;
     bool run;
+    bool skip_line;
+    ErrorCode ret_ec;
+    Instruction* instr;
     instr_offset = 0;
     tp_state = SPACES_PM;
     run = true;
     m_idx = 0;
     o_idx = 0;
+    c->n_line = 1;
     while(fgets(line, sizeof(line), file)){
+        skip_line = false;
         for(size_t i = 0; i < MAX_LINE_LEN && run;){
             switch (tp_state){
             case SPACES_PM:
-                if(line[i] != ' '){
+                if(line[i] == 0 || line[i] == '\n'){
+                    skip_line = true;
+                    tp_state = TPS_DONE;
+                }
+                else if(line[i] == '!'){
+                    tp_state = LINE_COMMENT;
+                }
+                else if(line[i] != ' '){
                     tp_state = MNEMONIC;
                 }
                 else{
                     i++;
                 }
                 break;
+            case LINE_COMMENT:
+                if(line[i] == 0 || line[i] == '\n'){
+                    skip_line = true;
+                    tp_state = TPS_DONE;
+                }
+                else{
+                    i++;
+                }
+                break;
+            case INLINE_COMMENT:
+                if(line[i] == 0 || line[i] == '\n'){
+                    tp_state = TPS_DONE;
+                }
+                else{
+                    i++;
+                }
+                break;
             case MNEMONIC:
-                if(line[i] == ' '){
+                if(line[i] == '!'){
+                    tp_state = INLINE_COMMENT;
+                }
+                else if(line[i] == '\n'){
+                    tp_state = TPS_DONE;
+                }
+                else if(line[i] == ' '){
                     tp_state = SPACES_PO;
                 }
                 else{
@@ -41,7 +76,10 @@ int process_source_file(const char* filename){
                 }
                 break;
             case SPACES_PO:
-                if(line[i] != ' '){
+                if(line[i] == '!'){
+                    tp_state = INLINE_COMMENT;
+                }
+                else if(line[i] != ' '){
                     tp_state = OPERANDS;
                 }
                 else{
@@ -49,8 +87,14 @@ int process_source_file(const char* filename){
                 }
                 break;
             case OPERANDS:
-                if(line[i] == 0 || line[i] == '\n'){
+                if(line[i] == '!'){
+                    tp_state = INLINE_COMMENT;
+                }
+                else if(line[i] == 0 || line[i] == '\n'){
                     tp_state = TPS_DONE;
+                }
+                else if(line[i] == ' '){
+                    i++;
                 }
                 else{
                     operands_token[o_idx] = line[i];
@@ -66,13 +110,21 @@ int process_source_file(const char* filename){
                 break;
             }
         }
-        Instruction* instr = Instruction_init(mnemonic_token, operands_token, instr_offset);
-        if(instr == NULL){
-            printf("%s\n", "ERROR!");
-            return -1;
+        if(skip_line){
+            tp_state = SPACES_PM;
+            run = true;
+            m_idx = 0;
+            o_idx = 0;
+            c->n_line++;
+            continue;
         }
-        if(InstructionStream_add_instruction(instr) != 0){
-            return -1;
+        instr = Instruction_init(c, &ret_ec, mnemonic_token, operands_token, instr_offset);
+        if(ret_ec != OK){
+            return ret_ec;
+        }
+        ret_ec = add_instruction(c, instr); 
+        if(ret_ec != OK){
+            return ret_ec;
         };
         instr_offset += mnemonic_to_length(mnemonic_token);
         tp_state = SPACES_PM;
@@ -82,35 +134,33 @@ int process_source_file(const char* filename){
         memset(&line, 0, sizeof(line));
         memset(&mnemonic_token, 0, sizeof(mnemonic_token));
         memset(&operands_token, 0, sizeof(operands_token));
+        c->n_line++;
     }
     fclose(file);
-    return 0;
+    return OK;
 }
 
 bool is_valid_mnemonic(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
-        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
-            return true;
-        }
+    if(mnemonic_to_table_index(mnemonic) != 0){
+        return true;
     }
     return false;
 }
 
-bool is_hex_char(const char* input, size_t length){
-    const char* hex_chars = "0123456789ABCDEFabcdef";
-    size_t hex_chars_len = strlen(hex_chars);
-    for(size_t i = 0; i < length; i++){
-        for(size_t j = 0; j < hex_chars_len; j++){
-            if(input[i] == hex_chars[j]){
-                return true;
-            }
+bool is_valid_hex_string(const char* input, size_t length){
+    bool valid = true;
+    for(size_t i = 0; i < length && valid; i++){
+        if(!((input[i] >= '0' && input[i] <= '9') || 
+             (input[i] >= 'A' && input[i] <= 'F') || 
+             (input[i] >= 'a' && input[i] <= 'f'))){
+            valid = false;
         }
     }
-    return false;
+    return valid;
 }
 
 InstructionFormat mnemonic_to_format(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
+    for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return INSTRUCTION_TABLE[i].format;
         }
@@ -119,64 +169,158 @@ InstructionFormat mnemonic_to_format(const char* mnemonic){
 }
 
 uint16_t mnemonic_to_opcode(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
+    for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return INSTRUCTION_TABLE[i].opcode;
         }
     }
-    return 0;
+    return OK;
 }
 
 uint8_t mnemonic_to_length(const char* mnemonic){
-    for(size_t i = 0; i < n_inst; i++){
+    for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
             return INSTRUCTION_TABLE[i].length;
         }
     }
+    return OK;
+}
+
+size_t mnemonic_to_table_index(const char* mnemonic){
+    for(size_t i = 0; i < N_INST; i++){
+        if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
+            return i;
+        }
+    }
+    return OK;
+}
+
+int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
+    uint8_t* output_bytes = (uint8_t*)output;
+    size_t byte_i = 0;
+    uint8_t str_char = 0;
+    uint8_t skipper = 0;
+    if(little_endian){
+        skipper = skip || (n_chars % 2);
+    }
+    // Clear output buffer
+    for(size_t i = 0; i < output_len; i++){
+        output_bytes[i] = 0;
+    }
+    if(little_endian){
+        byte_i = output_len - 1 - (output_len - ((n_chars + 1) / 2));
+    }
+    else{
+        byte_i = 0;
+    }
+    for(size_t i = 0; i < n_chars; i++){
+        if((i + skipper) % 2 == 0 && i != 0){
+            if(little_endian){
+                byte_i--;
+            }
+            else{
+                byte_i++;
+            }
+        }
+        str_char = input[i];
+        switch (str_char) {
+        case 'A':
+        case 'B':
+        case 'C':
+        case 'D':
+        case 'E':
+        case 'F':
+        case 'a':
+        case 'b':
+        case 'c':
+        case 'd':
+        case 'e':
+        case 'f':
+            str_char = ((str_char & 0x0F) | 0x08) + 1;
+            break;        
+        default:
+            str_char = str_char & 0x0F;
+            break;
+        }
+        if((i + skipper) % 2 == 0){
+            output_bytes[byte_i] = (output_bytes[byte_i] | str_char) << 4;
+        }
+        else{
+            output_bytes[byte_i] = output_bytes[byte_i] | str_char;
+        }
+    }
+    return 0;
+}
+int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset, char* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
+    uint8_t* input_bytes = (uint8_t*)input;
+    size_t byte_i = 0;
+    uint8_t binary_char = 0;
+    // Clear output buffer
+    for(size_t i = 0; i < output_len + 1; i++){
+        output[i] = 0;
+    }
+    if(little_endian){
+        byte_i = input_len - input_offset - 1;
+    }
+    else{
+        byte_i = input_offset;
+    }
+    for(size_t i = 0; i < n_chars; i++){
+        if((i + skip) % 2 == 0 && i != 0){
+            if(little_endian){
+                byte_i--;
+            }
+            else{
+                byte_i++;
+            }
+        }
+        if((i + skip) % 2 == 0){
+            binary_char = input_bytes[byte_i] >> 4;
+        }
+        else{
+            binary_char = input_bytes[byte_i] & 0x0F;
+        }
+        switch (binary_char){
+        case 0xA:
+        case 0xB:
+        case 0xC:
+        case 0xD:
+        case 0xE:
+        case 0xF:
+            output[i] = ((binary_char - 1) & 0x07) | 0x40;
+            break;        
+        default:
+            output[i] = binary_char | 0x30;
+            break;
+        }
+    }
     return 0;
 }
 
-uint32_t char_2_hex(const char* input){
-    uint8_t b1;
-    uint8_t b2;
-    size_t length = strlen(input);
-    uint32_t ret = 0;
-    uint8_t byte;
-    uint8_t eval;
-    for(size_t i = 0; i < length; i++){
-        byte = input[i];
-        eval = byte & 0x40;
-        if(eval != 0){
-            ret = ret << 4;
-            ret = ret | ((byte & 0x0F | 0x08) + 1);
-        }
-        else{
-            ret = ret << 4;
-            ret = ret | (byte & 0x0F);
-        }
-    }
-    return ret;
-}
-
-Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, Address offset){
+Instruction* Instruction_init(Context* c, ErrorCode* ec, const char* mnemonic_token, char* operands_token, Address offset){
     // Check if mnemonic exists in architecture table
     if(!is_valid_mnemonic(mnemonic_token)){
+        c->error_code = INVALID_MNEMONIC;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+        strcpy((char*)&c->msg_extras[1], mnemonic_token);
+        *ec = c->error_code;
         return NULL;
     }
-    InstructionFormat format = mnemonic_to_format(mnemonic_token);
-    uint16_t opcode = mnemonic_to_opcode(mnemonic_token);
+    size_t it_index = mnemonic_to_table_index(mnemonic_token);
+    InstructionFormat format = INSTRUCTION_TABLE[it_index].format;
     size_t o_idx = 0;
     uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
+    ErrorCode ret_ec;
     // Remove spaces and replace parenthesis with commas
     for(size_t i = 0; i < MAX_OPERANDS_LEN; i++){
-        if(operands_token[i] == ' '){
+        if(operands_token[i] == ' ' || operands_token[i] == ')'){
             continue;
         }
-        if(operands_token[i] == '('){
+        else if(operands_token[i] == '('){
             operands_token[o_idx] = ',';
             o_idx++;
         }
-        else if(is_hex_char(&operands_token[i], 1) || operands_token[i] == ','){
+        else{
             operands_token[o_idx] = operands_token[i];
             o_idx++;
         }
@@ -186,156 +330,40 @@ Instruction* Instruction_init(const char* mnemonic_token, char* operands_token, 
     }
     // Clear binary buffer
     memset(&bin_buffer, 0, sizeof(bin_buffer));
-    switch(format) {
-        case RXa:
-            if(build_RXa(opcode, operands_token, bin_buffer) != 0){
-                return NULL;
-            }
-            break;
-        case RXYa:
-            break;
-        case SSe:
-            break;
-        default:
-            return NULL;
+    ret_ec = INSTRUCTION_TABLE[it_index].build_fn(c, it_index, operands_token, bin_buffer);
+    if(ret_ec != 0){
+        *ec = ret_ec;
+        return NULL;
     }
     Instruction* instr = (Instruction*)malloc(sizeof(Instruction));
     if(instr == NULL){
+        c->error_code = MALLOC_UNSUCCESSUL;
+        strcpy((char*)&c->msg_extras[0], mnemonic_token);
+        *ec = c->error_code;
         return NULL;
     }
-    memcpy(&instr->mnemonic, mnemonic_token, MAX_MNEMONIC_LEN);
     memcpy(&instr->binary, bin_buffer, MAX_INSTRUCTION_LEN);
+    instr->it_index = it_index;
     instr->offset = offset;
     instr->next = NULL;
+    *ec = OK;
     return instr;
 }
 
-int build_RXa(uint16_t opcode, char* operands_token, uint8_t* bin_buffer){
-    uint8_t r1;
-    uint16_t d2;
-    uint8_t x2;
-    uint8_t b2;
-    uint32_t conv_char;
-    char buffer[MAX_OPERANDS_LEN];
-    OperandsParseState state = R1;
-    bool run = true;
-    size_t b_idx = 0;
-    // Clear buffer
-    memset(&buffer, 0, sizeof(buffer));
-    for(size_t i = 0; i < MAX_OPERANDS_LEN && run;){
-        switch (state){
-        case R1:
-            if(operands_token[i] == ','){
-                if(!is_hex_char(buffer, b_idx)){
-                    return -1;
-                }
-                r1 = char_2_hex(buffer);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = D2;
-                i++;
-            }
-            else{
-                if(b_idx > MAX_REG_LEN){
-                    return -1;
-                }
-                buffer[b_idx] = operands_token[i];
-                b_idx++;
-                i++;
-            }
-            break;
-        case D2:
-            if(operands_token[i] == ','){
-                if(!is_hex_char(buffer, b_idx)){
-                    return -1;
-                }
-                d2 = char_2_hex(buffer);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = X2;
-                i++;
-            }
-            else{
-                if(b_idx > MAX_DISP_LEN){
-                    return -1;
-                }
-                buffer[b_idx] = operands_token[i];
-                b_idx++;
-                i++;
-            }
-            break;
-        case X2:
-            if(operands_token[i] == ','){
-                if(!is_hex_char(buffer, b_idx)){
-                    return -1;
-                }
-                x2 = char_2_hex(buffer);
-                memset(&buffer, 0, sizeof(buffer));
-                b_idx = 0;
-                state = B2;
-                i++;
-            }
-            else{
-                if(b_idx > MAX_REG_LEN){
-                    return -1;
-                }
-                buffer[b_idx] = operands_token[i];
-                b_idx++;
-                i++;
-            }
-            break;
-        case B2:
-            if(operands_token[i] == 0){
-                if(!is_hex_char(buffer, b_idx)){
-                    return -1;
-                }
-                b2 = char_2_hex(buffer);
-                state = OPS_DONE;
-                i++;
-            }
-            else{
-                if(b_idx > MAX_REG_LEN){
-                    return -1;
-                }
-                buffer[b_idx] = operands_token[i];
-                b_idx++;
-                i++;
-            }
-            break;
-        case OPS_DONE:
-            run = false;
-        default:
-            break;
-        }
+void Context_init(Context* c){
+    c->instr_head = NULL;
+    c->instr_tail = NULL;
+    c->n_instr = 0;
+    c->error_code = OK;
+    for(size_t i = 0; i < MAX_MSG_EXTRAS; i++){
+        memset(&c->msg_extras[i], 0, sizeof(MAX_MSG_EXTRA_LEN));
     }
-    // Opcode: bits(0-8)
-    bin_buffer[0] = opcode;
-    // R1/M1: bits(8-11)
-    bin_buffer[1] = r1;
-    bin_buffer[1] = bin_buffer[1] << 4;
-    // X2: bits(12-15)
-    bin_buffer[1] = bin_buffer[1] | x2;
-    // B2: bits(16-19)
-    bin_buffer[2] = b2;
-    bin_buffer[2] = bin_buffer[2] << 4;
-    // D2: bits(20-31)
-    bin_buffer[2] = bin_buffer[2] | (d2 >> 8);
-    bin_buffer[3] = d2 & 0x00FF;
-    printf("R1=%x D2=%x X2=%x B2=%x\n", r1, d2, x2, b2);
-    printf("%x%x%x%x\n", bin_buffer[0], bin_buffer[1], bin_buffer[2], bin_buffer[3]);
-    return 0;
 }
 
-void InstructionStream_init(){
-    InstructionStream.head = NULL;
-    InstructionStream.tail = NULL;
-    InstructionStream.n_instr = 0;
-}
-
-void InstructionStream_free(){
+void Context_free(Context* c){
     Instruction* curr;
     Instruction* next;
-    curr = InstructionStream.head;
+    curr = c->instr_head;
     while(curr != NULL){
         next = curr->next;
         free(curr);
@@ -343,18 +371,73 @@ void InstructionStream_free(){
     }
 }
 
-int InstructionStream_add_instruction(Instruction* instr){
+ErrorCode add_instruction(Context* c, Instruction* instr){
     if(instr == NULL){
-        return -1;
+        c->error_code = NULL_POINTER_TO_OBJECT;
+        return c->error_code;
     }
-    if(InstructionStream.n_instr == 0){
-        InstructionStream.head = instr;
-        InstructionStream.tail = instr;
-        InstructionStream.n_instr++;
-        return 0;
+    if(c->n_instr == 0){
+        c->instr_head = instr;
+        c->instr_tail = instr;
+        c->n_instr++;
+        return OK;
     }
-    InstructionStream.tail->next = instr;
-    InstructionStream.tail = instr;
-    InstructionStream.n_instr++;
-    return 0;
+    c->instr_tail->next = instr;
+    c->instr_tail = instr;
+    c->n_instr++;
+    return OK;
+}
+
+ErrorCode display_stream(Context* c){
+    Instruction* curr = c->instr_head;
+    InstructionFormat format;
+    int ret;
+    while (curr != NULL){
+        ret = INSTRUCTION_TABLE[curr->it_index].display_fn(c, curr);
+        if(ret != 0){
+            return ret;
+        }
+        curr = curr->next;
+    }
+    return OK;
+}
+
+void display_error(Context* c){
+    switch (c->error_code){
+    case OK:
+        printf("OK: No error was encountered.\n");
+        break;
+    case SRC_FILE_NOT_FOUND:
+        printf("ERROR: SRC_FILE_NOT_FOUND -> Input source file \"%s\" cannot be found.\n", c->msg_extras[0]);
+        break;
+    case OUT_FILE_NOT_WRITABLE:
+        printf("ERROR: OUT_FILE_NOT_WRITABLE -> Output file \"%s\" cannot be written into.\n", c->msg_extras[0]);
+        break;
+    case CANNOT_OPEN_SRC_FILE:
+        printf("ERROR: CANNOT_OPEN_SRC_FILE -> Cannot open source file \"%s\".\n", c->msg_extras[0]);
+        break;
+    case INVALID_MNEMONIC:
+        printf("ERROR @ line %s: INVALID_MNEMONIC -> The mnemonic \"%s\" is not valid.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    case OPERAND_NON_HEX_FOUND:
+        printf("ERROR @ line %s: OPERAND_NON_HEX_FOUND -> Operand fields \"%s\" contain non-hexidecimal characters.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    case INVALID_OPERAND_LENGTH:
+        printf("ERROR @ line %s: INVALID_OPERAND_LENGTH -> The operand \"%s\" must have a maximum length of %s character(s).\n", c->msg_extras[0], c->msg_extras[1], c->msg_extras[2]);
+        break;
+    case MALLOC_UNSUCCESSUL:
+        printf("ERROR: MALLOC_UNSUCCESSUL -> Could not allocate memory for instruction instance.\n");
+        break;
+    case NULL_POINTER_TO_OBJECT:
+        printf("ERROR: NULL_POINTER_TO_OBJECT -> Attempted to reference an object with a null pointer.\n");
+        break;
+    case TOO_MANY_OPERANDS:
+        printf("ERROR @ line %s: TOO_MANY_OPERANDS -> The instruction \"%s\" has been assigned too many operands.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    case MISSING_OPERANDS:
+        printf("ERROR @ line %s: MISSING_OPERANDS -> The instruction \"%s\" is missing some required operands.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    default:
+        break;
+    }
 }
