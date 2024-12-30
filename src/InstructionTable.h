@@ -16,6 +16,7 @@ struct ITEntry{
 };
 
 static const ITEntry INSTRUCTION_TABLE[] = {
+    { NULL      , NULL        , NULL       , NF  , (uint16_t)0x0000  , USE_ALL                           , (uint8_t)0x4, "NULL"     }, 
     { build_RX  , display_RX  , decode_RX  , RXa , (uint16_t)0x5A    , USE_ALL                           , (uint8_t)0x4, "A"        }, 
     { build_RX  , display_RX  , decode_RX  , RXa , (uint16_t)0x6A    , USE_ALL                           , (uint8_t)0x4, "AD"       }, 
     { build_RXE , display_RXE , decode_RXE , RXE , (uint16_t)0xED1A  , M3_UNUSED                         , (uint8_t)0x6, "ADB"      }, 

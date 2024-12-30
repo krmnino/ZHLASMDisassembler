@@ -45,7 +45,7 @@ enum ErrorCode{
     OK,
     SRC_FILE_NOT_FOUND,
     OUT_FILE_NOT_WRITABLE,
-    CANNOT_OPEN_SRC_FILE,
+    CANNOT_OPEN_FILE,
     INVALID_MNEMONIC,
     INVALID_OPERAND_LENGTH,
     OPERAND_NON_HEX_FOUND,
@@ -140,7 +140,7 @@ struct Context{
 };
 static Context context;
 
-ErrorCode assemble(Context* c, const char*);
+ErrorCode assemble(Context* c, const char*, const char*);
 bool is_valid_mnemonic(const char*);
 bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);

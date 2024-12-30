@@ -3,3 +3,4 @@ src/.vscode
 src/*.o
 src/*.gch
 res/test.hlasm
+res/*.bin
