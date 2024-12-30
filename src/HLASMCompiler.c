@@ -1,10 +1,14 @@
 #include "HLASMCompiler.h"
 #include "InstructionTable.h"
 
-ErrorCode assemble(Context* c, const char* filename){
-    FILE* file = file = fopen(filename, "r");
-    if(file == NULL){
-        return CANNOT_OPEN_SRC_FILE;
+ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filename){
+    FILE* source_file = fopen(src_filename, "r");
+    FILE* binary_file = fopen(bin_filename, "w");
+    if(source_file == NULL){
+        return CANNOT_OPEN_FILE;
+    }
+    if(binary_file == NULL){
+        return CANNOT_OPEN_FILE;
     }
     char line[MAX_LINE_LEN];
     char mnemonic_token[MAX_MNEMONIC_LEN];
@@ -17,13 +21,14 @@ ErrorCode assemble(Context* c, const char* filename){
     bool skip_line;
     ErrorCode ret_ec;
     Instruction* instr;
+    Instruction* curr;
     instr_offset = 0;
     tp_state = SPACES_PM;
     run = true;
     m_idx = 0;
     o_idx = 0;
     c->n_line = 1;
-    while(fgets(line, sizeof(line), file)){
+    while(fgets(line, sizeof(line), source_file)){
         skip_line = false;
         for(size_t i = 0; i < MAX_LINE_LEN && run;){
             switch (tp_state){
@@ -136,7 +141,17 @@ ErrorCode assemble(Context* c, const char* filename){
         memset(&operands_token, 0, sizeof(operands_token));
         c->n_line++;
     }
-    fclose(file);
+    fclose(source_file);
+    curr = c->instr_head;
+    uint8_t buff;
+    while(true){
+        if(curr == NULL){
+            break;
+        }
+        fwrite((void*)curr->binary, 1, INSTRUCTION_TABLE[curr->it_index].length, binary_file);
+        curr = curr->next;
+    }
+    fclose(binary_file);
     return OK;
 }
 
@@ -413,8 +428,8 @@ void display_error(Context* c){
     case OUT_FILE_NOT_WRITABLE:
         printf("ERROR: OUT_FILE_NOT_WRITABLE -> Output file \"%s\" cannot be written into.\n", c->msg_extras[0]);
         break;
-    case CANNOT_OPEN_SRC_FILE:
-        printf("ERROR: CANNOT_OPEN_SRC_FILE -> Cannot open source file \"%s\".\n", c->msg_extras[0]);
+    case CANNOT_OPEN_FILE:
+        printf("ERROR: CANNOT_OPEN_FILE -> Cannot open file \"%s\".\n", c->msg_extras[0]);
         break;
     case INVALID_MNEMONIC:
         printf("ERROR @ line %s: INVALID_MNEMONIC -> The mnemonic \"%s\" is not valid.\n", c->msg_extras[0], c->msg_extras[1]);
