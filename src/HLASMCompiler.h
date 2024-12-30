@@ -44,6 +44,7 @@ typedef enum ErrorCode ErrorCode;
 enum ErrorCode{
     OK,
     SRC_FILE_NOT_FOUND,
+    OUT_FILE_NOT_WRITABLE,
     CANNOT_OPEN_SRC_FILE,
     INVALID_MNEMONIC,
     INVALID_OPERAND_LENGTH,

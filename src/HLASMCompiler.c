@@ -410,6 +410,9 @@ void display_error(Context* c){
     case SRC_FILE_NOT_FOUND:
         printf("ERROR: SRC_FILE_NOT_FOUND -> Input source file \"%s\" cannot be found.\n", c->msg_extras[0]);
         break;
+    case OUT_FILE_NOT_WRITABLE:
+        printf("ERROR: OUT_FILE_NOT_WRITABLE -> Output file \"%s\" cannot be written into.\n", c->msg_extras[0]);
+        break;
     case CANNOT_OPEN_SRC_FILE:
         printf("ERROR: CANNOT_OPEN_SRC_FILE -> Cannot open source file \"%s\".\n", c->msg_extras[0]);
         break;

@@ -59,11 +59,22 @@ int main(int argc, char* argv[]){
     ret = access(argv[2], F_OK);
     if(ret != 0){
         c->error_code = SRC_FILE_NOT_FOUND;
-        strcpy((char*)&c->msg_extras[0], argv[1]);
+        strcpy((char*)&c->msg_extras[0], argv[2]);
         display_error(c);
-        printf("ERROR: Input source file \"%s\" cannot be found.\n", argv[1]);
         return -1;
     }
+    // Check if output file is writable
+    ret = access(argv[3], F_OK);
+    if(ret == 0){
+        ret = access(argv[3], W_OK);
+        if(ret != 0){
+            c->error_code = OUT_FILE_NOT_WRITABLE;
+            strcpy((char*)&c->msg_extras[0], argv[3]);
+            display_error(c);
+            return -1;
+        }
+    }
+    // Assemble or disassemble
     if(options & ASSEMBLE_OPT == 1){
         ret_err = assemble(c, argv[2]);
         if(ret_err != OK){
@@ -78,7 +89,7 @@ int main(int argc, char* argv[]){
             return -1;
         }
     }
-
+    // If print option selected, do it
     if((options & PRINT_OPT) >> 2 == 1){
         ret_err = display_stream(c);
         if(ret_err != OK){
