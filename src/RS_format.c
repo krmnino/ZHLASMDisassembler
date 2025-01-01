@@ -282,6 +282,6 @@ ErrorCode display_RS(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_RS(){
+ErrorCode disassemble_RS(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

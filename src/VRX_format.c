@@ -267,6 +267,6 @@ ErrorCode display_VRX(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_VRX(){
+ErrorCode disassemble_VRX(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

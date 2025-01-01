@@ -175,6 +175,6 @@ ErrorCode display_RRD(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_RRD(){
+ErrorCode disassemble_RRD(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

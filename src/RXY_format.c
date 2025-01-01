@@ -268,6 +268,6 @@ ErrorCode display_RXY(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_RXY(){
+ErrorCode disassemble_RXY(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

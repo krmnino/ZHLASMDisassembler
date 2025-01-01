@@ -224,6 +224,6 @@ ErrorCode display_RIL(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_RIL(){
+ErrorCode disassemble_RIL(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

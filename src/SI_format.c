@@ -194,6 +194,6 @@ ErrorCode display_SI(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_SI(){
+ErrorCode disassemble_SI(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

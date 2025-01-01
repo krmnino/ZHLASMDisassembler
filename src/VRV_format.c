@@ -267,6 +267,6 @@ ErrorCode display_VRV(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_VRV(){
+ErrorCode disassemble_VRV(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

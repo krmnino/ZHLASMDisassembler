@@ -625,6 +625,6 @@ ErrorCode display_RIE(Context* c, Instruction* instr){
 }
 
 
-ErrorCode decode_RIE(){
+ErrorCode disassemble_RIE(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

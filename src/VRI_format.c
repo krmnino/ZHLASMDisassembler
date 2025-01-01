@@ -794,6 +794,6 @@ ErrorCode display_VRI(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_VRI(){
+ErrorCode disassemble_VRI(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

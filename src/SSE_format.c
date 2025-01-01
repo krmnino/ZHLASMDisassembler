@@ -213,6 +213,6 @@ ErrorCode display_SSE(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_SSE(){
+ErrorCode disassemble_SSE(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

@@ -265,6 +265,6 @@ ErrorCode display_RX(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_RX(){
+ErrorCode disassemble_RX(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }

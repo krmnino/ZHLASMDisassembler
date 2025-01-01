@@ -251,6 +251,6 @@ ErrorCode display_RXF(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode decode_RXF(){
+ErrorCode disassemble_RXF(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }
