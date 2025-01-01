@@ -2,17 +2,11 @@
 #include "InstructionTable.h"
 
 ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filename){
-    FILE* source_file = fopen(src_filename, "r");
-    FILE* binary_file = fopen(bin_filename, "w");
-    if(source_file == NULL){
-        return CANNOT_OPEN_FILE;
-    }
-    if(binary_file == NULL){
-        return CANNOT_OPEN_FILE;
-    }
     char line[MAX_LINE_LEN];
     char mnemonic_token[MAX_MNEMONIC_LEN];
     char operands_token[MAX_OPERANDS_LEN];
+    FILE* source_file;
+    FILE* binary_file;
     Address instr_offset;
     size_t m_idx;
     size_t o_idx;
@@ -22,6 +16,14 @@ ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filenam
     ErrorCode ret_ec;
     Instruction* instr;
     Instruction* curr;
+    source_file = fopen(src_filename, "r");
+    binary_file = fopen(bin_filename, "w");
+    if(source_file == NULL){
+        return CANNOT_OPEN_FILE;
+    }
+    if(binary_file == NULL){
+        return CANNOT_OPEN_FILE;
+    }
     instr_offset = 0;
     tp_state = SPACES_PM;
     run = true;
@@ -123,14 +125,14 @@ ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filenam
             c->n_line++;
             continue;
         }
-        instr = Instruction_init(c, &ret_ec, mnemonic_token, operands_token, instr_offset);
+        instr = Instruction_init_a(c, &ret_ec, mnemonic_token, operands_token, instr_offset);
         if(ret_ec != OK){
             return ret_ec;
         }
         ret_ec = add_instruction(c, instr); 
         if(ret_ec != OK){
             return ret_ec;
-        };
+        }
         instr_offset += mnemonic_to_length(mnemonic_token);
         tp_state = SPACES_PM;
         run = true;
@@ -155,11 +157,146 @@ ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filenam
     return OK;
 }
 
-bool is_valid_mnemonic(const char* mnemonic){
-    if(mnemonic_to_table_index(mnemonic) != 0){
-        return true;
+ErrorCode disassemble(Context* c, const char* bin_filename, const char* src_filename){
+    uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
+    FILE* binary_file;
+    FILE* source_file;
+    void* bin_buffer_ptr;
+    Address instr_offset;
+    size_t table_index;
+    size_t file_len;
+    ErrorCode ret_ec;
+    Instruction* instr;
+    Instruction* curr;
+    uint16_t opcode;
+    uint8_t instr_len;
+    uint8_t nibble;
+    char src_buffer[MAX_PRINTOUT_FIELD_LEN];
+    binary_file = fopen(bin_filename, "r");
+    source_file = fopen(src_filename, "w");
+    if(binary_file == NULL){
+        return CANNOT_OPEN_FILE;
     }
-    return false;
+    if(source_file == NULL){
+        return CANNOT_OPEN_FILE;
+    }
+    // Length of binary file
+    fseek(binary_file, 0, SEEK_END);
+    file_len = ftell(binary_file);
+    rewind(binary_file);
+    c->bin_offset = 0;
+    instr_offset = 0;
+    // Read instruction by instruction
+    while(instr_offset < file_len){
+        opcode = 0;
+        bin_buffer_ptr = &bin_buffer;
+        fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);
+        bin_buffer_ptr++;
+        nibble = bin_buffer[0] >> 4;
+        switch (nibble){
+        case 0x0C:
+        case 0x0D:
+        case 0x0E:
+        case 0x0F:
+            fread(bin_buffer_ptr, sizeof(uint8_t), MAX_5CHR_LEN, binary_file);
+            switch (bin_buffer[0]){
+            case 0xE3:
+            case 0xE6:
+            case 0xE7:
+            case 0xEB:
+            case 0xEC:
+            case 0xED:
+                opcode = (bin_buffer[0] << 8) | bin_buffer[5];
+                break;
+            case 0xE5:
+                opcode = (bin_buffer[0] << 8) | bin_buffer[1];
+                break;
+            case 0xC0:
+            case 0xC2:
+            case 0xC4:
+            case 0xC6:
+            case 0xC8:
+            case 0xCC:
+                opcode = (bin_buffer[0] << 4) | (bin_buffer[1] & 0x0F);
+                break;
+            default:
+                opcode = bin_buffer[0];
+                break;
+            }
+            instr_len = MAX_6CHR_LEN;
+            break;        
+        case 0x04:
+        case 0x05:
+        case 0x06:
+        case 0x07:
+        case 0x08:
+        case 0x09:
+        case 0x0A:
+        case 0x0B:
+            fread(bin_buffer_ptr, sizeof(uint8_t), MAX_3CHR_LEN, binary_file);
+            switch (bin_buffer[0]){
+            case 0xB2:
+            case 0xB3:
+            case 0xB9:
+                opcode = (bin_buffer[0] << 8) | bin_buffer[1];
+                break;
+            case 0xA5:
+            case 0xA7:
+                opcode = (bin_buffer[0] << 4) | (bin_buffer[1] & 0x0F);
+                break;
+            default:
+                opcode = bin_buffer[0];
+                break;
+            }
+            instr_len = MAX_4CHR_LEN;
+            break;        
+        case 0x00:
+        case 0x01:
+        case 0x02:
+        case 0x03:
+            fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);
+            switch (bin_buffer[0]){
+            case 0x01:
+                opcode = (bin_buffer[0] << 8) | bin_buffer[1];
+                break;
+            default:
+                opcode = bin_buffer[0];
+                break;
+            }
+            instr_len = MAX_2CHR_LEN;
+            break;        
+        default:
+            break;
+        }
+        table_index = opcode_to_table_index(opcode);
+        instr = Instruction_init_d(c, &ret_ec, opcode, bin_buffer, instr_offset);
+        if(ret_ec != OK){
+            return ret_ec;
+        }
+        ret_ec = add_instruction(c, instr); 
+        if(ret_ec != OK){
+            return ret_ec;
+        }
+        c->bin_offset += instr_len;
+        instr_offset += instr_len;
+    }
+    fclose(binary_file);
+    curr = c->instr_head;
+    uint8_t buff;
+    while(true){
+        if(curr == NULL){
+            break;
+        }
+        fprintf(source_file, "%s", INSTRUCTION_TABLE[curr->it_index].mnemonic);
+        for(size_t i = 0; i < (MAX_MNEMONIC_LEN - strlen(INSTRUCTION_TABLE[curr->it_index].mnemonic)); i++){
+            fprintf(source_file, "%s", " ");
+        }
+        fprintf(source_file, "%s", curr->operands_txt);
+        fprintf(source_file, "%s", "\n");
+        curr = curr->next;
+    }
+    fclose(source_file);
+    return OK;
 }
 
 bool is_valid_hex_string(const char* input, size_t length){
@@ -204,6 +341,15 @@ uint8_t mnemonic_to_length(const char* mnemonic){
 size_t mnemonic_to_table_index(const char* mnemonic){
     for(size_t i = 0; i < N_INST; i++){
         if(strcmp(mnemonic, INSTRUCTION_TABLE[i].mnemonic) == 0){
+            return i;
+        }
+    }
+    return OK;
+}
+
+size_t opcode_to_table_index(uint16_t opcode){
+    for(size_t i = 0; i < N_INST; i++){
+        if(opcode == INSTRUCTION_TABLE[i].opcode){
             return i;
         }
     }
@@ -312,41 +458,43 @@ int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset
     return 0;
 }
 
-Instruction* Instruction_init(Context* c, ErrorCode* ec, const char* mnemonic_token, char* operands_token, Address offset){
-    // Check if mnemonic exists in architecture table
-    if(!is_valid_mnemonic(mnemonic_token)){
+Instruction* Instruction_init_a(Context* c, ErrorCode* ec, const char* mnemonic_token, char* operands_token, Address offset){
+    size_t it_index = mnemonic_to_table_index(mnemonic_token);
+    size_t o_idx = 0;
+    uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
+    char clean_operands_token[MAX_OPERANDS_LEN];
+    ErrorCode ret_ec;
+    // Check if mnemonic exists in instruction table
+    if(it_index == 0){
         c->error_code = INVALID_MNEMONIC;
         sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
         strcpy((char*)&c->msg_extras[1], mnemonic_token);
         *ec = c->error_code;
         return NULL;
     }
-    size_t it_index = mnemonic_to_table_index(mnemonic_token);
-    InstructionFormat format = INSTRUCTION_TABLE[it_index].format;
-    size_t o_idx = 0;
-    uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
-    ErrorCode ret_ec;
+    // Clear operand buffer
+    memset(&bin_buffer, 0, sizeof(bin_buffer));
     // Remove spaces and replace parenthesis with commas
     for(size_t i = 0; i < MAX_OPERANDS_LEN; i++){
         if(operands_token[i] == ' ' || operands_token[i] == ')'){
             continue;
         }
         else if(operands_token[i] == '('){
-            operands_token[o_idx] = ',';
+            clean_operands_token[o_idx] = ',';
             o_idx++;
         }
         else{
-            operands_token[o_idx] = operands_token[i];
+            clean_operands_token[o_idx] = operands_token[i];
             o_idx++;
         }
         if(o_idx <= i){
-            operands_token[i] = 0;
+            clean_operands_token[i] = 0;
         }
     }
     // Clear binary buffer
     memset(&bin_buffer, 0, sizeof(bin_buffer));
-    ret_ec = INSTRUCTION_TABLE[it_index].build_fn(c, it_index, operands_token, bin_buffer);
-    if(ret_ec != 0){
+    ret_ec = INSTRUCTION_TABLE[it_index].assemble_fn(c, it_index, clean_operands_token, bin_buffer);
+    if(ret_ec != OK){
         *ec = ret_ec;
         return NULL;
     }
@@ -358,6 +506,42 @@ Instruction* Instruction_init(Context* c, ErrorCode* ec, const char* mnemonic_to
         return NULL;
     }
     memcpy(&instr->binary, bin_buffer, MAX_INSTRUCTION_LEN);
+    memcpy(&instr->operands_txt, operands_token, MAX_OPERANDS_LEN);
+    instr->it_index = it_index;
+    instr->offset = offset;
+    instr->next = NULL;
+    *ec = OK;
+    return instr;
+}
+
+Instruction* Instruction_init_d(Context* c, ErrorCode* ec, uint16_t opcode, const uint8_t* bin_buffer, Address offset){
+    size_t it_index = opcode_to_table_index(opcode);
+    char operands_buffer[MAX_OPERANDS_LEN];
+    ErrorCode ret_ec;
+    // Check if mnemonic exists in instruction table
+    if(it_index == 0){
+        c->error_code = INVALID_MNEMONIC;
+        sprintf((char*)&c->msg_extras[0], "%ld", c->bin_offset);
+        sprintf((char*)&c->msg_extras[1], "%x", opcode);
+        *ec = c->error_code;
+        return NULL;
+    }
+    // Clear operands buffer
+    memset(&operands_buffer, 0, sizeof(operands_buffer));
+    ret_ec = INSTRUCTION_TABLE[it_index].disassemble_fn(c, it_index, bin_buffer, operands_buffer);
+    if(ret_ec != OK){
+        *ec = ret_ec;
+        return NULL;
+    }
+    Instruction* instr = (Instruction*)malloc(sizeof(Instruction));
+    if(instr == NULL){
+        c->error_code = MALLOC_UNSUCCESSUL;
+        strcpy((char*)&c->msg_extras[0], INSTRUCTION_TABLE[it_index].mnemonic);
+        *ec = c->error_code;
+        return NULL;
+    }
+    memcpy(&instr->binary, bin_buffer, MAX_INSTRUCTION_LEN);
+    memcpy(&instr->operands_txt, operands_buffer, MAX_OPERANDS_LEN);
     instr->it_index = it_index;
     instr->offset = offset;
     instr->next = NULL;
@@ -451,6 +635,9 @@ void display_error(Context* c){
         break;
     case MISSING_OPERANDS:
         printf("ERROR @ line %s: MISSING_OPERANDS -> The instruction \"%s\" is missing some required operands.\n", c->msg_extras[0], c->msg_extras[1]);
+        break;
+    case INVALID_OPCODE:
+        printf("ERROR @ offset %s: INVALID_OPCODE -> The opcode \"%s\" is not valid.\n", c->msg_extras[0], c->msg_extras[1]);
         break;
     default:
         break;
