@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-ErrorCode build_SIY(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode assemble_SIY(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     bool i2_unused = INSTRUCTION_TABLE[table_index].unused_operands & I2_UNUSED;
     uint8_t b1 = 0;

@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-ErrorCode build_RIL(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode assemble_RIL(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;    
     uint8_t r1_m1 = 0; 

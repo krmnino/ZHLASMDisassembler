@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMCompiler.h"
 
-ErrorCode build_S(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode assemble_S(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     bool b2_unused = INSTRUCTION_TABLE[table_index].unused_operands & B2_UNUSED;
     bool d2_unused = INSTRUCTION_TABLE[table_index].unused_operands & D2_UNUSED;
