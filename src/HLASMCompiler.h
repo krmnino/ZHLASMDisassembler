@@ -20,6 +20,7 @@
 #define MAX_5CHR_LEN 5
 #define MAX_6CHR_LEN 6
 #define MAX_8CHR_LEN 8
+#define MAX_12CHR_LEN 12
 #define MAX_PRINTOUT_FIELD_LEN 13
 #define MAX_MSG_EXTRAS 16
 #define MAX_MSG_EXTRA_LEN 128

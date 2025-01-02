@@ -193,6 +193,7 @@ ErrorCode display_RI(Context* c, Instruction* instr){
     }
     // Print general information
     printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
+    printf("OPERANDS: %s\n", instr->operands_txt);
     hex_str_2_char_str((void*)&opcode, sizeof(opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
     hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
@@ -241,5 +242,18 @@ ErrorCode display_RI(Context* c, Instruction* instr){
 }
 
 ErrorCode disassemble_RI(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
+    char buffer[MAX_OPERANDS_LEN];
+    // R1/M1:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+    operands_token[0] = buffer[0];
+    operands_token[1] = ',';
+    // I2/RI2:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
+    operands_token[2] = buffer[0];
+    operands_token[3] = buffer[1];
+    operands_token[4] = buffer[2];
+    operands_token[5] = buffer[3];
     return OK;
 }
