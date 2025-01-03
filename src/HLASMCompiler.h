@@ -28,15 +28,16 @@
 
 #define USE_ALL   0x0000
 #define B2_UNUSED 0x0001
-#define M3_UNUSED 0x0002
-#define M4_UNUSED 0x0004
-#define M5_UNUSED 0x0008
-#define M6_UNUSED 0x0010
-#define R1_UNUSED 0x0020
-#define R2_UNUSED 0x0040
-#define R3_UNUSED 0x0080
-#define D2_UNUSED 0x0100
-#define I2_UNUSED 0x0200
+#define M1_UNUSED 0x0002
+#define M3_UNUSED 0x0004
+#define M4_UNUSED 0x0008
+#define M5_UNUSED 0x0010
+#define M6_UNUSED 0x0020
+#define R1_UNUSED 0x0040
+#define R2_UNUSED 0x0080
+#define R3_UNUSED 0x0100
+#define D2_UNUSED 0x0200
+#define I2_UNUSED 0x0400
 
 typedef uint64_t Address;
 

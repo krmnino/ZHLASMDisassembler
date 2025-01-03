@@ -4,6 +4,7 @@
 ErrorCode build_RI(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
+    bool m1_unused = INSTRUCTION_TABLE[table_index].unused_operands & M1_UNUSED;
     uint8_t r1_m1 = 0; 
     uint16_t i2_ri2 = 0; 
     char buffer[MAX_OPERANDS_LEN];
@@ -18,7 +19,12 @@ ErrorCode build_RI(Context* c, size_t table_index, const char* operands_token, u
         state = R1;
         break;
     case RIc:
-        state = M1;
+        if(m1_unused){
+            state = RI2;
+        }
+        else{
+            state = M1;
+        }
         break;
     default:
         break;
@@ -152,6 +158,7 @@ ErrorCode display_RI(Context* c, Instruction* instr){
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
     InstructionFormat format = INSTRUCTION_TABLE[instr->it_index].format;
+    bool m1_unused = INSTRUCTION_TABLE[instr->it_index].unused_operands & M1_UNUSED;
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
     // Print instruction layout
     switch (format){
@@ -168,10 +175,18 @@ ErrorCode display_RI(Context* c, Instruction* instr){
         printf("0        8    C    10              1F\n");
         break;
     case RIc:
-        printf("+--------+----+----+----------------+\n");
-        printf("| OPCODE | M1 | OP |      RI2       |\n");
-        printf("+--------+----+----+----------------+\n");
-        printf("0        8    C    10              1F\n");
+        if(m1_unused){
+            printf("+--------+----+----+----------------+\n");
+            printf("| OPCODE | // | OP |      RI2       |\n");
+            printf("+--------+----+----+----------------+\n");
+            printf("0        8    C    10              1F\n");
+        }
+        else{
+            printf("+--------+----+----+----------------+\n");
+            printf("| OPCODE | M1 | OP |      RI2       |\n");
+            printf("+--------+----+----+----------------+\n");
+            printf("0        8    C    10              1F\n");
+        }
         break;
     default:
         break;
@@ -212,8 +227,10 @@ ErrorCode display_RI(Context* c, Instruction* instr){
         printf("RI2:      %s\n", conv_buffer);
         break;
     case RIc:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
-        printf("M1:       %s\n", conv_buffer);
+        if(!m1_unused){
+            hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+            printf("M1:       %s\n", conv_buffer);
+        }
         hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
         printf("RI2:      %s\n", conv_buffer);
         break;
