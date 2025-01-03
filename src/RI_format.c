@@ -243,11 +243,32 @@ ErrorCode display_RI(Context* c, Instruction* instr){
 
 ErrorCode disassemble_RI(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     char buffer[MAX_OPERANDS_LEN];
+    InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
+    bool m1_unused = INSTRUCTION_TABLE[table_index].unused_operands & M1_UNUSED;
     // R1/M1:
-    memset(&buffer, 0, sizeof(buffer));
-    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
-    operands_token[0] = buffer[0];
-    operands_token[1] = ',';
+    switch (format){
+    case RIa:
+    case RIb:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[0] = buffer[0];
+        operands_token[1] = ',';
+        break;
+    case RIc:
+        if(m1_unused){
+            operands_token[0] = '0';
+            operands_token[1] = ',';
+        }
+        else{
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[0] = buffer[0];
+            operands_token[1] = ',';
+        }
+        break;
+    default:
+        break;
+    }
     // I2/RI2:
     memset(&buffer, 0, sizeof(buffer));
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
