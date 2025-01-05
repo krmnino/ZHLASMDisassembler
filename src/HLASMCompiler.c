@@ -268,7 +268,6 @@ ErrorCode disassemble(Context* c, const char* bin_filename, const char* src_file
         default:
             break;
         }
-        table_index = opcode_to_table_index(opcode);
         instr = Instruction_init_d(c, &ret_ec, opcode, bin_buffer, instr_offset);
         if(ret_ec != OK){
             return ret_ec;
@@ -529,7 +528,16 @@ Instruction* Instruction_init_d(Context* c, ErrorCode* ec, uint16_t opcode, cons
     // Clear operands buffer
     memset(&operands_buffer, 0, sizeof(operands_buffer));
     ret_ec = INSTRUCTION_TABLE[it_index].disassemble_fn(c, it_index, bin_buffer, operands_buffer);
-    if(ret_ec != OK){
+    // If initial disassembler function call requires using alternative instruction, then try again with alternative
+    if(ret_ec == USE_ALTERNATIVE){
+        it_index = mnemonic_to_table_index(INSTRUCTION_TABLE[it_index].alternative_instr);
+        ret_ec = INSTRUCTION_TABLE[it_index].disassemble_fn(c, it_index, bin_buffer, operands_buffer);
+        if(ret_ec != OK){
+            *ec = ret_ec;
+            return NULL;
+        }
+    }
+    else if(ret_ec != OK){
         *ec = ret_ec;
         return NULL;
     }

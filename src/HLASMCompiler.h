@@ -45,6 +45,7 @@ typedef uint64_t Address;
 typedef enum ErrorCode ErrorCode;
 enum ErrorCode{
     OK,
+    USE_ALTERNATIVE,
     SRC_FILE_NOT_FOUND,
     OUT_FILE_NOT_WRITABLE,
     CANNOT_OPEN_FILE,
