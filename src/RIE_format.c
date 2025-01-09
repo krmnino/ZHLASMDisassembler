@@ -628,22 +628,23 @@ ErrorCode display_RIE(Context* c, Instruction* instr){
 
 ErrorCode disassemble_RIE(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     char buffer[MAX_OPERANDS_LEN];
+    size_t i = 0;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     // R1:
     memset(&buffer, 0, sizeof(buffer));
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
-    operands_token[0] = buffer[0];
-    operands_token[1] = ',';
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = ',';
     switch (format){
     case RIEa:
         // I2:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
-        operands_token[2] = buffer[0];
-        operands_token[3] = buffer[1];
-        operands_token[4] = buffer[2];
-        operands_token[5] = buffer[3];
-        operands_token[6] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        operands_token[i++] = buffer[3];
+        operands_token[i++] = ',';
         // M3:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
@@ -653,93 +654,93 @@ ErrorCode disassemble_RIE(Context* c, size_t table_index, const uint8_t* bin_buf
         // R2:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
-        operands_token[2] = buffer[0];
-        operands_token[3] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
         // M3:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
-        operands_token[4] = buffer[0];
-        operands_token[5] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
         // RI4:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
-        operands_token[6] = buffer[0];
-        operands_token[7] = buffer[1];
-        operands_token[8] = buffer[2];
-        operands_token[9] = buffer[3];
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        operands_token[i++] = buffer[3];
         break;
     case RIEc:
         // I2:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
-        operands_token[2] = buffer[0];
-        operands_token[3] = buffer[1];
-        operands_token[4] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = ',';
         // M3:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
-        operands_token[5] = buffer[0];
-        operands_token[6] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
         // RI4:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
-        operands_token[7] = buffer[0];
-        operands_token[8] = buffer[1];
-        operands_token[9] = buffer[2];
-        operands_token[10] = buffer[3];
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        operands_token[i++] = buffer[3];
         break;
     case RIEd:
     case RIEe:
         // R3:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
-        operands_token[2] = buffer[0];
-        operands_token[3] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
         // I2/RI2:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
-        operands_token[4] = buffer[0];
-        operands_token[5] = buffer[1];
-        operands_token[6] = buffer[2];
-        operands_token[7] = buffer[3];
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        operands_token[i++] = buffer[3];
         break;
     case RIEf:
         // R2:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
-        operands_token[2] = buffer[0];
-        operands_token[3] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
         // I3:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
-        operands_token[4] = buffer[0];
-        operands_token[5] = buffer[1];
-        operands_token[6] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = ',';
         // I4:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
-        operands_token[7] = buffer[0];
-        operands_token[8] = buffer[1];
-        operands_token[9] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = ',';
         // I5:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
-        operands_token[10] = buffer[0];
-        operands_token[11] = buffer[1];
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
         break;
     case RIEg:
         // I2:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
-        operands_token[2] = buffer[0];
-        operands_token[3] = buffer[1];
-        operands_token[4] = buffer[2];
-        operands_token[5] = buffer[3];
-        operands_token[6] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        operands_token[i++] = buffer[3];
+        operands_token[i++] = ',';
         // M3:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
-        operands_token[7] = buffer[0];
+        operands_token[i++] = buffer[0];
         break;
         break;
     default:

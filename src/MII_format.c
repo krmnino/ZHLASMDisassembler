@@ -161,7 +161,7 @@ ErrorCode display_MII(Context* c, Instruction* instr){
     // Print general information
     printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
     printf("OPERANDS: %s\n", instr->operands_txt);
-    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_2CHR_LEN, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
     hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_12CHR_LEN, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
@@ -180,26 +180,27 @@ ErrorCode display_MII(Context* c, Instruction* instr){
 
 ErrorCode disassemble_MII(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     char buffer[MAX_OPERANDS_LEN];
+    size_t i = 0;
     // M1:
     memset(&buffer, 0, sizeof(buffer));
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
-    operands_token[0] = buffer[0];
-    operands_token[1] = ',';
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = ',';
     // RI2:
     memset(&buffer, 0, sizeof(buffer));
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
-    operands_token[2] = buffer[0];
-    operands_token[3] = buffer[1];
-    operands_token[4] = buffer[2];
-    operands_token[5] = ',';
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = buffer[1];
+    operands_token[i++] = buffer[2];
+    operands_token[i++] = ',';
     // RI3:
     memset(&buffer, 0, sizeof(buffer));
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_6CHR_LEN, NO_SKIP, false);
-    operands_token[6] = buffer[0];
-    operands_token[7] = buffer[1];
-    operands_token[8] = buffer[2];
-    operands_token[9] = buffer[3];
-    operands_token[10] = buffer[4];
-    operands_token[11] = buffer[5];
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = buffer[1];
+    operands_token[i++] = buffer[2];
+    operands_token[i++] = buffer[3];
+    operands_token[i++] = buffer[4];
+    operands_token[i++] = buffer[5];
     return OK;
 }

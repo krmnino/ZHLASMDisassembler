@@ -618,9 +618,10 @@ ErrorCode display_SS(Context* c, Instruction* instr){
     }
     // Print general information
     printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
-    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    printf("OPERANDS: %s\n", instr->operands_txt);
+    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_2CHR_LEN, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 12, NO_SKIP, false);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_12CHR_LEN, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", length);
     switch (format){
@@ -649,17 +650,17 @@ ErrorCode display_SS(Context* c, Instruction* instr){
     // Print operands
     switch (format){
     case SSa:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_2CHR_LEN, NO_SKIP, false);
         printf("L1:       %s\n", conv_buffer);
         break;
     case SSb:
     case SSc:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("L1:       %s\n", conv_buffer);
         break;
     case SSd:
     case SSe:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("R1:       %s\n", conv_buffer);
         break;
     default:
@@ -667,20 +668,20 @@ ErrorCode display_SS(Context* c, Instruction* instr){
     }
     switch (format){
     case SSb:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, SKIP, false);
         printf("L2:       %s\n", conv_buffer);
         break;
     case SSc:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, SKIP, false);
         printf("I3:       %s\n", conv_buffer);
         break;
     case SSd:
     case SSe:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, SKIP, false);
         printf("R3:       %s\n", conv_buffer);
         break;
     case SSf:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_2CHR_LEN, NO_SKIP, false);
         printf("L2:       %s\n", conv_buffer);
         break;
     default:
@@ -692,23 +693,23 @@ ErrorCode display_SS(Context* c, Instruction* instr){
     case SSc:
     case SSd:
     case SSf:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("B1:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_3CHR_LEN, SKIP, false);
         printf("D1:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("B2:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_3CHR_LEN, SKIP, false);
         printf("D2:       %s\n", conv_buffer);
         break;
     case SSe:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("B2:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_3CHR_LEN, SKIP, false);
         printf("D2:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("B4:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 4, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_3CHR_LEN, SKIP, false);
         printf("D4:       %s\n", conv_buffer);
         break;
     default:
@@ -718,5 +719,226 @@ ErrorCode display_SS(Context* c, Instruction* instr){
 }
 
 ErrorCode disassemble_SS(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
+    char buffer[MAX_OPERANDS_LEN];
+    InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
+    size_t i = 0;
+    switch (format){
+    case SSa:
+        // D1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // L1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = ',';
+        // B1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // D2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // B2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        break;
+    case SSb:
+        // D1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // L1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // B1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // D2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // L2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // B2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        break;
+    case SSc:
+        // D1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // L1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // B1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // D2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // B2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // I3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        break;
+    case SSd:
+        // D1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // R1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // B1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // D2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // B2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // R3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        break;
+    case SSe:
+        // R1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // R3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // D1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // B1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // D2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // B2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        break;
+    case SSf:
+        // D1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // B1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        // D2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+        operands_token[i++] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = buffer[2];
+        // L1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = '(';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = buffer[1];
+        operands_token[i++] = ',';
+        // B2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ')';
+        break;
+    default:
+        break;
+    }
     return OK;
 }

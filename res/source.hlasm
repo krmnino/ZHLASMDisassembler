@@ -30,13 +30,13 @@ TRTRE   A,B,C                ! RRFc format
 CSDTR   5,8,C                ! RRFd format        
 CXLGTR  1,3,2,4              ! RRFe format        
 TBEDR   1,3,2                ! RRFe format        
-CRB     1,A,F,6B8,5          ! RRS format         
+CRB     1,A,F,6B8(5)         ! RRS format         
 LM      1,2,ABC(D)           ! RSa format         
 SLDA    3,A12(4)             ! RSa format         
 STCM    A,F,123(2)           ! RSb format         
 BRXH    1,3,ABCD             ! RSI format         
-CDPT    5,987(FE,2),1        ! RSLb format        
 TP      123(F,A)             ! RSLa format        
+CDPT    5,987(FE,2),1        ! RSLb format        
 CDSG    1,2,ABCDE(5)         ! RSYa format        
 CLGT    A,B,12345(6)         ! RSYb format        
 AL      9,CCC(8,7)           ! RXa format         
@@ -100,5 +100,5 @@ VLL     3,6,ACD(9)           ! VRSb format
 VLGV    9,8,A12(3),6         ! VRSc format        
 VLRLR   6,7,852(4)           ! VRSd format        
 VGEF    1,ABC(F,2),3         ! VRV format         
-VLLEZ   2,BCD(1,3),4         ! VRV format         
+VLLEZ   2,BCD(1,3),4         ! VRX format         
 VLRL    3,CDE(2),AB          ! VSI format         

@@ -194,9 +194,9 @@ ErrorCode display_RI(Context* c, Instruction* instr){
     // Print general information
     printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
     printf("OPERANDS: %s\n", instr->operands_txt);
-    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 3, SKIP, true);
+    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_3CHR_LEN, SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_8CHR_LEN, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", length);
     switch (format){
@@ -216,23 +216,23 @@ ErrorCode display_RI(Context* c, Instruction* instr){
     // Print operands
     switch (format){
     case RIa:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("R1:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_4CHR_LEN, NO_SKIP, false);
         printf("I2:       %s\n", conv_buffer);
         break;
     case RIb:
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
         printf("R1:       %s\n", conv_buffer);
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_4CHR_LEN, NO_SKIP, false);
         printf("RI2:      %s\n", conv_buffer);
         break;
     case RIc:
         if(!m1_unused){
-            hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+            hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
             printf("M1:       %s\n", conv_buffer);
         }
-        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+        hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_4CHR_LEN, NO_SKIP, false);
         printf("RI2:      %s\n", conv_buffer);
         break;
     default:
@@ -245,25 +245,22 @@ ErrorCode disassemble_RI(Context* c, size_t table_index, const uint8_t* bin_buff
     char buffer[MAX_OPERANDS_LEN];
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     bool m1_unused = INSTRUCTION_TABLE[table_index].unused_operands & M1_UNUSED;
+    size_t i = 0;
     // R1/M1:
     switch (format){
     case RIa:
     case RIb:
         memset(&buffer, 0, sizeof(buffer));
         hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
-        operands_token[0] = buffer[0];
-        operands_token[1] = ',';
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
         break;
     case RIc:
-        if(m1_unused){
-            operands_token[0] = '0';
-            operands_token[1] = ',';
-        }
-        else{
+        if(!m1_unused){
             memset(&buffer, 0, sizeof(buffer));
             hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
-            operands_token[0] = buffer[0];
-            operands_token[1] = ',';
+            operands_token[i++] = buffer[0];
+            operands_token[i++] = ',';
         }
         break;
     default:
@@ -272,9 +269,9 @@ ErrorCode disassemble_RI(Context* c, size_t table_index, const uint8_t* bin_buff
     // I2/RI2:
     memset(&buffer, 0, sizeof(buffer));
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
-    operands_token[2] = buffer[0];
-    operands_token[3] = buffer[1];
-    operands_token[4] = buffer[2];
-    operands_token[5] = buffer[3];
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = buffer[1];
+    operands_token[i++] = buffer[2];
+    operands_token[i++] = buffer[3];
     return OK;
 }

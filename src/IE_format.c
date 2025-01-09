@@ -142,16 +142,17 @@ ErrorCode display_IE(Context* c, Instruction* instr){
 
 ErrorCode disassemble_IE(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     char buffer[MAX_OPERANDS_LEN];
+    size_t i = 0;
     // Clear buffer
     memset(&buffer, 0, sizeof(buffer));
     // I1:
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
-    operands_token[0] = buffer[0];
-    operands_token[1] = ',';
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = ',';
     // Clear buffer
     memset(&buffer, 0, sizeof(buffer));
     // I2:
     hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
-    operands_token[2] = buffer[0];
+    operands_token[i++] = buffer[0];
     return OK;
 }

@@ -158,23 +158,43 @@ ErrorCode display_RSI(Context* c, Instruction* instr){
     printf("0        8    C    10              1F\n");
     // Print general information
     printf("MNEMONIC: %s\n", INSTRUCTION_TABLE[instr->it_index].mnemonic);
-    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 2, NO_SKIP, true);
+    printf("OPERANDS: %s\n", instr->operands_txt);
+    hex_str_2_char_str((void*)&opcode, sizeof(opcode), 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_2CHR_LEN, NO_SKIP, true);
     printf("OPCODE:   %s\n", conv_buffer);
-    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 8, NO_SKIP, false);
+    hex_str_2_char_str((void*)&instr->binary, MAX_INSTRUCTION_LEN, 0, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_8CHR_LEN, NO_SKIP, false);
     printf("BINARY:   %s\n", conv_buffer);
     printf("LENGTH:   0x%x\n", length);
     printf("FORMAT:   RSI\n");
     printf("OFFSET:   0x%lx\n", instr->offset);
     // Print operands
-    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, NO_SKIP, false);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, NO_SKIP, false);
     printf("R1:       %s\n", conv_buffer);
-    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 1, SKIP, false);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 1, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_1CHR_LEN, SKIP, false);
     printf("R3:       %s\n", conv_buffer);
-    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, 4, NO_SKIP, false);
+    hex_str_2_char_str(((void*)&instr->binary), MAX_INSTRUCTION_LEN, 2, conv_buffer, MAX_PRINTOUT_FIELD_LEN, MAX_4CHR_LEN, NO_SKIP, false);
     printf("RI2:      %s\n", conv_buffer);
     return OK;
 }
 
 ErrorCode disassemble_RSI(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
+    char buffer[MAX_OPERANDS_LEN];
+    size_t i = 0;
+    // R1:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = ',';
+    // R3:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = ',';
+    // RI2:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_4CHR_LEN, NO_SKIP, false);
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = buffer[1];
+    operands_token[i++] = buffer[2];
+    operands_token[i++] = buffer[3];
     return OK;
 }
