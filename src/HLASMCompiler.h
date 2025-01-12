@@ -20,6 +20,7 @@
 #define MAX_5CHR_LEN 5
 #define MAX_6CHR_LEN 6
 #define MAX_8CHR_LEN 8
+#define MAX_12CHR_LEN 12
 #define MAX_PRINTOUT_FIELD_LEN 13
 #define MAX_MSG_EXTRAS 16
 #define MAX_MSG_EXTRA_LEN 128
@@ -44,6 +45,7 @@ typedef uint64_t Address;
 typedef enum ErrorCode ErrorCode;
 enum ErrorCode{
     OK,
+    USE_ALTERNATIVE,
     SRC_FILE_NOT_FOUND,
     OUT_FILE_NOT_WRITABLE,
     CANNOT_OPEN_FILE,
@@ -54,6 +56,7 @@ enum ErrorCode{
     NULL_POINTER_TO_OBJECT,
     TOO_MANY_OPERANDS,
     MISSING_OPERANDS,
+    INVALID_OPCODE,
 };
 
 typedef enum TokensParseState TokensParseState;
@@ -126,6 +129,7 @@ typedef struct Instruction Instruction;
 struct Instruction{
     size_t it_index;
     uint8_t binary[MAX_INSTRUCTION_LEN];
+    char operands_txt[MAX_OPERANDS_LEN];
     Address offset;
     Instruction* next;
 };
@@ -135,58 +139,61 @@ struct Context{
     ErrorCode error_code;
     char msg_extras[MAX_MSG_EXTRAS][MAX_MSG_EXTRA_LEN];
     size_t n_line;
+    size_t bin_offset;
     size_t n_instr;
     Instruction* instr_head;
     Instruction* instr_tail;
 };
-static Context context;
+static Context context __attribute__((unused)) = {};
 
 ErrorCode assemble(Context* c, const char*, const char*);
-bool is_valid_mnemonic(const char*);
+ErrorCode disassemble(Context* c, const char*, const char*);
 bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
 uint16_t mnemonic_to_opcode(const char*);
 uint8_t mnemonic_to_length(const char*);
 size_t mnemonic_to_table_index(const char*);
+size_t opcode_to_table_index(uint16_t);
 int char_str_2_hex_str(const char*, size_t, void*, size_t, size_t, size_t, bool);
 int hex_str_2_char_str(const void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
 
-Instruction* Instruction_init(Context* c, ErrorCode*, const char*, char*, Address);
-ErrorCode build_E(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_I(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_IE(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_MII(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RI(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RIE(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RIL(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RIS(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RR(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RRD(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RRE(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RRF(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RRS(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RS(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RSI(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RSL(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RSY(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RX(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RXE(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RXF(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_RXY(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_S(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_SI(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_SIL(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_SIY(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_SMI(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_SS(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_SSE(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_SSF(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_VRI(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_VRR(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_VRS(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_VRV(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_VRX(Context*, size_t, const char*, uint8_t*);
-ErrorCode build_VSI(Context*, size_t, const char*, uint8_t*);
+Instruction* Instruction_init_a(Context* c, ErrorCode*, const char*, char*, Address);
+Instruction* Instruction_init_d(Context* c, ErrorCode*, uint16_t, const uint8_t*, Address);
+ErrorCode assemble_E(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_I(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_IE(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_MII(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RI(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RIE(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RIL(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RIS(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RR(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RRD(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RRE(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RRF(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RRS(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RS(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RSI(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RSL(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RSY(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RX(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RXE(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RXF(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_RXY(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_S(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_SI(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_SIL(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_SIY(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_SMI(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_SS(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_SSE(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_SSF(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_VRI(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_VRR(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_VRS(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_VRV(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_VRX(Context*, size_t, const char*, uint8_t*);
+ErrorCode assemble_VSI(Context*, size_t, const char*, uint8_t*);
 
 ErrorCode display_E(Context*, Instruction*);
 ErrorCode display_I(Context*, Instruction*);
@@ -224,41 +231,41 @@ ErrorCode display_VRV(Context*, Instruction*);
 ErrorCode display_VRX(Context*, Instruction*);
 ErrorCode display_VSI(Context*, Instruction*);
 
-ErrorCode decode_E();
-ErrorCode decode_I();
-ErrorCode decode_IE();
-ErrorCode decode_MII();
-ErrorCode decode_RI();
-ErrorCode decode_RIE();
-ErrorCode decode_RIL();
-ErrorCode decode_RIS();
-ErrorCode decode_RR();
-ErrorCode decode_RRD();
-ErrorCode decode_RRE();
-ErrorCode decode_RRF();
-ErrorCode decode_RRS();
-ErrorCode decode_RS();
-ErrorCode decode_RSI();
-ErrorCode decode_RSL();
-ErrorCode decode_RSY();
-ErrorCode decode_RX();
-ErrorCode decode_RXE();
-ErrorCode decode_RXF();
-ErrorCode decode_RXY();
-ErrorCode decode_S();
-ErrorCode decode_SI();
-ErrorCode decode_SIL();
-ErrorCode decode_SIY();
-ErrorCode decode_SMI();
-ErrorCode decode_SS();
-ErrorCode decode_SSE();
-ErrorCode decode_SSF();
-ErrorCode decode_VRI();
-ErrorCode decode_VRR();
-ErrorCode decode_VRS();
-ErrorCode decode_VRV();
-ErrorCode decode_VRX();
-ErrorCode decode_VSI();
+ErrorCode disassemble_E(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_I(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_IE(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_MII(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RI(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RIE(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RIL(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RIS(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RR(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RRD(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RRE(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RRF(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RRS(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RS(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RSI(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RSL(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RSY(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RX(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RXE(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RXF(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_RXY(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_S(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_SI(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_SIL(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_SIY(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_SMI(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_SS(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_SSE(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_SSF(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_VRI(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_VRR(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_VRS(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_VRV(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_VRX(Context*, size_t, const uint8_t*, char*);
+ErrorCode disassemble_VSI(Context*, size_t, const uint8_t*, char*);
 
 void Context_init(Context* c);
 void Context_free(Context* c);

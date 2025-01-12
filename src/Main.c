@@ -75,15 +75,15 @@ int main(int argc, char* argv[]){
         }
     }
     // Assemble or disassemble
-    if(options & ASSEMBLE_OPT == 1){
+    if((options & ASSEMBLE_OPT) == 1){
         ret_err = assemble(c, argv[2], argv[3]);
         if(ret_err != OK){
             display_error(c);
             return -1;
         }
     }
-    else if(options & DISASSEMBLE_OPT == 1){
-        //ret_err = disassemble(c, argv[2]);
+    else if((options & DISASSEMBLE_OPT) >> 1 == 1){
+        ret_err = disassemble(c, argv[2], argv[3]);
         if(ret_err != OK){
             display_error(c);
             return -1;

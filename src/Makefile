@@ -82,10 +82,10 @@ all: compile link
 debug: compile_debug link
 	
 compile:
-	gcc -c $(SRC_FILES)
+	gcc -c -Wall $(SRC_FILES)
 
 single:
-	gcc -c -g $(FILE)
+	gcc -c -g -Wall $(FILE)
 
 compile_debug:
 	gcc -c -g $(SRC_FILES)
