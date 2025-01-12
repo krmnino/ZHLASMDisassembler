@@ -152,7 +152,6 @@ ErrorCode display_SIL(Context* c, Instruction* instr){
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
-    InstructionFormat format = INSTRUCTION_TABLE[instr->it_index].format;
     char conv_buffer[MAX_PRINTOUT_FIELD_LEN];
     // Print instruction layout
     printf("+----------------+----+------------+----------------+\n");

@@ -23,7 +23,6 @@ int main(int argc, char* argv[]){
     int ret;
     Context* c = &context;
     ErrorCode ret_err;
-    uint32_t eval;
     uint32_t options = 0;
     Context_init(c);
     // Make sure options start with a dash
@@ -76,7 +75,7 @@ int main(int argc, char* argv[]){
         }
     }
     // Assemble or disassemble
-    if(options & ASSEMBLE_OPT == 1){
+    if((options & ASSEMBLE_OPT) == 1){
         ret_err = assemble(c, argv[2], argv[3]);
         if(ret_err != OK){
             display_error(c);

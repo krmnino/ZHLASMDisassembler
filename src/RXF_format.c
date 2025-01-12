@@ -254,7 +254,6 @@ ErrorCode display_RXF(Context* c, Instruction* instr){
 
 ErrorCode disassemble_RXF(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     char buffer[MAX_OPERANDS_LEN];
-    bool m3_unused = INSTRUCTION_TABLE[table_index].unused_operands & M3_UNUSED;
     size_t i = 0;
     // R1:
     memset(&buffer, 0, sizeof(buffer));

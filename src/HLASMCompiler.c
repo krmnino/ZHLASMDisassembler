@@ -145,7 +145,6 @@ ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filenam
     }
     fclose(source_file);
     curr = c->instr_head;
-    uint8_t buff;
     while(true){
         if(curr == NULL){
             break;
@@ -163,7 +162,6 @@ ErrorCode disassemble(Context* c, const char* bin_filename, const char* src_file
     FILE* source_file;
     void* bin_buffer_ptr;
     Address instr_offset;
-    size_t table_index;
     size_t file_len;
     ErrorCode ret_ec;
     Instruction* instr;
@@ -171,7 +169,6 @@ ErrorCode disassemble(Context* c, const char* bin_filename, const char* src_file
     uint16_t opcode;
     uint8_t instr_len;
     uint8_t nibble;
-    char src_buffer[MAX_PRINTOUT_FIELD_LEN];
     binary_file = fopen(bin_filename, "r");
     source_file = fopen(src_filename, "w");
     if(binary_file == NULL){
@@ -281,7 +278,6 @@ ErrorCode disassemble(Context* c, const char* bin_filename, const char* src_file
     }
     fclose(binary_file);
     curr = c->instr_head;
-    uint8_t buff;
     while(true){
         if(curr == NULL){
             break;
@@ -597,7 +593,6 @@ ErrorCode add_instruction(Context* c, Instruction* instr){
 
 ErrorCode display_stream(Context* c){
     Instruction* curr = c->instr_head;
-    InstructionFormat format;
     int ret;
     while (curr != NULL){
         ret = INSTRUCTION_TABLE[curr->it_index].display_fn(c, curr);

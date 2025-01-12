@@ -116,7 +116,7 @@ ErrorCode assemble_SS(Context* c, size_t table_index, const char* operands_token
                 }
             }
             else{
-                switch (state){
+                switch (format){
                 case SSa:
                     if(b_idx >= MAX_2CHR_LEN){
                         c->error_code = INVALID_OPERAND_LENGTH;
@@ -251,7 +251,7 @@ ErrorCode assemble_SS(Context* c, size_t table_index, const char* operands_token
                 }
             }
             else{
-                switch (state){
+                switch (format){
                 case SSb:
                     if(b_idx >= MAX_1CHR_LEN){
                         c->error_code = INVALID_OPERAND_LENGTH;
@@ -360,7 +360,7 @@ ErrorCode assemble_SS(Context* c, size_t table_index, const char* operands_token
                 }
             }
             else{
-                switch (state){
+                switch (format){
                 case SSc:
                     if(b_idx >= MAX_1CHR_LEN){
                         c->error_code = INVALID_OPERAND_LENGTH;

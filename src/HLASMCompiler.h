@@ -144,7 +144,7 @@ struct Context{
     Instruction* instr_head;
     Instruction* instr_tail;
 };
-static Context context;
+static Context context __attribute__((unused)) = {};
 
 ErrorCode assemble(Context* c, const char*, const char*);
 ErrorCode disassemble(Context* c, const char*, const char*);
