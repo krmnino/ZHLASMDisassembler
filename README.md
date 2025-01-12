@@ -1,2 +1,2 @@
-# ZHLASMCompiler
-Z High-Level Assembler compiler in C. 
+# ZHLASMDisassembler
+Z High-Level Assembly language disassembler in C. 
