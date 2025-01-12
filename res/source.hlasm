@@ -73,7 +73,7 @@ VAP     D,E,F,AB,8           ! VRIf format
 VPSOP   1,2,E3,B8,5          ! VRIg format        
 VLIP    F,4321,5             ! VRIh format        
 VCVD    A,2,89,4             ! VRIi format        
-VCFPS   1,2,A,B,C            ! VRRa format        
+VCDG    1,2,A,B,C            ! VRRa format        
 VCLFNH  A,B,4,5              ! VRRa format        
 VISTR   C,D,3,5              ! VRRa format        
 VSEG    5,6,3                ! VRRa format        

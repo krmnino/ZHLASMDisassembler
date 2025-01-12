@@ -995,5 +995,285 @@ ErrorCode display_VRR(Context* c, Instruction* instr){
 }
 
 ErrorCode disassemble_VRR(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
+    char buffer[MAX_OPERANDS_LEN];
+    InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
+    bool m3_unused = INSTRUCTION_TABLE[table_index].unused_operands & M3_UNUSED;
+    bool m4_unused = INSTRUCTION_TABLE[table_index].unused_operands & M4_UNUSED;
+    bool m5_unused = INSTRUCTION_TABLE[table_index].unused_operands & M5_UNUSED;
+    bool m6_unused = INSTRUCTION_TABLE[table_index].unused_operands & M6_UNUSED;
+    size_t i = 0;
+    switch (format){
+    case VRRa:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        // M3:
+        if(!m3_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        // M4:
+        if(!m4_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        // M5:
+        if(!m5_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        break;
+    case VRRb:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        // M4:
+        if(!m4_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        // M5:
+        if(!m5_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        break;
+    case VRRc:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        // M4:
+        if(!m4_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        // M5:
+        if(!m5_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        // M6:
+        if(!m6_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        break;
+    case VRRd:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V4:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        // M5:
+        if(!m5_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        // M6:
+        if(!m6_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        break;
+    case VRRe:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V4:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        // M5:
+        if(!m5_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        // M6:
+        if(!m6_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        break;
+    case VRRf:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // R2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // R3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        break;
+    case VRRg:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        break;
+    case VRRh:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        // M3:
+        if(!m3_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        break;
+    case VRRi:
+        // R1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // M3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        // M4:
+        if(!m4_unused){
+            memset(&buffer, 0, sizeof(buffer));
+            hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+            operands_token[i++] = ',';
+            operands_token[i++] = buffer[0];
+        }
+        break;
+    case VRRj:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // M4:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        break;
+    case VRRk:
+        // V1:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // V2:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
+        operands_token[i++] = buffer[0];
+        operands_token[i++] = ',';
+        // M3:
+        memset(&buffer, 0, sizeof(buffer));
+        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 3, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+        operands_token[i++] = buffer[0];
+        break;
+    default:
+        break;
+    }
     return OK;
 }
