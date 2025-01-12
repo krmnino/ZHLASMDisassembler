@@ -214,5 +214,30 @@ ErrorCode display_VSI(Context* c, Instruction* instr){
 }
 
 ErrorCode disassemble_VSI(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
+    char buffer[MAX_OPERANDS_LEN];
+    size_t i = 0;
+    // V1:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 4, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = ',';
+    // D2:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_3CHR_LEN, SKIP, false);
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = buffer[1];
+    operands_token[i++] = buffer[2];
+    // B2:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, NO_SKIP, false);
+    operands_token[i++] = '(';
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = ')';
+    // I3:
+    memset(&buffer, 0, sizeof(buffer));
+    hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 1, buffer, MAX_OPERANDS_LEN, MAX_2CHR_LEN, NO_SKIP, false);
+    operands_token[i++] = ',';
+    operands_token[i++] = buffer[0];
+    operands_token[i++] = buffer[1];
     return OK;
 }

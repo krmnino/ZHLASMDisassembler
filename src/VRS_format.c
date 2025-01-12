@@ -430,7 +430,7 @@ ErrorCode display_VRS(Context* c, Instruction* instr){
 }
 
 ErrorCode disassemble_VRS(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
-char buffer[MAX_OPERANDS_LEN];
+    char buffer[MAX_OPERANDS_LEN];
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     bool m4_unused = INSTRUCTION_TABLE[table_index].unused_operands & M4_UNUSED;
     size_t i = 0;
