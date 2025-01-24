@@ -1,5 +1,5 @@
 SRC_FILES = InstructionTable.h		\
-			HLASMCompiler.c 		\
+			HLASMDisassembler.c 	\
 			E_format.c				\
 			I_format.c				\
 			IE_format.c				\
@@ -37,7 +37,7 @@ SRC_FILES = InstructionTable.h		\
 			VSI_format.c			\
 			Main.c
 
-OBJ_FILES = HLASMCompiler.o 		\
+OBJ_FILES = HLASMDisassembler.o 	\
 			E_format.o				\
 			I_format.o				\
 			IE_format.o				\
@@ -91,8 +91,8 @@ compile_debug:
 	gcc -c -g $(SRC_FILES)
 
 link:
-	gcc -o compiler $(OBJ_FILES)
+	gcc -o zhlasmdis $(OBJ_FILES)
 
 clean:
-	rm *.o *.gch compiler
+	rm *.o *.gch zhlasmdis
 

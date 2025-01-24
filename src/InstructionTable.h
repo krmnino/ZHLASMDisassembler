@@ -1,7 +1,7 @@
 #ifndef INSTRTAB
 #define INSTRTAB
 
-#include "HLASMCompiler.h"
+#include "HLASMDisassembler.h"
 
 typedef struct ITEntry ITEntry;
 struct ITEntry{

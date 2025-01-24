@@ -1,5 +1,5 @@
 #include "InstructionTable.h"
-#include "HLASMCompiler.h"
+#include "HLASMDisassembler.h"
 
 
 ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){

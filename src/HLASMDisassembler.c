@@ -1,4 +1,4 @@
-#include "HLASMCompiler.h"
+#include "HLASMDisassembler.h"
 #include "InstructionTable.h"
 
 ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filename){

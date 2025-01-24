@@ -1,5 +1,5 @@
-#ifndef COMPILER
-#define COMPILER
+#ifndef DISASSEMBLER
+#define DISASSEMBLER
 
 #include <stdarg.h> 
 #include <stdlib.h>
