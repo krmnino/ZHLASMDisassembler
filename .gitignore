@@ -1,4 +1,4 @@
-src/compiler
+src/zhlasmdis
 src/.vscode
 src/*.o
 src/*.gch
