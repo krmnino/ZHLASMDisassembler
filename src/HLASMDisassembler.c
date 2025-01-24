@@ -253,6 +253,7 @@ ErrorCode disassemble(Context* c, const char* bin_filename, const char* src_file
         case 0x03:
             fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);
             switch (bin_buffer[0]){
+            case 0x00:
             case 0x01:
                 opcode = (bin_buffer[0] << 8) | bin_buffer[1];
                 break;
