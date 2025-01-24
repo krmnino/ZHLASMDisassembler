@@ -1,5 +1,5 @@
 #include "InstructionTable.h"
-#include "HLASMCompiler.h"
+#include "HLASMDisassembler.h"
 
 ErrorCode assemble_VRR(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;

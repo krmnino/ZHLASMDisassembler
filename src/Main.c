@@ -1,6 +1,6 @@
 #include <unistd.h>
 
-#include "HLASMCompiler.h"
+#include "HLASMDisassembler.h"
 
 #define OPTS_MAX_LEN 4
 #define ASSEMBLE_OPT 0x1
@@ -8,10 +8,10 @@
 #define PRINT_OPT 0x4
 
 void print_usage(){
-    printf("USAGE: ./compiler [-OPTIONS] [INPUT_FILE] [OUTPUT_FILE]\n");
+    printf("USAGE: ./zhlasmdis [-OPTIONS] [INPUT_FILE] [OUTPUT_FILE]\n");
     printf("OPTIONS:\n");
-    printf("a: assemble binary from source file\n");
     printf("d: disassemble binary into source file\n");
+    printf("a: assemble binary from source file\n");
     printf("p: optional - generate detailed print out from source/binary file\n");
 }
 
