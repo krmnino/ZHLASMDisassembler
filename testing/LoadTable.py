@@ -42,8 +42,9 @@ def clean_table_entry(raw_entry):
     return clean_entry
 
 
-def load_table(table : List[Any]):
+def load_table():
     with open('../src/InstructionTable.h') as f:
+        table = []
         table_keyword = 'INSTRUCTION_TABLE'
         start_parsing = False
         buffer = ''
