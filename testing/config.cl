@@ -1,3 +1,3 @@
-stream_size = 1000;
+stream_size = 2500;
 enable_formats = [];
-disable_formats = [E];
+disable_formats = [];
