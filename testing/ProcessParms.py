@@ -89,9 +89,9 @@ enabled_formats = {
     'VSI'   : True, 
 }
 
-def load_parameters() -> int:
+def load_parameters(table : List[str]) -> int:
     config = cl.Config('config.cl')
-    ret = validate_parms(config)
+    ret = validate_parms(config, table)
     if(ret != 0):
         return -1
     pgm_parms['max_stream_size'] = config.get_value('max_stream_size')
@@ -103,7 +103,7 @@ def load_parameters() -> int:
         disable_formats_parms(disable_fmts)
     return 0
 
-def validate_parms(config : cl.Config) -> int:
+def validate_parms(config : cl.Config, table : List[str]) -> int:
     if((not config.key_exists('max_stream_size')) or \
        (not config.key_exists('enable_instructions'))  or \
        (not config.key_exists('disable_instructions'))  or \
@@ -122,8 +122,25 @@ def validate_parms(config : cl.Config) -> int:
         for d_key in disable_fmts:
             if(d_key not in enabled_formats.keys()):
                 return -1
-    if(len(enable_fmts) != 0 and len(disable_fmts) != 0):
+    enable_instrs = config.get_value('enable_instructions')
+    disable_instrs = config.get_value('disable_instructions')
+    found = False
+    if(len(enable_instrs) != 0 and len(disable_instrs) != 0):
         return -1
+    if(len(enable_instrs) != 0):
+        for instr in enable_instrs:
+            for entry in table:
+                if(instr == entry[7]):
+                    found = True
+            if(not found):
+                return -1
+    if(len(disable_instrs) != 0):
+        for instr in enable_instrs:
+            for entry in table:
+                if(instr == entry[7]):
+                    found = True
+            if(not found):
+                return -1
     return 0
 
 def enable_formats_parms(in_enable_fmts : List[str]) -> None:
