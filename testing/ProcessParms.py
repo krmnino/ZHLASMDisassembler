@@ -3,7 +3,9 @@ from typing import List
 import ConfigLoader as cl
 
 pgm_parms = {
-    'max_stream_size' : 0
+    'max_stream_size' : 0,
+    'enable_instructions' : [],
+    'disable_instructions' : []
 }
 
 enabled_formats = {
@@ -101,6 +103,12 @@ def load_parameters(table : List[str]) -> int:
         enable_formats_parms(enable_fmts)
     if(len(disable_fmts) != 0):
         disable_formats_parms(disable_fmts)
+    enable_instrs = config.get_value('enable_instructions')
+    disable_instrs = config.get_value('disable_instructions')
+    if(len(enable_instrs) != 0):
+        pgm_parms['enable_instructions'] = enable_instrs
+    if(len(disable_instrs) != 0):
+        pgm_parms['disable_instructions'] = disable_instrs
     return 0
 
 def validate_parms(config : cl.Config, table : List[str]) -> int:
