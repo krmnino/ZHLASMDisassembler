@@ -1,4 +1,8 @@
+from typing import List
+
 import ConfigLoader as cl
+
+max_stream_size = [0]
 
 enabled_formats = {
     'E'     : True,
@@ -85,35 +89,48 @@ enabled_formats = {
 
 def load_parameters() -> int:
     config = cl.Config('config.cl')
-    stream_size = config.get_value('stream_size')
+    ret = validate_parms(config)
+    if(ret != 0):
+        return -1
+    max_stream_size[0] = config.get_value('max_stream_size')
+    enable = config.get_value('enable_formats')
+    disable = config.get_value('disable_formats')
+    if(len(enable) != 0):
+        enable_formats_parms(enable)
+    if(len(disable) != 0):
+        disable_formats_parms(disable)
+    return 0
+
+def validate_parms(config : cl.Config) -> int:
+    if((not config.key_exists('max_stream_size')) or \
+       (not config.key_exists('enable_instructions'))  or \
+       (not config.key_exists('disable_instructions'))  or \
+       (not config.key_exists('enable_formats'))  or \
+       (not config.key_exists('disable_formats'))):
+        return -1
     enable = config.get_value('enable_formats')
     disable = config.get_value('disable_formats')
     if(len(enable) != 0 and len(disable) != 0):
-        # ERROR
         return -1
     if(len(enable) != 0):
         for e_key in enable:
             if(e_key not in enabled_formats.keys()):
-                # ERROR
                 return -1
         enable_formats_parms(enable)
-        return stream_size
     if(len(disable) != 0):
         for d_key in disable:
             if(d_key not in enabled_formats.keys()):
-                # ERROR
                 return -1
         disable_formats_parms(disable)
-        return stream_size
-    return stream_size
+    return 0
 
-def enable_formats_parms(enable) -> None:
+def enable_formats_parms(enable : List[str]) -> None:
     for key in enabled_formats.keys():
         if(key in enable):
             continue
         enabled_formats[key] = False
 
-def disable_formats_parms(disable) -> None:
+def disable_formats_parms(disable : List[str]) -> None:
     for key in enabled_formats.keys():
         if(key in disable):
             enabled_formats[key] = False
