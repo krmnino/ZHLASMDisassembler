@@ -300,7 +300,7 @@ static const ITEntry INSTRUCTION_TABLE[] = {
     { assemble_RRE , display_RRE , disassemble_RRE , RRE , (uint16_t)0xB257  , USE_ALL                           , (uint8_t)0x4, "CUSE"    , ""         }, 
     { assemble_RRF , display_RRF , disassemble_RRF , RRFc, (uint16_t)0xB2A7  , M4_UNUSED                         , (uint8_t)0x4, "CUTFU"   , "CU12"     }, 
     { assemble_RRF , display_RRF , disassemble_RRF , RRFc, (uint16_t)0xB2A6  , M4_UNUSED                         , (uint8_t)0x4, "CUUTF"   , "CU21"     }, 
-    { assemble_RRE , display_RRE , disassemble_RRE , RRE , (uint16_t)0x2035  , USE_ALL                           , (uint8_t)0x4, "CUXTR"   , ""         }, 
+    { assemble_RRE , display_RRE , disassemble_RRE , RRE , (uint16_t)0xB3EA  , USE_ALL                           , (uint8_t)0x4, "CUXTR"   , ""         }, 
     { assemble_RX  , display_RX  , disassemble_RX  , RXa , (uint16_t)0x4F    , USE_ALL                           , (uint8_t)0x4, "CVB"     , ""         }, 
     { assemble_RXY , display_RXY , disassemble_RXY , RXYa, (uint16_t)0xE30E  , USE_ALL                           , (uint8_t)0x6, "CVBG"    , ""         }, 
     { assemble_RXY , display_RXY , disassemble_RXY , RXYa, (uint16_t)0xE306  , USE_ALL                           , (uint8_t)0x6, "CVBY"    , ""         }, 
