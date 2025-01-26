@@ -1,134 +1,138 @@
-import Utils
 from typing import List
 
-from ProcessParms import enabled_formats
+import Utils
+from ProcessParms import pgm_parms
+from ProcessParms import available_instructions
 from LoadTable import FORMAT_IDX
 from LoadTable import UNUSED_IDX
 from LoadTable import MNEMONIC_IDX
 
 MNEMONIC_MAX_LEN = 8
 
-def generate_stream(table : List[str], n_instructions : int) -> List[str]:
+def generate_stream() -> List[str]:
     stream = []
     i = 0
-    while(i < n_instructions):
-        rand_idx = Utils.gen_random_integer(1, len(table) - 1)
-        format = table[rand_idx][FORMAT_IDX]
-        if(enabled_formats['E'] and format == 'E'):
-            stream.append(generate_E(table, rand_idx))
-        elif(enabled_formats['I'] and  format == 'I'):
-            stream.append(generate_I(table, rand_idx))
-        elif(enabled_formats['IE'] and format == 'IE'):
-            stream.append(generate_IE(table, rand_idx))
-        elif(enabled_formats['MII'] and format == 'MII'):
-            stream.append(generate_MII(table, rand_idx))
-        elif((enabled_formats['RIa'] and format == 'RIa') or \
-             (enabled_formats['RIb'] and format == 'RIb') or \
-             (enabled_formats['RIc'] and format == 'RIc')):
-            stream.append(generate_RI(table, rand_idx))
-        elif((enabled_formats['RIEa'] and format == 'RIEa') or \
-             (enabled_formats['RIEb'] and format == 'RIEb') or \
-             (enabled_formats['RIEc'] and format == 'RIEc') or \
-             (enabled_formats['RIEd'] and format == 'RIEd') or \
-             (enabled_formats['RIEe'] and format == 'RIEe') or \
-             (enabled_formats['RIEf'] and format == 'RIEf') or \
-             (enabled_formats['RIEg'] and format == 'RIEg')):
-            stream.append(generate_RIE(table, rand_idx))
-        elif((enabled_formats['RILa'] and format == 'RILa') or \
-             (enabled_formats['RILb'] and format == 'RILb') or \
-             (enabled_formats['RILc'] and format == 'RILc')):
-            stream.append(generate_RIL(table, rand_idx))
-        elif(enabled_formats['RIS'] and format == 'RIS'):
-            stream.append(generate_RIS(table, rand_idx))
-        elif(enabled_formats['RR'] and format == 'RR'):
-            stream.append(generate_RR(table, rand_idx))
-        elif(enabled_formats['RRD'] and format == 'RRD'):
-            stream.append(generate_RRD(table, rand_idx))
-        elif(enabled_formats['RRE'] and format == 'RRE'):
-            stream.append(generate_RRE(table, rand_idx))
-        elif((enabled_formats['RRFa'] and format == 'RRFa') or \
-             (enabled_formats['RRFb'] and format == 'RRFb') or \
-             (enabled_formats['RRFc'] and format == 'RRFc') or \
-             (enabled_formats['RRFd'] and format == 'RRFd') or \
-             (enabled_formats['RRFe'] and format == 'RRFe')):
-            stream.append(generate_RRF(table, rand_idx))
-        elif(enabled_formats['RRS'] and format == 'RRS'):
-            stream.append(generate_RRS(table, rand_idx))
-        elif((enabled_formats['RSa'] and format == 'RSa') or \
-             (enabled_formats['RSb'] and format == 'RSb')):
-            stream.append(generate_RS(table, rand_idx))
-        elif(enabled_formats['RSI'] and format == 'RSI'):
-            stream.append(generate_RSI(table, rand_idx))
-        elif((enabled_formats['RSLa'] and format == 'RSLa') or \
-             (enabled_formats['RSLb'] and format == 'RSLb')):
-            stream.append(generate_RSL(table, rand_idx))
-        elif((enabled_formats['RSYa'] and format == 'RSYa') or \
-             (enabled_formats['RSYb'] and format == 'RSYb')):
-            stream.append(generate_RSY(table, rand_idx))
-        elif((enabled_formats['RXa'] and format == 'RXa') or \
-             (enabled_formats['RXb'] and format == 'RXb')):
-            stream.append(generate_RX(table, rand_idx))
-        elif(enabled_formats['RXE'] and format == 'RXE'):
-            stream.append(generate_RXE(table, rand_idx))
-        elif(enabled_formats['RXF'] and format == 'RXF'):
-            stream.append(generate_RXF(table, rand_idx))
-        elif((enabled_formats['RXYa'] and format == 'RXYa') or \
-             (enabled_formats['RXYb'] and format == 'RXYb')):
-            stream.append(generate_RXY(table, rand_idx))
-        elif(enabled_formats['S'] and format == 'S'):
-            stream.append(generate_S(table, rand_idx))
-        elif(enabled_formats['SI'] and format == 'SI'):
-            stream.append(generate_SI(table, rand_idx))
-        elif(enabled_formats['SIL'] and format == 'SIL'):
-            stream.append(generate_SIL(table, rand_idx))
-        elif(enabled_formats['SIY'] and format == 'SIY'):
-            stream.append(generate_SIY(table, rand_idx))
-        elif(enabled_formats['SMI'] and format == 'SMI'):
-            stream.append(generate_SMI(table, rand_idx))
-        elif((enabled_formats['SSa'] and format == 'SSa') or \
-             (enabled_formats['SSb'] and format == 'SSb') or \
-             (enabled_formats['SSc'] and format == 'SSc') or \
-             (enabled_formats['SSd'] and format == 'SSd') or \
-             (enabled_formats['SSe'] and format == 'SSe') or \
-             (enabled_formats['SSf'] and format == 'SSf')):
-            stream.append(generate_SS(table, rand_idx))
-        elif(enabled_formats['SSE'] and format == 'SSE'):
-            stream.append(generate_SSE(table, rand_idx))
-        elif(enabled_formats['SSF'] and format == 'SSF'):
-            stream.append(generate_SSF(table, rand_idx))
-        elif((enabled_formats['VRIa'] and format == 'VRIa') or \
-             (enabled_formats['VRIb'] and format == 'VRIb') or \
-             (enabled_formats['VRIc'] and format == 'VRIc') or \
-             (enabled_formats['VRId'] and format == 'VRId') or \
-             (enabled_formats['VRIe'] and format == 'VRIe') or \
-             (enabled_formats['VRIf'] and format == 'VRIf') or \
-             (enabled_formats['VRIg'] and format == 'VRIg') or \
-             (enabled_formats['VRIh'] and format == 'VRIh') or \
-             (enabled_formats['VRIi'] and format == 'VRIi')):
-            stream.append(generate_VRI(table, rand_idx))
+    while(i < pgm_parms['max_stream_size']):
+        if(len(available_instructions) == 1):
+            rand_idx = 0
+        else:
+            rand_idx = Utils.gen_random_integer(0, len(available_instructions) - 1)
+        format = available_instructions[rand_idx][FORMAT_IDX]
+        if(format == 'E'):
+            stream.append(generate_E(rand_idx))
+        elif(format == 'I'):
+            stream.append(generate_I(rand_idx))
+        elif(format == 'IE'):
+            stream.append(generate_IE(rand_idx))
+        elif(format == 'MII'):
+            stream.append(generate_MII(rand_idx))
+        elif(format == 'RIa' or \
+             format == 'RIb' or \
+             format == 'RIc'):
+            stream.append(generate_RI(rand_idx))
+        elif(format == 'RIEa' or \
+             format == 'RIEb' or \
+             format == 'RIEc' or \
+             format == 'RIEd' or \
+             format == 'RIEe' or \
+             format == 'RIEf' or \
+             format == 'RIEg'):
+            stream.append(generate_RIE(rand_idx))
+        elif(format == 'RILa' or \
+             format == 'RILb' or \
+             format == 'RILc'):
+            stream.append(generate_RIL(rand_idx))
+        elif(format == 'RIS'):
+            stream.append(generate_RIS(rand_idx))
+        elif(format == 'RR'):
+            stream.append(generate_RR(rand_idx))
+        elif(format == 'RRD'):
+            stream.append(generate_RRD(rand_idx))
+        elif(format == 'RRE'):
+            stream.append(generate_RRE(rand_idx))
+        elif(format == 'RRFa' or \
+             format == 'RRFb' or \
+             format == 'RRFc' or \
+             format == 'RRFd' or \
+             format == 'RRFe'):
+            stream.append(generate_RRF(rand_idx))
+        elif(format == 'RRS'):
+            stream.append(generate_RRS(rand_idx))
+        elif(format == 'RSa' or \
+             format == 'RSb'):
+            stream.append(generate_RS(rand_idx))
+        elif(format == 'RSI'):
+            stream.append(generate_RSI(rand_idx))
+        elif(format == 'RSLa' or \
+             format == 'RSLb'):
+            stream.append(generate_RSL(rand_idx))
+        elif(format == 'RSYa' or \
+             format == 'RSYb'):
+            stream.append(generate_RSY(rand_idx))
+        elif(format == 'RXa' or \
+             format == 'RXb'):
+            stream.append(generate_RX(rand_idx))
+        elif(format == 'RXE'):
+            stream.append(generate_RXE(rand_idx))
+        elif(format == 'RXF'):
+            stream.append(generate_RXF(rand_idx))
+        elif(format == 'RXYa' or \
+             format == 'RXYb'):
+            stream.append(generate_RXY(rand_idx))
+        elif(format == 'S'):
+            stream.append(generate_S(rand_idx))
+        elif(format == 'SI'):
+            stream.append(generate_SI(rand_idx))
+        elif(format == 'SIL'):
+            stream.append(generate_SIL(rand_idx))
+        elif(format == 'SIY'):
+            stream.append(generate_SIY(rand_idx))
+        elif(format == 'SMI'):
+            stream.append(generate_SMI(rand_idx))
+        elif(format == 'SSa' or \
+             format == 'SSb' or \
+             format == 'SSc' or \
+             format == 'SSd' or \
+             format == 'SSe' or \
+             format == 'SSf'):
+            stream.append(generate_SS(rand_idx))
+        elif(format == 'SSE'):
+            stream.append(generate_SSE(rand_idx))
+        elif(format == 'SSF'):
+            stream.append(generate_SSF(rand_idx))
+        elif(format == 'VRIa' or \
+             format == 'VRIb' or \
+             format == 'VRIc' or \
+             format == 'VRId' or \
+             format == 'VRIe' or \
+             format == 'VRIf' or \
+             format == 'VRIg' or \
+             format == 'VRIh' or \
+             format == 'VRIi'):
+            stream.append(generate_VRI(rand_idx))
         else:
             continue
         i += 1
     return stream
 
-def generate_E(table, tidx):
+def generate_E(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX] 
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX] 
     asm_instr += mnemonic
     return asm_instr
 
-def generate_I(table, tidx):
+def generate_I(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     i = Utils.gen_operand(0xFF)
     asm_instr += i
     return asm_instr
 
-def generate_IE(table, tidx):
+def generate_IE(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     i1 = Utils.gen_operand(0xF)
@@ -138,9 +142,9 @@ def generate_IE(table, tidx):
     asm_instr += i2
     return asm_instr
 
-def generate_MII(table, tidx):
+def generate_MII(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     m1 = Utils.gen_operand(0xF)
@@ -153,11 +157,11 @@ def generate_MII(table, tidx):
     asm_instr += ri3
     return asm_instr
 
-def generate_RI(table, tidx):
+def generate_RI(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    format = table[tidx][FORMAT_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1_m1 = Utils.gen_operand(0xF)
@@ -168,10 +172,10 @@ def generate_RI(table, tidx):
     asm_instr += i2_ri2
     return asm_instr
 
-def generate_RIE(table, tidx):
+def generate_RIE(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    format = table[tidx][FORMAT_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'RIEa'):
@@ -242,9 +246,9 @@ def generate_RIE(table, tidx):
         asm_instr += m3
     return asm_instr
 
-def generate_RIL(table, tidx):
+def generate_RIL(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1_m1 = Utils.gen_operand(0xF)
@@ -254,9 +258,9 @@ def generate_RIL(table, tidx):
     asm_instr += i2_ri2
     return asm_instr
 
-def generate_RIS(table, tidx):
+def generate_RIS(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -276,10 +280,10 @@ def generate_RIS(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_RR(table, tidx):
+def generate_RR(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -290,9 +294,9 @@ def generate_RR(table, tidx):
         asm_instr += r2
     return asm_instr
 
-def generate_RRD(table, tidx):
+def generate_RRD(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -305,10 +309,10 @@ def generate_RRD(table, tidx):
     asm_instr += r2
     return asm_instr
 
-def generate_RRE(table, tidx):
+def generate_RRE(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -320,11 +324,11 @@ def generate_RRE(table, tidx):
         asm_instr += r2
     return asm_instr
 
-def generate_RRF(table, tidx):
+def generate_RRF(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    format = table[tidx][FORMAT_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'RRFa'):
@@ -388,9 +392,9 @@ def generate_RRF(table, tidx):
             asm_instr += m4
     return asm_instr
 
-def generate_RRS(table, tidx):
+def generate_RRS(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -410,11 +414,11 @@ def generate_RRS(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_RS(table, tidx):
+def generate_RS(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    format = table[tidx][FORMAT_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -442,9 +446,9 @@ def generate_RS(table, tidx):
         asm_instr += ')'
     return asm_instr
 
-def generate_RSI(table, tidx):
+def generate_RSI(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -457,10 +461,10 @@ def generate_RSI(table, tidx):
     asm_instr += ri2
     return asm_instr
 
-def generate_RSL(table, tidx):
+def generate_RSL(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    format = table[tidx][FORMAT_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'RSLa'):
@@ -491,9 +495,9 @@ def generate_RSL(table, tidx):
         asm_instr += m3
     return asm_instr
 
-def generate_RSY(table, tidx):
+def generate_RSY(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -510,9 +514,9 @@ def generate_RSY(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_RX(table, tidx):
+def generate_RX(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1_m1 = Utils.gen_operand(0xF)
@@ -529,10 +533,10 @@ def generate_RX(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_RXE(table, tidx):
+def generate_RXE(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -553,9 +557,9 @@ def generate_RXE(table, tidx):
         asm_instr += m3
     return asm_instr
 
-def generate_RXF(table, tidx):
+def generate_RXF(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1 = Utils.gen_operand(0xF)
@@ -575,9 +579,9 @@ def generate_RXF(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_RXY(table, tidx):
+def generate_RXY(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r1_m1 = Utils.gen_operand(0xF)
@@ -594,10 +598,10 @@ def generate_RXY(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_S(table, tidx):
+def generate_S(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     d2 = Utils.gen_operand(0xFFF)
@@ -610,10 +614,10 @@ def generate_S(table, tidx):
         asm_instr += ')'
     return asm_instr
 
-def generate_SI(table, tidx):
+def generate_SI(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     d1 = Utils.gen_operand(0xFFF)
@@ -628,9 +632,9 @@ def generate_SI(table, tidx):
         asm_instr += i2
     return asm_instr
 
-def generate_SIL(table, tidx):
+def generate_SIL(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     d1 = Utils.gen_operand(0xFFF)
@@ -644,10 +648,10 @@ def generate_SIL(table, tidx):
     asm_instr += i2
     return asm_instr
 
-def generate_SIY(table, tidx):
+def generate_SIY(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     d1 = Utils.gen_operand(0xFFFFF)
@@ -662,9 +666,9 @@ def generate_SIY(table, tidx):
         asm_instr += i2
     return asm_instr
 
-def generate_SMI(table, tidx):
+def generate_SMI(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     m1 = Utils.gen_operand(0xF)
@@ -681,10 +685,10 @@ def generate_SMI(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_SS(table, tidx):
+def generate_SS(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    format = table[tidx][FORMAT_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'SSa'):
@@ -783,9 +787,9 @@ def generate_SS(table, tidx):
         asm_instr += ')'
     return asm_instr
 
-def generate_SSE(table, tidx):
+def generate_SSE(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     d1 = Utils.gen_operand(0xFFF)
@@ -803,9 +807,9 @@ def generate_SSE(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_SSF(table, tidx):
+def generate_SSF(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     r3 = Utils.gen_operand(0xF)
@@ -826,11 +830,11 @@ def generate_SSF(table, tidx):
     asm_instr += ')'
     return asm_instr
 
-def generate_VRI(table, tidx):
+def generate_VRI(tidx : int) -> str:
     asm_instr = ''
-    mnemonic = table[tidx][MNEMONIC_IDX]
-    format = table[tidx][FORMAT_IDX]
-    unused = table[tidx][UNUSED_IDX]
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'VRIa'):

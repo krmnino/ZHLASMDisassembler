@@ -1,15 +1,15 @@
 import subprocess
 
-from ProcessParms import max_stream_size
 from ProcessParms import load_parameters
 from LoadTable import load_table
 from GenInstruction import generate_stream
 
-def main():
-    load_parameters()
-    table = []
-    table = load_table(table)
-    stream = generate_stream(table, max_stream_size)
+def main() -> int:
+    table = load_table()
+    ret = load_parameters(table)
+    if(ret != 0):
+        return -1
+    stream = generate_stream()
     i = 0
     while(True):
         with open('res/source.hlasm', 'w') as f:
@@ -21,7 +21,8 @@ def main():
         if(i % 100 == 0):
             print(f'PASS: {i}')
         if(pgm_output_str.find('ERROR') != -1):
-            print(f'PASS: {i} -> {pgm_output_str}')
+            print(f'!!!!! ERROR IN PASS: {i} !!!!!')
+            print(f'MESSAGE: {pgm_output_str}')
             break
         i += 1
     return 0
