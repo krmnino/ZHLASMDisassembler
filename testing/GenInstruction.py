@@ -110,6 +110,29 @@ def generate_stream() -> List[str]:
              format == 'VRIh' or \
              format == 'VRIi'):
             stream.append(generate_VRI(rand_idx))
+        elif(format == 'VRRa' or \
+             format == 'VRRb' or \
+             format == 'VRRc' or \
+             format == 'VRRd' or \
+             format == 'VRRe' or \
+             format == 'VRRf' or \
+             format == 'VRRg' or \
+             format == 'VRRh' or \
+             format == 'VRRi' or \
+             format == 'VRRj' or \
+             format == 'VRRk'):
+            stream.append(generate_VRR(rand_idx))
+        elif(format == 'VRRa' or \
+             format == 'VRRb' or \
+             format == 'VRRc' or \
+             format == 'VRRd'):
+            stream.append(generate_VRS(rand_idx))
+        elif(format == 'VRV'):
+            stream.append(generate_VRV(rand_idx))
+        elif(format == 'VRX'):
+            stream.append(generate_VRX(rand_idx))
+        elif(format == 'VSI'):
+            stream.append(generate_VSI(rand_idx))
         else:
             continue
         i += 1
@@ -953,4 +976,287 @@ def generate_VRI(tidx : int) -> str:
         asm_instr += i3
         asm_instr += ','
         asm_instr += m4
+    return asm_instr
+
+def generate_VRR(tidx : int) -> str:
+    asm_instr = ''
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
+    asm_instr += mnemonic 
+    asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
+    if(format == 'VRRa'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        m3 = Utils.gen_operand(0xF)
+        m4 = Utils.gen_operand(0xF)
+        m5 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        if('M3_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m3
+        if('M4_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m4
+        if('M5_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m5
+    elif(format == 'VRRb'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        v3 = Utils.gen_operand(0xF)
+        m4 = Utils.gen_operand(0xF)
+        m5 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        asm_instr += ','
+        asm_instr += v3
+        if('M4_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m4
+        if('M5_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m5
+    elif(format == 'VRRc'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        v3 = Utils.gen_operand(0xF)
+        m4 = Utils.gen_operand(0xF)
+        m5 = Utils.gen_operand(0xF)
+        m6 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        asm_instr += ','
+        asm_instr += v3
+        if('M4_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m4
+        if('M5_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m5
+        if('M6_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m6
+    elif(format == 'VRRd'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        v3 = Utils.gen_operand(0xF)
+        v4 = Utils.gen_operand(0xF)
+        m5 = Utils.gen_operand(0xF)
+        m6 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        asm_instr += ','
+        asm_instr += v3
+        asm_instr += ','
+        asm_instr += v4
+        if('M5_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m5
+        if('M6_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m6
+    elif(format == 'VRRe'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        v3 = Utils.gen_operand(0xF)
+        v4 = Utils.gen_operand(0xF)
+        m5 = Utils.gen_operand(0xF)
+        m6 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        asm_instr += ','
+        asm_instr += v3
+        asm_instr += ','
+        asm_instr += v4
+        if('M5_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m5
+        if('M6_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m6
+    elif(format == 'VRRf'):
+        v1 = Utils.gen_operand(0xF)
+        r2 = Utils.gen_operand(0xF)
+        r3 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += r2
+        asm_instr += ','
+        asm_instr += r3
+    elif(format == 'VRRg'):
+        v1 = Utils.gen_operand(0xF)
+        asm_instr += v1
+    elif(format == 'VRRh'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        m3 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        if('M3_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m3
+    elif(format == 'VRRi'):
+        r1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        m3 = Utils.gen_operand(0xF)
+        m4 = Utils.gen_operand(0xF)
+        asm_instr += r1
+        asm_instr += ','
+        asm_instr += v2
+        asm_instr += ','
+        asm_instr += m3
+        if('M4_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m4
+    elif(format == 'VRRj'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        v3 = Utils.gen_operand(0xF)
+        m4 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        asm_instr += ','
+        asm_instr += v3
+        asm_instr += ','
+        asm_instr += m4
+    elif(format == 'VRRk'):
+        v1 = Utils.gen_operand(0xF)
+        v2 = Utils.gen_operand(0xF)
+        m3 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += v2
+        asm_instr += ','
+        asm_instr += m3
+    return asm_instr
+
+def generate_VRS(tidx : int) -> str:
+    asm_instr = ''
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    format = available_instructions[tidx][FORMAT_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
+    asm_instr += mnemonic 
+    asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
+    if(format == 'VRSa' or format == 'VRSb'):
+        v1 = Utils.gen_operand(0xF)
+        r3_v3 = Utils.gen_operand(0xF)
+        d2 = Utils.gen_operand(0xFFF)
+        b2 = Utils.gen_operand(0xF)
+        m4 = Utils.gen_operand(0xF)
+        asm_instr += v1
+        asm_instr += ','
+        asm_instr += r3_v3
+        asm_instr += ','
+        asm_instr += d2
+        asm_instr += '('
+        asm_instr += b2
+        asm_instr += ')'
+        if('M4_UNUSED' not in unused):
+            asm_instr += ','
+            asm_instr += m4
+    elif(format == 'VRSc'):
+        r1 = Utils.gen_operand(0xF)
+        v3 = Utils.gen_operand(0xF)
+        d2 = Utils.gen_operand(0xFFF)
+        b2 = Utils.gen_operand(0xF)
+        m4 = Utils.gen_operand(0xF)
+        asm_instr += r1
+        asm_instr += ','
+        asm_instr += v3
+        asm_instr += ','
+        asm_instr += d2
+        asm_instr += '('
+        asm_instr += b2
+        asm_instr += ')'
+        asm_instr += ','
+        asm_instr += m4
+    elif(format == 'VRSd'):
+        v1 = Utils.gen_operand(0xF)
+        r3 = Utils.gen_operand(0xF)
+        d2 = Utils.gen_operand(0xFFF)
+        b2 = Utils.gen_operand(0xF)
+        asm_instr += r1
+        asm_instr += ','
+        asm_instr += r3
+        asm_instr += ','
+        asm_instr += d2
+        asm_instr += '('
+        asm_instr += b2
+        asm_instr += ')'
+    return asm_instr
+
+def generate_VRV(tidx : int) -> str:
+    asm_instr = ''
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
+    asm_instr += mnemonic 
+    asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
+    v1 = Utils.gen_operand(0xF)
+    d2 = Utils.gen_operand(0xFFF)
+    v2 = Utils.gen_operand(0xF)
+    b2 = Utils.gen_operand(0xF)
+    m3 = Utils.gen_operand(0xF)
+    asm_instr += v1
+    asm_instr += ','
+    asm_instr += d2
+    asm_instr += '('
+    asm_instr += v2
+    asm_instr += ','
+    asm_instr += b2
+    asm_instr += ')'
+    if('M3_UNUSED' not in unused):
+        asm_instr += ','
+        asm_instr += m3
+    return asm_instr
+
+def generate_VRX(tidx : int) -> str:
+    asm_instr = ''
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    unused = available_instructions[tidx][UNUSED_IDX]
+    asm_instr += mnemonic 
+    asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
+    v1 = Utils.gen_operand(0xF)
+    d2 = Utils.gen_operand(0xFFF)
+    x2 = Utils.gen_operand(0xF)
+    b2 = Utils.gen_operand(0xF)
+    m3 = Utils.gen_operand(0xF)
+    asm_instr += v1
+    asm_instr += ','
+    asm_instr += d2
+    asm_instr += '('
+    asm_instr += x2
+    asm_instr += ','
+    asm_instr += b2
+    asm_instr += ')'
+    if('M3_UNUSED' not in unused):
+        asm_instr += ','
+        asm_instr += m3
+    return asm_instr
+
+def generate_VSI(tidx : int) -> str:
+    asm_instr = ''
+    mnemonic = available_instructions[tidx][MNEMONIC_IDX]
+    asm_instr += mnemonic 
+    asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
+    v1 = Utils.gen_operand(0xF)
+    d2 = Utils.gen_operand(0xFFF)
+    b2 = Utils.gen_operand(0xF)
+    i3 = Utils.gen_operand(0xFF)
+    asm_instr += v1
+    asm_instr += ','
+    asm_instr += d2
+    asm_instr += '('
+    asm_instr += b2
+    asm_instr += ')'
+    asm_instr += ','
+    asm_instr += i3
     return asm_instr
