@@ -408,6 +408,7 @@ int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t
     }
     return 0;
 }
+
 int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset, char* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
     uint8_t* input_bytes = (uint8_t*)input;
     size_t byte_i = 0;
