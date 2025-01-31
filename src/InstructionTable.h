@@ -17,7 +17,7 @@ struct ITEntry{
 };
 
 static const ITEntry INSTRUCTION_TABLE[] = {
-    { NULL         , NULL        , NULL            , NF  , (uint16_t)0x0     , USE_ALL                           , (uint8_t)0x0, ""        , ""         }, 
+    { NULL         , NULL        , NULL            , NF  , (uint16_t)0xFFFF  , USE_ALL                           , (uint8_t)0x0, ""        , ""         }, 
     { assemble_E   , display_E   , disassemble_E   , E   , (uint16_t)0x0000  , USE_ALL                           , (uint8_t)0x2, "NULL"    , ""         }, 
     { assemble_RX  , display_RX  , disassemble_RX  , RXa , (uint16_t)0x5A    , USE_ALL                           , (uint8_t)0x4, "A"       , ""         }, 
     { assemble_RX  , display_RX  , disassemble_RX  , RXa , (uint16_t)0x6A    , USE_ALL                           , (uint8_t)0x4, "AD"      , ""         }, 
@@ -300,7 +300,7 @@ static const ITEntry INSTRUCTION_TABLE[] = {
     { assemble_RRE , display_RRE , disassemble_RRE , RRE , (uint16_t)0xB257  , USE_ALL                           , (uint8_t)0x4, "CUSE"    , ""         }, 
     { assemble_RRF , display_RRF , disassemble_RRF , RRFc, (uint16_t)0xB2A7  , M4_UNUSED                         , (uint8_t)0x4, "CUTFU"   , "CU12"     }, 
     { assemble_RRF , display_RRF , disassemble_RRF , RRFc, (uint16_t)0xB2A6  , M4_UNUSED                         , (uint8_t)0x4, "CUUTF"   , "CU21"     }, 
-    { assemble_RRE , display_RRE , disassemble_RRE , RRE , (uint16_t)0x2035  , USE_ALL                           , (uint8_t)0x4, "CUXTR"   , ""         }, 
+    { assemble_RRE , display_RRE , disassemble_RRE , RRE , (uint16_t)0xB3EA  , USE_ALL                           , (uint8_t)0x4, "CUXTR"   , ""         }, 
     { assemble_RX  , display_RX  , disassemble_RX  , RXa , (uint16_t)0x4F    , USE_ALL                           , (uint8_t)0x4, "CVB"     , ""         }, 
     { assemble_RXY , display_RXY , disassemble_RXY , RXYa, (uint16_t)0xE30E  , USE_ALL                           , (uint8_t)0x6, "CVBG"    , ""         }, 
     { assemble_RXY , display_RXY , disassemble_RXY , RXYa, (uint16_t)0xE306  , USE_ALL                           , (uint8_t)0x6, "CVBY"    , ""         }, 

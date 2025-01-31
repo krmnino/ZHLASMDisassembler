@@ -253,6 +253,7 @@ ErrorCode disassemble(Context* c, const char* bin_filename, const char* src_file
         case 0x03:
             fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);
             switch (bin_buffer[0]){
+            case 0x00:
             case 0x01:
                 opcode = (bin_buffer[0] << 8) | bin_buffer[1];
                 break;
@@ -407,6 +408,7 @@ int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t
     }
     return 0;
 }
+
 int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset, char* output, size_t output_len, size_t n_chars, size_t skip, bool little_endian){
     uint8_t* input_bytes = (uint8_t*)input;
     size_t byte_i = 0;
