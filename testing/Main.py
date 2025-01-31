@@ -9,22 +9,39 @@ def main() -> int:
     ret = load_parameters(table)
     if(ret != 0):
         return -1
-    stream = generate_stream()
-    i = 0
+    pass_counter = 0
+    error = False
     while(True):
+        stream = generate_stream()
         with open('res/source.hlasm', 'w') as f:
             for instr in stream:
                 f.write(instr + '\n')
-        pgm_output = subprocess.run(['./zhlasmdis', '-a', 'res/source.hlasm', 'res/disassemble.bin'])
-        pgm_output = subprocess.run(['./zhlasmdis', '-d', 'res/disassemble.bin', 'res/assemble.hlasm'], capture_output=True, text=True)
+        pgm_output = subprocess.run(['./zhlasmdis', '-a', 'res/source.hlasm', 'res/assembled.bin'], capture_output=True, text=True)
         pgm_output_str = pgm_output.stdout
-        if(i % 100 == 0):
-            print(f'PASS: {i}')
         if(pgm_output_str.find('ERROR') != -1):
-            print(f'!!!!! ERROR IN PASS: {i} !!!!!')
+            print(f'!!!!! zhlasmdis -a -> ERROR IN PASS: {pass_counter} !!!!!')
             print(f'MESSAGE: {pgm_output_str}')
             break
-        i += 1
+        pgm_output = subprocess.run(['./zhlasmdis', '-d', 'res/assembled.bin', 'res/disassembled.hlasm'], capture_output=True, text=True)
+        pgm_output_str = pgm_output.stdout
+        if(pgm_output_str.find('ERROR') != -1):
+            print(f'!!!!! zhlasmdis -d -> ERROR IN PASS: {pass_counter} !!!!!')
+            print(f'MESSAGE: {pgm_output_str}')
+            break
+        with open('res/disassembled.hlasm', 'r') as f:
+            for i, line in enumerate(f):
+                stream_instr = stream[i].strip().replace('\n', '')
+                file_instr = line.strip().replace('\n', '')
+                if(stream_instr != file_instr):
+                    print(f'!!!!! MISMATCH -> ERROR IN PASS: {pass_counter} !!!!!')
+                    print(f'{stream_instr} != {file_instr}')
+                    error = True
+                    break
+            if(error):
+                break
+        if(pass_counter % 100 == 0):
+            print(f'PASS: {pass_counter}')
+        pass_counter += 1
     return 0
 
 if(__name__ == '__main__'):
