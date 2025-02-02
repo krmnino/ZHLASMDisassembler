@@ -386,13 +386,9 @@ ErrorCode disassemble_RRF(Context* c, size_t table_index, const uint8_t* bin_buf
     bool m3_unused = INSTRUCTION_TABLE[table_index].unused_operands & M3_UNUSED;
     bool m4_unused = INSTRUCTION_TABLE[table_index].unused_operands & M4_UNUSED;
     size_t i = 0;
-    // Check for alternative instruction if M4 is not 0
-    if(m4_unused){
-        memset(&buffer, 0, sizeof(buffer));
-        hex_str_2_char_str(bin_buffer, MAX_INSTRUCTION_LEN, 2, buffer, MAX_OPERANDS_LEN, MAX_1CHR_LEN, SKIP, false);
-        if(buffer[0] != '0'){
-            return USE_ALTERNATIVE;
-        }
+    // Check if need to use alternative instruction
+    if(strlen(INSTRUCTION_TABLE[table_index].alternative_instr) != 0 && ((bin_buffer[2] & 0x0F) != 0x00) && m4_unused){
+        return USE_ALTERNATIVE;
     }
     // R1:
     memset(&buffer, 0, sizeof(buffer));
