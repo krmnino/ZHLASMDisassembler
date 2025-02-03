@@ -246,6 +246,10 @@ ErrorCode disassemble_RI(Context* c, size_t table_index, const uint8_t* bin_buff
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     bool m1_unused = INSTRUCTION_TABLE[table_index].unused_operands & M1_UNUSED;
     size_t i = 0;
+    // Check if need to use alternative instruction
+    if(strlen(INSTRUCTION_TABLE[table_index].alternative_instr) != 0){
+        return USE_ALTERNATIVE;
+    }
     // R1/M1:
     switch (format){
     case RIa:
