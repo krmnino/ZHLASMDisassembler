@@ -75,3 +75,10 @@ def load_table():
                     else:
                         break
     return table
+
+def mnemonic_to_table_index(table : List[Any], mnemonic : str) -> int:
+    len_table = len(table)
+    for i in range(0, len_table):
+        if(mnemonic == table[i][MNEMONIC_IDX]):
+            return i
+    return -1
