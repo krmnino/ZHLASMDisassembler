@@ -8,6 +8,7 @@ from LoadTable import MNEMONIC_IDX
 available_instructions = []
 
 pgm_parms = {
+    'continue_on_error' : 0,
     'max_stream_size' : 0,
     'enable_instructions' : [],
     'disable_instructions' : [],
@@ -18,6 +19,7 @@ pgm_parms = {
 def load_parameters(table : List[str]) -> int:
     config = cl.Config('config.cl')
     ret = validate_parms(config, table)
+    pgm_parms['continue_on_error'] = config.get_value('continue_on_error')
     pgm_parms['max_stream_size'] = config.get_value('max_stream_size')
     pgm_parms['enable_formats'] = config.get_value('enable_formats')
     pgm_parms['disable_formats'] = config.get_value('disable_formats')
@@ -41,7 +43,8 @@ def load_parameters(table : List[str]) -> int:
     return 0
 
 def validate_parms(config : cl.Config, table : List[str]) -> int:
-    if((not config.key_exists('max_stream_size')) or \
+    if((not config.key_exists('continue_on_error')) or \
+       (not config.key_exists('max_stream_size')) or \
        (not config.key_exists('enable_instructions'))  or \
        (not config.key_exists('disable_instructions'))  or \
        (not config.key_exists('enable_formats'))  or \
