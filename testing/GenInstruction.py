@@ -149,7 +149,7 @@ def generate_I(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    i = Utils.gen_operand(0xFF)
+    i = Utils.gen_operand(0x0, 0xFF)
     asm_instr += i
     return asm_instr
 
@@ -158,8 +158,8 @@ def generate_IE(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    i1 = Utils.gen_operand(0xF)
-    i2 = Utils.gen_operand(0xF)
+    i1 = Utils.gen_operand(0x0, 0xF)
+    i2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += i1
     asm_instr += ','
     asm_instr += i2
@@ -170,9 +170,9 @@ def generate_MII(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    m1 = Utils.gen_operand(0xF)
-    ri2 = Utils.gen_operand(0xFFF)
-    ri3 = Utils.gen_operand(0xFFFFFF)
+    m1 = Utils.gen_operand(0x0, 0xF)
+    ri2 = Utils.gen_operand(0x0, 0xFFF)
+    ri3 = Utils.gen_operand(0x0, 0xFFFFFF)
     asm_instr += m1
     asm_instr += ','
     asm_instr += ri2
@@ -187,8 +187,8 @@ def generate_RI(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1_m1 = Utils.gen_operand(0xF)
-    i2_ri2 = Utils.gen_operand(0xFFFF)
+    r1_m1 = Utils.gen_operand(0x0, 0xF)
+    i2_ri2 = Utils.gen_operand(0x0, 0xFFFF)
     if(format != 'RIc' or (format == 'RIc' and 'M1_UNUSED' not in unused)):
         asm_instr += r1_m1
         asm_instr += ','
@@ -202,19 +202,19 @@ def generate_RIE(tidx : int) -> str:
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'RIEa'):
-        r1 = Utils.gen_operand(0xF)
-        i2 = Utils.gen_operand(0xFFFF)
-        m3 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        i2 = Utils.gen_operand(0x0, 0xFFFF)
+        m3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += i2
         asm_instr += ','
         asm_instr += m3
     elif(format == 'RIEb'):
-        r1 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
-        ri4 = Utils.gen_operand(0xFFFF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
+        ri4 = Utils.gen_operand(0x0, 0xFFFF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r2
@@ -223,10 +223,10 @@ def generate_RIE(tidx : int) -> str:
         asm_instr += ','
         asm_instr += ri4
     elif(format == 'RIEc'):
-        r1 = Utils.gen_operand(0xF)
-        i2 = Utils.gen_operand(0xFF)
-        m3 = Utils.gen_operand(0xF)
-        ri4 = Utils.gen_operand(0xFFFF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        i2 = Utils.gen_operand(0x0, 0xFF)
+        m3 = Utils.gen_operand(0x0, 0xF)
+        ri4 = Utils.gen_operand(0x0, 0xFFFF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += i2
@@ -235,20 +235,20 @@ def generate_RIE(tidx : int) -> str:
         asm_instr += ','
         asm_instr += ri4
     elif(format == 'RIEd' or format == 'RIEe'):
-        r1 = Utils.gen_operand(0xF)
-        r3 = Utils.gen_operand(0xF)
-        i2_ri2 = Utils.gen_operand(0xFFFF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r3 = Utils.gen_operand(0x0, 0xF)
+        i2_ri2 = Utils.gen_operand(0x0, 0xFFFF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r3
         asm_instr += ','
         asm_instr += i2_ri2
     elif(format == 'RIEf'):
-        r1 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        i3 = Utils.gen_operand(0xFF)
-        i4 = Utils.gen_operand(0xFF)
-        i5 = Utils.gen_operand(0xFF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        i3 = Utils.gen_operand(0x0, 0xFF)
+        i4 = Utils.gen_operand(0x0, 0xFF)
+        i5 = Utils.gen_operand(0x0, 0xFF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r2
@@ -259,9 +259,9 @@ def generate_RIE(tidx : int) -> str:
         asm_instr += ','
         asm_instr += i5
     elif(format == 'RIEg'):
-        r1 = Utils.gen_operand(0xF)
-        i2 = Utils.gen_operand(0xFFFF)
-        m3 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        i2 = Utils.gen_operand(0x0, 0xFFFF)
+        m3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += i2
@@ -274,8 +274,8 @@ def generate_RIL(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1_m1 = Utils.gen_operand(0xF)
-    i2_ri2 = Utils.gen_operand(0xFFFFFFFF)
+    r1_m1 = Utils.gen_operand(0x0, 0xF)
+    i2_ri2 = Utils.gen_operand(0x0, 0xFFFFFFFF)
     asm_instr += r1_m1
     asm_instr += ','
     asm_instr += i2_ri2
@@ -286,11 +286,11 @@ def generate_RIS(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    i2 = Utils.gen_operand(0xFF)
-    m3 = Utils.gen_operand(0xF)
-    d4 = Utils.gen_operand(0xFFF)
-    b4 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    i2 = Utils.gen_operand(0x0, 0xFF)
+    m3 = Utils.gen_operand(0x0, 0xF)
+    d4 = Utils.gen_operand(0x0, 0xFFF)
+    b4 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1
     asm_instr += ','
     asm_instr += i2
@@ -309,8 +309,8 @@ def generate_RR(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r2 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1
     if('R2_UNUSED' not in unused):
         asm_instr += ','
@@ -322,9 +322,9 @@ def generate_RRD(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r3 = Utils.gen_operand(0xF)
-    r2 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r3 = Utils.gen_operand(0x0, 0xF)
+    r2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1
     asm_instr += ','
     asm_instr += r3
@@ -338,8 +338,8 @@ def generate_RRE(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r2 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r2 = Utils.gen_operand(0x0, 0xF)
     if('R1_UNUSED' not in unused):
         asm_instr += r1
     if('R2_UNUSED' not in unused):
@@ -355,10 +355,10 @@ def generate_RRF(tidx : int) -> str:
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'RRFa'):
-        r1 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        r3 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        r3 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x1, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r2
@@ -368,10 +368,10 @@ def generate_RRF(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m4
     elif(format == 'RRFb'):
-        r1 = Utils.gen_operand(0xF)
-        r3 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r3 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r3
@@ -381,9 +381,9 @@ def generate_RRF(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m4
     elif(format == 'RRFc'):
-        r1 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r2
@@ -391,9 +391,9 @@ def generate_RRF(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m3
     elif(format == 'RRFd'):
-        r1 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r2
@@ -401,10 +401,10 @@ def generate_RRF(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m4
     elif(format == 'RRFe'):
-        r1 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x1, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += m3
@@ -420,11 +420,11 @@ def generate_RRS(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r2 = Utils.gen_operand(0xF)
-    m3 = Utils.gen_operand(0xF)
-    d4 = Utils.gen_operand(0xFFF)
-    b4 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r2 = Utils.gen_operand(0x0, 0xF)
+    m3 = Utils.gen_operand(0x0, 0xF)
+    d4 = Utils.gen_operand(0x0, 0xFFF)
+    b4 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1
     asm_instr += ','
     asm_instr += r2
@@ -444,10 +444,10 @@ def generate_RS(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r3_m3 = Utils.gen_operand(0xF)
-    b2 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r3_m3 = Utils.gen_operand(0x0, 0xF)
+    b2 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
     if(format == 'RSa'):
         asm_instr += r1
         if(unused not in 'R3_UNUSED'):
@@ -474,9 +474,9 @@ def generate_RSI(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r3 = Utils.gen_operand(0xF)
-    ri2 = Utils.gen_operand(0xFFFF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r3 = Utils.gen_operand(0x0, 0xF)
+    ri2 = Utils.gen_operand(0x0, 0xFFFF)
     asm_instr += r1
     asm_instr += ','
     asm_instr += r3
@@ -491,9 +491,9 @@ def generate_RSL(tidx : int) -> str:
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'RSLa'):
-        d1 = Utils.gen_operand(0xFFF)
-        l1 = Utils.gen_operand(0xF)
-        b1 = Utils.gen_operand(0xF)
+        d1 = Utils.gen_operand(0x0, 0xFFF)
+        l1 = Utils.gen_operand(0x0, 0xF)
+        b1 = Utils.gen_operand(0x0, 0xF)
         asm_instr += d1
         asm_instr += '('
         asm_instr += l1
@@ -501,11 +501,11 @@ def generate_RSL(tidx : int) -> str:
         asm_instr += b1
         asm_instr += ')'
     elif(format == 'RSLb'):
-        r1 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        l2 = Utils.gen_operand(0xFF)
-        b2 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        l2 = Utils.gen_operand(0x0, 0xFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += d2
@@ -523,10 +523,10 @@ def generate_RSY(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r3_m3 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFFFF)
-    b2 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r3_m3 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFFFF)
+    b2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1
     asm_instr += ','
     asm_instr += r3_m3
@@ -542,10 +542,10 @@ def generate_RX(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1_m1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    x2 = Utils.gen_operand(0xF)
-    b2 = Utils.gen_operand(0xF)
+    r1_m1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    x2 = Utils.gen_operand(0x0, 0xF)
+    b2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1_m1
     asm_instr += ','
     asm_instr += d2
@@ -562,11 +562,11 @@ def generate_RXE(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    x2 = Utils.gen_operand(0xF)
-    b2 = Utils.gen_operand(0xF)
-    m3 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    x2 = Utils.gen_operand(0x0, 0xF)
+    b2 = Utils.gen_operand(0x0, 0xF)
+    m3 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1
     asm_instr += ','
     asm_instr += d2
@@ -585,11 +585,11 @@ def generate_RXF(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1 = Utils.gen_operand(0xF)
-    r3 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    x2 = Utils.gen_operand(0xF)
-    b2 = Utils.gen_operand(0xF)
+    r1 = Utils.gen_operand(0x0, 0xF)
+    r3 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    x2 = Utils.gen_operand(0x0, 0xF)
+    b2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1
     asm_instr += ','
     asm_instr += r3
@@ -607,10 +607,10 @@ def generate_RXY(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r1_m1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFFFF)
-    x2 = Utils.gen_operand(0xF)
-    b2 = Utils.gen_operand(0xF)
+    r1_m1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFFFF)
+    x2 = Utils.gen_operand(0x0, 0xF)
+    b2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r1_m1
     asm_instr += ','
     asm_instr += d2
@@ -627,8 +627,8 @@ def generate_S(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    d2 = Utils.gen_operand(0xFFF)
-    b2 = Utils.gen_operand(0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    b2 = Utils.gen_operand(0x0, 0xF)
     if('D2_UNUSED' not in unused):
         asm_instr += d2
     if('B2_UNUSED' not in unused):
@@ -643,9 +643,9 @@ def generate_SI(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    d1 = Utils.gen_operand(0xFFF)
-    b1 = Utils.gen_operand(0xF)
-    i2 = Utils.gen_operand(0xFF)
+    d1 = Utils.gen_operand(0x0, 0xFFF)
+    b1 = Utils.gen_operand(0x0, 0xF)
+    i2 = Utils.gen_operand(0x0, 0xFF)
     asm_instr += d1
     asm_instr += '('
     asm_instr += b1
@@ -660,9 +660,9 @@ def generate_SIL(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    d1 = Utils.gen_operand(0xFFF)
-    b1 = Utils.gen_operand(0xF)
-    i2 = Utils.gen_operand(0xFFFF)
+    d1 = Utils.gen_operand(0x0, 0xFFF)
+    b1 = Utils.gen_operand(0x0, 0xF)
+    i2 = Utils.gen_operand(0x0, 0xFFFF)
     asm_instr += d1
     asm_instr += '('
     asm_instr += b1
@@ -677,9 +677,9 @@ def generate_SIY(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    d1 = Utils.gen_operand(0xFFFFF)
-    b1 = Utils.gen_operand(0xF)
-    i2 = Utils.gen_operand(0xFF)
+    d1 = Utils.gen_operand(0x0, 0xFFFFF)
+    b1 = Utils.gen_operand(0x0, 0xF)
+    i2 = Utils.gen_operand(0x0, 0xFF)
     asm_instr += d1
     asm_instr += '('
     asm_instr += b1
@@ -694,10 +694,10 @@ def generate_SMI(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    m1 = Utils.gen_operand(0xF)
-    ri2 = Utils.gen_operand(0xFFFF)
-    d3 = Utils.gen_operand(0xFFF)
-    b3 = Utils.gen_operand(0xF)
+    m1 = Utils.gen_operand(0x0, 0xF)
+    ri2 = Utils.gen_operand(0x0, 0xFFFF)
+    d3 = Utils.gen_operand(0x0, 0xFFF)
+    b3 = Utils.gen_operand(0x0, 0xF)
     asm_instr += m1
     asm_instr += ','
     asm_instr += ri2
@@ -715,11 +715,11 @@ def generate_SS(tidx : int) -> str:
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'SSa'):
-        d1 = Utils.gen_operand(0xFFF)
-        l1 = Utils.gen_operand(0xFF)
-        b1 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        b2 = Utils.gen_operand(0xF)
+        d1 = Utils.gen_operand(0x0, 0xFFF)
+        l1 = Utils.gen_operand(0x0, 0xFF)
+        b1 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
         asm_instr += d1
         asm_instr += '('
         asm_instr += l1
@@ -732,12 +732,12 @@ def generate_SS(tidx : int) -> str:
         asm_instr += b2
         asm_instr += ')'
     elif(format == 'SSb'):
-        d1 = Utils.gen_operand(0xFFF)
-        l1 = Utils.gen_operand(0xF)
-        b1 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        l2 = Utils.gen_operand(0xF)
-        b2 = Utils.gen_operand(0xF)
+        d1 = Utils.gen_operand(0x0, 0xFFF)
+        l1 = Utils.gen_operand(0x0, 0xF)
+        b1 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        l2 = Utils.gen_operand(0x0, 0xF)
+        b2 = Utils.gen_operand(0x0, 0xF)
         asm_instr += d1
         asm_instr += '('
         asm_instr += l1
@@ -752,12 +752,12 @@ def generate_SS(tidx : int) -> str:
         asm_instr += b2
         asm_instr += ')'
     elif(format == 'SSc' or format == 'SSd'):
-        d1 = Utils.gen_operand(0xFFF)
-        l1_r1 = Utils.gen_operand(0xF)
-        b1 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        b2 = Utils.gen_operand(0xF)
-        i3_r3 = Utils.gen_operand(0xF)
+        d1 = Utils.gen_operand(0x0, 0xFFF)
+        l1_r1 = Utils.gen_operand(0x0, 0xF)
+        b1 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
+        i3_r3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += d1
         asm_instr += '('
         asm_instr += l1_r1
@@ -772,12 +772,12 @@ def generate_SS(tidx : int) -> str:
         asm_instr += ','
         asm_instr += i3_r3
     elif(format == 'SSe'):
-        r1 = Utils.gen_operand(0xF)
-        r3 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        b2 = Utils.gen_operand(0xF)
-        d4 = Utils.gen_operand(0xFFF)
-        b4 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        r3 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
+        d4 = Utils.gen_operand(0x0, 0xFFF)
+        b4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r3
@@ -792,11 +792,11 @@ def generate_SS(tidx : int) -> str:
         asm_instr += b4
         asm_instr += ')'
     elif(format == 'SSf'):
-        d1 = Utils.gen_operand(0xFFF)
-        b1 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        l2 = Utils.gen_operand(0xFF)
-        b2 = Utils.gen_operand(0xF)
+        d1 = Utils.gen_operand(0x0, 0xFFF)
+        b1 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        l2 = Utils.gen_operand(0x0, 0xFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
         asm_instr += d1
         asm_instr += '('
         asm_instr += b1
@@ -815,10 +815,10 @@ def generate_SSE(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    d1 = Utils.gen_operand(0xFFF)
-    b1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    b2 = Utils.gen_operand(0xF)
+    d1 = Utils.gen_operand(0x0, 0xFFF)
+    b1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    b2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += d1
     asm_instr += '('
     asm_instr += b1
@@ -835,11 +835,11 @@ def generate_SSF(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    r3 = Utils.gen_operand(0xF)
-    d1 = Utils.gen_operand(0xFFF)
-    b1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    b2 = Utils.gen_operand(0xF)
+    r3 = Utils.gen_operand(0x0, 0xF)
+    d1 = Utils.gen_operand(0x0, 0xFFF)
+    b1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    b2 = Utils.gen_operand(0x0, 0xF)
     asm_instr += r3
     asm_instr += ','
     asm_instr += d1
@@ -861,9 +861,9 @@ def generate_VRI(tidx : int) -> str:
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'VRIa'):
-        v1 = Utils.gen_operand(0xF)
-        i2 = Utils.gen_operand(0xFFFF)
-        m3 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        i2 = Utils.gen_operand(0x0, 0xFFFF)
+        m3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += i2
@@ -871,10 +871,10 @@ def generate_VRI(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m3
     elif(format == 'VRIb'):
-        v1 = Utils.gen_operand(0xF)
-        i2 = Utils.gen_operand(0xFF)
-        i3 = Utils.gen_operand(0xFF)
-        m4 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        i2 = Utils.gen_operand(0x0, 0xFF)
+        i3 = Utils.gen_operand(0x0, 0xFF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += i2
@@ -883,10 +883,10 @@ def generate_VRI(tidx : int) -> str:
         asm_instr += ','
         asm_instr += m4
     elif(format == 'VRIc'):
-        v1 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        i2 = Utils.gen_operand(0xFFFF)
-        m4 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        i2 = Utils.gen_operand(0x0, 0xFFFF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v3
@@ -895,11 +895,11 @@ def generate_VRI(tidx : int) -> str:
         asm_instr += ','
         asm_instr += m4
     elif(format == 'VRId'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        i4 = Utils.gen_operand(0xFF)
-        m5 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        i4 = Utils.gen_operand(0x0, 0xFF)
+        m5 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -911,11 +911,11 @@ def generate_VRI(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m5
     elif(format == 'VRIe'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        i3 = Utils.gen_operand(0xFFF)
-        m4 = Utils.gen_operand(0xF)
-        m5 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        i3 = Utils.gen_operand(0x0, 0xFFF)
+        m4 = Utils.gen_operand(0x0, 0xF)
+        m5 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -926,11 +926,11 @@ def generate_VRI(tidx : int) -> str:
         asm_instr += ','
         asm_instr += m5
     elif(format == 'VRIf'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        i4 = Utils.gen_operand(0xFF)
-        m5 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        i4 = Utils.gen_operand(0x0, 0xFF)
+        m5 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -941,11 +941,11 @@ def generate_VRI(tidx : int) -> str:
         asm_instr += ','
         asm_instr += m5
     elif(format == 'VRIg'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        i3 = Utils.gen_operand(0xFF)
-        i4 = Utils.gen_operand(0xFF)
-        m5 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        i3 = Utils.gen_operand(0x0, 0xFF)
+        i4 = Utils.gen_operand(0x0, 0xFF)
+        m5 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -956,19 +956,19 @@ def generate_VRI(tidx : int) -> str:
         asm_instr += ','
         asm_instr += m5
     elif(format == 'VRIh'):
-        v1 = Utils.gen_operand(0xF)
-        i2 = Utils.gen_operand(0xFFFF)
-        i3 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        i2 = Utils.gen_operand(0x0, 0xFFFF)
+        i3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += i2
         asm_instr += ','
         asm_instr += i3
     elif(format == 'VRIi'):
-        v1 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        i3 = Utils.gen_operand(0xFF)
-        m4 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        i3 = Utils.gen_operand(0x0, 0xFF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += r2
@@ -986,11 +986,11 @@ def generate_VRR(tidx : int) -> str:
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'VRRa'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
-        m5 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
+        m5 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1004,11 +1004,11 @@ def generate_VRR(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m5
     elif(format == 'VRRb'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
-        m5 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
+        m5 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1021,12 +1021,12 @@ def generate_VRR(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m5
     elif(format == 'VRRc'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
-        m5 = Utils.gen_operand(0xF)
-        m6 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
+        m5 = Utils.gen_operand(0x0, 0xF)
+        m6 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1042,12 +1042,12 @@ def generate_VRR(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m6
     elif(format == 'VRRd'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        v4 = Utils.gen_operand(0xF)
-        m5 = Utils.gen_operand(0xF)
-        m6 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        v4 = Utils.gen_operand(0x0, 0xF)
+        m5 = Utils.gen_operand(0x0, 0xF)
+        m6 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1062,12 +1062,12 @@ def generate_VRR(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m6
     elif(format == 'VRRe'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        v4 = Utils.gen_operand(0xF)
-        m5 = Utils.gen_operand(0xF)
-        m6 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        v4 = Utils.gen_operand(0x0, 0xF)
+        m5 = Utils.gen_operand(0x0, 0xF)
+        m6 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1082,21 +1082,21 @@ def generate_VRR(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m6
     elif(format == 'VRRf'):
-        v1 = Utils.gen_operand(0xF)
-        r2 = Utils.gen_operand(0xF)
-        r3 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        r2 = Utils.gen_operand(0x0, 0xF)
+        r3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += r2
         asm_instr += ','
         asm_instr += r3
     elif(format == 'VRRg'):
-        v1 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
     elif(format == 'VRRh'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1104,10 +1104,10 @@ def generate_VRR(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m3
     elif(format == 'VRRi'):
-        r1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += v2
@@ -1117,10 +1117,10 @@ def generate_VRR(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m4
     elif(format == 'VRRj'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1129,9 +1129,9 @@ def generate_VRR(tidx : int) -> str:
         asm_instr += ','
         asm_instr += m4
     elif(format == 'VRRk'):
-        v1 = Utils.gen_operand(0xF)
-        v2 = Utils.gen_operand(0xF)
-        m3 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        v2 = Utils.gen_operand(0x0, 0xF)
+        m3 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += v2
@@ -1147,11 +1147,11 @@ def generate_VRS(tidx : int) -> str:
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'VRSa' or format == 'VRSb'):
-        v1 = Utils.gen_operand(0xF)
-        r3_v3 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        b2 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        r3_v3 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += v1
         asm_instr += ','
         asm_instr += r3_v3
@@ -1164,11 +1164,11 @@ def generate_VRS(tidx : int) -> str:
             asm_instr += ','
             asm_instr += m4
     elif(format == 'VRSc'):
-        r1 = Utils.gen_operand(0xF)
-        v3 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        b2 = Utils.gen_operand(0xF)
-        m4 = Utils.gen_operand(0xF)
+        r1 = Utils.gen_operand(0x0, 0xF)
+        v3 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
+        m4 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += v3
@@ -1180,10 +1180,10 @@ def generate_VRS(tidx : int) -> str:
         asm_instr += ','
         asm_instr += m4
     elif(format == 'VRSd'):
-        v1 = Utils.gen_operand(0xF)
-        r3 = Utils.gen_operand(0xF)
-        d2 = Utils.gen_operand(0xFFF)
-        b2 = Utils.gen_operand(0xF)
+        v1 = Utils.gen_operand(0x0, 0xF)
+        r3 = Utils.gen_operand(0x0, 0xF)
+        d2 = Utils.gen_operand(0x0, 0xFFF)
+        b2 = Utils.gen_operand(0x0, 0xF)
         asm_instr += r1
         asm_instr += ','
         asm_instr += r3
@@ -1200,11 +1200,11 @@ def generate_VRV(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    v1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    v2 = Utils.gen_operand(0xF)
-    b2 = Utils.gen_operand(0xF)
-    m3 = Utils.gen_operand(0xF)
+    v1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    v2 = Utils.gen_operand(0x0, 0xF)
+    b2 = Utils.gen_operand(0x0, 0xF)
+    m3 = Utils.gen_operand(0x0, 0xF)
     asm_instr += v1
     asm_instr += ','
     asm_instr += d2
@@ -1224,11 +1224,11 @@ def generate_VRX(tidx : int) -> str:
     unused = available_instructions[tidx][UNUSED_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    v1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    x2 = Utils.gen_operand(0xF)
-    b2 = Utils.gen_operand(0xF)
-    m3 = Utils.gen_operand(0xF)
+    v1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    x2 = Utils.gen_operand(0x0, 0xF)
+    b2 = Utils.gen_operand(0x0, 0xF)
+    m3 = Utils.gen_operand(0x0, 0xF)
     asm_instr += v1
     asm_instr += ','
     asm_instr += d2
@@ -1247,10 +1247,10 @@ def generate_VSI(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
-    v1 = Utils.gen_operand(0xF)
-    d2 = Utils.gen_operand(0xFFF)
-    b2 = Utils.gen_operand(0xF)
-    i3 = Utils.gen_operand(0xFF)
+    v1 = Utils.gen_operand(0x0, 0xF)
+    d2 = Utils.gen_operand(0x0, 0xFFF)
+    b2 = Utils.gen_operand(0x0, 0xF)
+    i3 = Utils.gen_operand(0x0, 0xFF)
     asm_instr += v1
     asm_instr += ','
     asm_instr += d2
