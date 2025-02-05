@@ -6,6 +6,7 @@ from ProcessParms import available_instructions
 from LoadTable import FORMAT_IDX
 from LoadTable import UNUSED_IDX
 from LoadTable import MNEMONIC_IDX
+from LoadTable import ALTERNATIVE_INSTR_IDX
 
 MNEMONIC_MAX_LEN = 8
 
@@ -983,6 +984,7 @@ def generate_VRR(tidx : int) -> str:
     mnemonic = available_instructions[tidx][MNEMONIC_IDX]
     format = available_instructions[tidx][FORMAT_IDX]
     unused = available_instructions[tidx][UNUSED_IDX]
+    alternative = available_instructions[tidx][ALTERNATIVE_INSTR_IDX]
     asm_instr += mnemonic 
     asm_instr += ''.join([' ' for j in range(0, MNEMONIC_MAX_LEN - len(mnemonic))])
     if(format == 'VRRa'):
@@ -996,6 +998,8 @@ def generate_VRR(tidx : int) -> str:
         asm_instr += v2
         if('M3_UNUSED' not in unused):
             asm_instr += ','
+            if(len(alternative) == 0):
+                m3 = Utils.gen_operand(0x2, 0x3)
             asm_instr += m3
         if('M4_UNUSED' not in unused):
             asm_instr += ','
