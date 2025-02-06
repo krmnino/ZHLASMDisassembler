@@ -1002,6 +1002,18 @@ ErrorCode disassemble_VRR(Context* c, size_t table_index, const uint8_t* bin_buf
     bool m5_unused = INSTRUCTION_TABLE[table_index].unused_operands & M5_UNUSED;
     bool m6_unused = INSTRUCTION_TABLE[table_index].unused_operands & M6_UNUSED;
     size_t i = 0;
+    uint8_t m3;
+    // Check if need to use alternative instruction
+    switch (format){
+    case VRRa:
+        m3 = bin_buffer[4] >> 4;
+        if(strlen(INSTRUCTION_TABLE[table_index].alternative_instr) != 0 && (m3 == 0x02 || m3 == 0x03)){
+            return USE_ALTERNATIVE;
+        }
+        break;
+    default:
+        break;
+    }
     switch (format){
     case VRRa:
         // V1:

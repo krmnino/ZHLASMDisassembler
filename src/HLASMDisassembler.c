@@ -32,6 +32,8 @@ ErrorCode assemble(Context* c, const char* src_filename, const char* bin_filenam
     c->n_line = 1;
     while(fgets(line, sizeof(line), source_file)){
         skip_line = false;
+        memset(&mnemonic_token, 0, sizeof(mnemonic_token));
+        memset(&operands_token, 0, sizeof(operands_token));
         for(size_t i = 0; i < MAX_LINE_LEN && run;){
             switch (tp_state){
             case SPACES_PM:

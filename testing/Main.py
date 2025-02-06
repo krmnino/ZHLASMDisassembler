@@ -1,8 +1,12 @@
 import subprocess
 
 from ProcessParms import load_parameters
+from ProcessParms import pgm_parms
 from LoadTable import load_table
+from LoadTable import mnemonic_to_table_index
 from GenInstruction import generate_stream
+
+from LoadTable import ALTERNATIVE_INSTR_IDX
 
 def main() -> int:
     table = load_table()
@@ -33,11 +37,20 @@ def main() -> int:
                 stream_instr = stream[i].strip().replace('\n', '')
                 file_instr = line.strip().replace('\n', '')
                 if(stream_instr != file_instr):
+                    stream_mnemonic = stream_instr[:stream_instr.find(' ')]
+                    stream_operands = stream_instr[stream_instr.rfind(' '):]
+                    file_mnemonic = file_instr[:file_instr.find(' ')]
+                    file_operands = file_instr[file_instr.rfind(' '):]
+                    table_idx = mnemonic_to_table_index(table, stream_mnemonic)
+                    if(table[table_idx][ALTERNATIVE_INSTR_IDX] == file_mnemonic and 
+                       stream_operands == file_operands):
+                        continue
+                    print(table[table_idx])
                     print(f'!!!!! MISMATCH -> ERROR IN PASS: {pass_counter} !!!!!')
                     print(f'{stream_instr} != {file_instr}')
                     error = True
                     break
-            if(error):
+            if(error and pgm_parms['continue_on_error'] == 0):
                 break
         if(pass_counter % 100 == 0):
             print(f'PASS: {pass_counter}')

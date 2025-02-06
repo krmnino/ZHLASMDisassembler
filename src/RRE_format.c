@@ -181,6 +181,10 @@ ErrorCode disassemble_RRE(Context* c, size_t table_index, const uint8_t* bin_buf
     bool r1_unused = INSTRUCTION_TABLE[table_index].unused_operands & R1_UNUSED;
     bool r2_unused = INSTRUCTION_TABLE[table_index].unused_operands & R2_UNUSED;
     size_t i = 0;
+    // Check if need to use alternative instruction
+    if(strlen(INSTRUCTION_TABLE[table_index].alternative_instr) != 0 && bin_buffer[2] != 0x00){
+        return USE_ALTERNATIVE;
+    }
     // R1:
     if(!r1_unused){
         memset(&buffer, 0, sizeof(buffer));
