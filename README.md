@@ -11,7 +11,7 @@ This project implements a Z High-Level Assembly language disassembler in C. It i
 ## Requirements and Dependencies
 
 - Ubuntu 22.04 or later
-- C++17
+- C17
 - Make
 
 ## Build and Run
