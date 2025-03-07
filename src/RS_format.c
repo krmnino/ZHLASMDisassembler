@@ -2,7 +2,7 @@
 #include "HLASMDisassembler.h"
 
 
-ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode assemble_RS(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode;
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     bool r3_unused = INSTRUCTION_TABLE[table_index].unused_operands & R3_UNUSED;
@@ -26,10 +26,10 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
                     run = false;
                 }
                 else if(!is_valid_hex_string(buffer, b_idx)){
-                    c->error_code = OPERAND_NON_HEX_FOUND;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    strcpy((char*)&c->msg_extras[1], operands_token);
-                    return c->error_code;
+                    Context.error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+                    strcpy((char*)&Context.msg_extras[1], operands_token);
+                    return Context.error_code;
                 }
                 else{
                     char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r1, sizeof(r1), b_idx, NO_SKIP, true);
@@ -55,11 +55,11 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    c->error_code = INVALID_OPERAND_LENGTH;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    strcpy((char*)&c->msg_extras[1], "R1");
-                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
-                    return c->error_code;
+                    Context.error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+                    strcpy((char*)&Context.msg_extras[1], "R1");
+                    sprintf((char*)&Context.msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return Context.error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -73,10 +73,10 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
                     run = false;
                 }
                 else if(!is_valid_hex_string(buffer, b_idx)){
-                    c->error_code = OPERAND_NON_HEX_FOUND;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    strcpy((char*)&c->msg_extras[1], operands_token);
-                    return c->error_code;
+                    Context.error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+                    strcpy((char*)&Context.msg_extras[1], operands_token);
+                    return Context.error_code;
                 }
                 else{
                     char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&r3_m3, sizeof(r3_m3), b_idx, NO_SKIP, true);
@@ -88,20 +88,20 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    c->error_code = INVALID_OPERAND_LENGTH;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
+                    Context.error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
                     switch (format){
                     case RSa:
-                        strcpy((char*)&c->msg_extras[1], "R3");
+                        strcpy((char*)&Context.msg_extras[1], "R3");
                         break;
                     case RSb:
-                        strcpy((char*)&c->msg_extras[1], "M3");
+                        strcpy((char*)&Context.msg_extras[1], "M3");
                         break;
                     default:
                         break;
                     }
-                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
-                    return c->error_code;
+                    sprintf((char*)&Context.msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return Context.error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -114,10 +114,10 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
                     run = false;
                 }
                 else if(!is_valid_hex_string(buffer, b_idx)){
-                    c->error_code = OPERAND_NON_HEX_FOUND;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    strcpy((char*)&c->msg_extras[1], operands_token);
-                    return c->error_code;
+                    Context.error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+                    strcpy((char*)&Context.msg_extras[1], operands_token);
+                    return Context.error_code;
                 }
                 else{
                     char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&d2, sizeof(d2), b_idx, NO_SKIP, true);
@@ -129,11 +129,11 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
             }
             else{
                 if(b_idx >= MAX_3CHR_LEN){
-                    c->error_code = INVALID_OPERAND_LENGTH;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    strcpy((char*)&c->msg_extras[1], "D2");
-                    sprintf((char*)&c->msg_extras[2], "%d", MAX_3CHR_LEN);
-                    return c->error_code;
+                    Context.error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+                    strcpy((char*)&Context.msg_extras[1], "D2");
+                    sprintf((char*)&Context.msg_extras[2], "%d", MAX_3CHR_LEN);
+                    return Context.error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -146,10 +146,10 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
                     run = false;
                 }
                 else if(!is_valid_hex_string(buffer, b_idx)){
-                    c->error_code = OPERAND_NON_HEX_FOUND;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    strcpy((char*)&c->msg_extras[1], operands_token);
-                    return c->error_code;
+                    Context.error_code = OPERAND_NON_HEX_FOUND;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+                    strcpy((char*)&Context.msg_extras[1], operands_token);
+                    return Context.error_code;
                 }
                 else{
                     char_str_2_hex_str(buffer, MAX_OPERANDS_LEN, (void*)&b2, sizeof(b2), b_idx, NO_SKIP, true);
@@ -161,11 +161,11 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
             }
             else{
                 if(b_idx >= MAX_1CHR_LEN){
-                    c->error_code = INVALID_OPERAND_LENGTH;
-                    sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-                    strcpy((char*)&c->msg_extras[1], "B2");
-                    sprintf((char*)&c->msg_extras[2], "%d", MAX_1CHR_LEN);
-                    return c->error_code;
+                    Context.error_code = INVALID_OPERAND_LENGTH;
+                    sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+                    strcpy((char*)&Context.msg_extras[1], "B2");
+                    sprintf((char*)&Context.msg_extras[2], "%d", MAX_1CHR_LEN);
+                    return Context.error_code;
                 }
                 buffer[b_idx] = operands_token[i];
                 b_idx++;
@@ -180,16 +180,16 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
         }
     }
     if(state != OPS_DONE){
-        c->error_code = MISSING_OPERANDS;
-        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
-        return c->error_code;
+        Context.error_code = MISSING_OPERANDS;
+        sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+        strcpy((char*)&Context.msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return Context.error_code;
     }
     if(i != operands_token_len){
-        c->error_code = TOO_MANY_OPERANDS;
-        sprintf((char*)&c->msg_extras[0], "%ld", c->n_line);
-        strcpy((char*)&c->msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
-        return c->error_code;
+        Context.error_code = TOO_MANY_OPERANDS;
+        sprintf((char*)&Context.msg_extras[0], "%ld", Context.n_line);
+        strcpy((char*)&Context.msg_extras[1], INSTRUCTION_TABLE[table_index].mnemonic);
+        return Context.error_code;
     }
     // Opcode: bits(0-7)
     bin_buffer[0] = opcode;
@@ -205,10 +205,10 @@ ErrorCode assemble_RS(Context* c, size_t table_index, const char* operands_token
     return OK;
 }
 
-ErrorCode display_RS(Context* c, Instruction* instr){
+ErrorCode display_RS(Instruction* instr){
     if(instr == NULL){
-        c->error_code = NULL_POINTER_TO_OBJECT;
-        return c->error_code;
+        Context.error_code = NULL_POINTER_TO_OBJECT;
+        return Context.error_code;
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
@@ -283,7 +283,7 @@ ErrorCode display_RS(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode disassemble_RS(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
+ErrorCode disassemble_RS(size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     char buffer[MAX_OPERANDS_LEN];
     InstructionFormat format = INSTRUCTION_TABLE[table_index].format;
     bool r3_unused = INSTRUCTION_TABLE[table_index].unused_operands & R3_UNUSED;

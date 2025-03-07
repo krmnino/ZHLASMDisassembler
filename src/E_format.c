@@ -1,7 +1,7 @@
 #include "InstructionTable.h"
 #include "HLASMDisassembler.h"
 
-ErrorCode assemble_E(Context* c, size_t table_index, const char* operands_token, uint8_t* bin_buffer){
+ErrorCode assemble_E(size_t table_index, const char* operands_token, uint8_t* bin_buffer){
     uint16_t opcode = INSTRUCTION_TABLE[table_index].opcode; 
     // Opcode: bits(0-7)
     bin_buffer[0] = opcode >> 8;
@@ -10,10 +10,10 @@ ErrorCode assemble_E(Context* c, size_t table_index, const char* operands_token,
     return OK;
 }
 
-ErrorCode display_E(Context* c, Instruction* instr){
+ErrorCode display_E(Instruction* instr){
     if(instr == NULL){
-        c->error_code = NULL_POINTER_TO_OBJECT;
-        return c->error_code;
+        Context.error_code = NULL_POINTER_TO_OBJECT;
+        return Context.error_code;
     }
     uint16_t opcode = INSTRUCTION_TABLE[instr->it_index].opcode;
     uint8_t length = INSTRUCTION_TABLE[instr->it_index].length;
@@ -36,6 +36,6 @@ ErrorCode display_E(Context* c, Instruction* instr){
     return OK;
 }
 
-ErrorCode disassemble_E(Context* c, size_t table_index, const uint8_t* bin_buffer, char* operands_token){
+ErrorCode disassemble_E(size_t table_index, const uint8_t* bin_buffer, char* operands_token){
     return OK;
 }
