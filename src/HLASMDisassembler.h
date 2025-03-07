@@ -142,7 +142,6 @@ static struct Context{
     Instruction* instr_head;
     Instruction* instr_tail;
 } Context;
-//static Context context __attribute__((unused)) = {};
 
 ErrorCode assemble(const char*, const char*);
 ErrorCode disassemble(const char*, const char*);
