@@ -5,9 +5,9 @@
 
 typedef struct ITEntry ITEntry;
 struct ITEntry{
-    ErrorCode (*assemble_fn) (Context*, size_t, const char*, uint8_t*);
-    ErrorCode (*display_fn) (Context*, Instruction*);
-    ErrorCode (*disassemble_fn) (Context*, size_t, const uint8_t*, char*);
+    ErrorCode (*assemble_fn) (size_t, const char*, uint8_t*);
+    ErrorCode (*display_fn) (Instruction*);
+    ErrorCode (*disassemble_fn) (size_t, const uint8_t*, char*);
     InstructionFormat format;
     uint16_t opcode;
     uint16_t unused_operands;

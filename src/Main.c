@@ -21,10 +21,9 @@ int main(int argc, char* argv[]){
         return -1;
     }
     int ret;
-    Context* c = &context;
     ErrorCode ret_err;
     uint32_t options = 0;
-    Context_init(c);
+    Context_init();
     // Make sure options start with a dash
     if(argv[1][0] != '-'){
         print_usage();
@@ -58,9 +57,9 @@ int main(int argc, char* argv[]){
     // Check if input file exists
     ret = access(argv[2], F_OK);
     if(ret != 0){
-        c->error_code = SRC_FILE_NOT_FOUND;
-        strcpy((char*)&c->msg_extras[0], argv[2]);
-        display_error(c);
+        Context.error_code = SRC_FILE_NOT_FOUND;
+        strcpy((char*)&Context.msg_extras[0], argv[2]);
+        display_error();
         return -1;
     }
     // Check if output file is writable
@@ -68,35 +67,35 @@ int main(int argc, char* argv[]){
     if(ret == 0){
         ret = access(argv[3], W_OK);
         if(ret != 0){
-            c->error_code = OUT_FILE_NOT_WRITABLE;
-            strcpy((char*)&c->msg_extras[0], argv[3]);
-            display_error(c);
+            Context.error_code = OUT_FILE_NOT_WRITABLE;
+            strcpy((char*)&Context.msg_extras[0], argv[3]);
+            display_error();
             return -1;
         }
     }
     // Assemble or disassemble
     if((options & ASSEMBLE_OPT) == 1){
-        ret_err = assemble(c, argv[2], argv[3]);
+        ret_err = assemble(argv[2], argv[3]);
         if(ret_err != OK){
-            display_error(c);
+            display_error();
             return -1;
         }
     }
     else if((options & DISASSEMBLE_OPT) >> 1 == 1){
-        ret_err = disassemble(c, argv[2], argv[3]);
+        ret_err = disassemble(argv[2], argv[3]);
         if(ret_err != OK){
-            display_error(c);
+            display_error();
             return -1;
         }
     }
     // If print option selected, do it
     if((options & PRINT_OPT) >> 2 == 1){
-        ret_err = display_stream(c);
+        ret_err = display_stream();
         if(ret_err != OK){
-            display_error(c);
+            display_error();
             return -1;
         }
     }
-    Context_free(c);
+    Context_free();
     return 0;
 }
