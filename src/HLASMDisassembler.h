@@ -144,7 +144,7 @@ static struct Context{
 } Context;
 
 ErrorCode assemble(const char*, const char*);
-ErrorCode disassemble(const char*, const char*);
+ErrorCode disassemble(const char*, const char*, bool);
 bool is_valid_hex_string(const char*, size_t);
 InstructionFormat mnemonic_to_format(const char*);
 uint16_t mnemonic_to_opcode(const char*);
@@ -153,6 +153,7 @@ size_t mnemonic_to_table_index(const char*);
 size_t opcode_to_table_index(uint16_t);
 int char_str_2_hex_str(const char*, size_t, void*, size_t, size_t, size_t, bool);
 int hex_str_2_char_str(const void*, size_t, size_t, char*, size_t, size_t, size_t, bool);
+ErrorCode read_ascii_hex(FILE*, size_t*, char*, size_t);
 
 Instruction* Instruction_init_a(ErrorCode*, const char*, char*, Address);
 Instruction* Instruction_init_d(ErrorCode*, uint16_t, const uint8_t*, Address);
