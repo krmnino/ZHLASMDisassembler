@@ -158,13 +158,13 @@ ErrorCode assemble(const char* src_filename, const char* bin_filename){
     return OK;
 }
 
-ErrorCode disassemble(const char* bin_filename, const char* src_filename){
+ErrorCode disassemble(const char* bin_filename, const char* src_filename, bool ascii_input){
     uint8_t bin_buffer[MAX_INSTRUCTION_LEN];
+    char ascii_buffer[MAX_INSTRUCTION_LEN * 2];
     FILE* binary_file;
     FILE* source_file;
     void* bin_buffer_ptr;
     Address instr_offset;
-    size_t file_len;
     ErrorCode ret_ec;
     Instruction* instr;
     Instruction* curr;
@@ -181,15 +181,27 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename){
     }
     // Length of binary file
     fseek(binary_file, 0, SEEK_END);
-    file_len = ftell(binary_file);
+    Context.file_len = ftell(binary_file);
     rewind(binary_file);
+    Context.file_idx = 0;
     Context.bin_offset = 0;
     instr_offset = 0;
     // Read instruction by instruction
-    while(instr_offset < file_len){
+    while(instr_offset < Context.file_len && Context.file_idx < Context.file_len){
         opcode = 0;
         bin_buffer_ptr = &bin_buffer;
-        fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);
+        memset(&bin_buffer, 0, sizeof(bin_buffer));
+        // If input file is ASCII, read 2 characters and convert them to binary
+        if(ascii_input){
+            memset(&ascii_buffer, 0, sizeof(ascii_buffer));
+            if(read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_1CHR_LEN * 2) == END_OF_FILE){
+                break;
+            }
+            char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_1CHR_LEN, MAX_1CHR_LEN * 2, NO_SKIP, false);
+        }
+        else{
+            fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);        
+        }
         bin_buffer_ptr++;
         nibble = bin_buffer[0] >> 4;
         switch (nibble){
@@ -197,7 +209,14 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename){
         case 0x0D:
         case 0x0E:
         case 0x0F:
-            fread(bin_buffer_ptr, sizeof(uint8_t), MAX_5CHR_LEN, binary_file);
+            if(ascii_input){
+                memset(&ascii_buffer, 0, sizeof(ascii_buffer));
+                read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_5CHR_LEN * 2);
+                char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_5CHR_LEN, MAX_5CHR_LEN * 2, NO_SKIP, false);
+            }
+            else{
+                fread(bin_buffer_ptr, sizeof(uint8_t), MAX_5CHR_LEN, binary_file);
+            }
             switch (bin_buffer[0]){
             case 0xE3:
             case 0xE6:
@@ -232,7 +251,14 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename){
         case 0x09:
         case 0x0A:
         case 0x0B:
-            fread(bin_buffer_ptr, sizeof(uint8_t), MAX_3CHR_LEN, binary_file);
+            if(ascii_input){
+                memset(&ascii_buffer, 0, sizeof(ascii_buffer));
+                read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_3CHR_LEN * 2);
+                char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_3CHR_LEN, MAX_3CHR_LEN * 2, NO_SKIP, false);
+            }
+            else{
+                fread(bin_buffer_ptr, sizeof(uint8_t), MAX_3CHR_LEN, binary_file);
+            }
             switch (bin_buffer[0]){
             case 0xB2:
             case 0xB3:
@@ -253,7 +279,14 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename){
         case 0x01:
         case 0x02:
         case 0x03:
-            fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);
+            if(ascii_input){
+                memset(&ascii_buffer, 0, sizeof(ascii_buffer));
+                read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_1CHR_LEN * 2);
+                char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_1CHR_LEN, MAX_1CHR_LEN * 2, NO_SKIP, false);
+            }
+            else{
+                fread(bin_buffer_ptr, sizeof(uint8_t), MAX_1CHR_LEN, binary_file);
+            }
             switch (bin_buffer[0]){
             case 0x00:
             case 0x01:
@@ -363,9 +396,7 @@ int char_str_2_hex_str(const char* input, size_t input_len, void* output, size_t
         skipper = skip || (n_chars % 2);
     }
     // Clear output buffer
-    for(size_t i = 0; i < output_len; i++){
-        output_bytes[i] = 0;
-    }
+    memset(output_bytes, 0, output_len);
     if(little_endian){
         byte_i = output_len - 1 - (output_len - ((n_chars + 1) / 2));
     }
@@ -416,9 +447,7 @@ int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset
     size_t byte_i = 0;
     uint8_t binary_char = 0;
     // Clear output buffer
-    for(size_t i = 0; i < output_len + 1; i++){
-        output[i] = 0;
-    }
+    memset(output, 0, output_len + 1);
     if(little_endian){
         byte_i = input_len - input_offset - 1;
     }
@@ -455,6 +484,30 @@ int hex_str_2_char_str(const void* input, size_t input_len , size_t input_offset
         }
     }
     return 0;
+}
+
+ErrorCode read_ascii_hex(FILE* binary_file, char* ascii_buffer_ptr, size_t n_chars){
+    size_t ascii_char_counter = 0;
+    while(ascii_char_counter < n_chars){
+        fread(ascii_buffer_ptr, sizeof(char), MAX_1CHR_LEN, binary_file);
+        if(Context.file_idx >= Context.file_len){
+            return END_OF_FILE;
+        }
+        if(*(char*)ascii_buffer_ptr == '\n' || *(char*)ascii_buffer_ptr == ' '){
+            Context.file_idx++;
+            continue;
+        }
+        if(!is_valid_hex_string((char*)ascii_buffer_ptr, MAX_1CHR_LEN)){
+            Context.error_code = INVALID_OPCODE;
+            sprintf((char*)&Context.msg_extras[0], "%ld", Context.file_idx);
+            sprintf((char*)&Context.msg_extras[1], "%x", *ascii_buffer_ptr);
+            return Context.error_code;
+        }
+        Context.file_idx++;
+        ascii_buffer_ptr++;
+        ascii_char_counter++;
+    }
+    return OK;
 }
 
 Instruction* Instruction_init_a(ErrorCode* ec, const char* mnemonic_token, char* operands_token, Address offset){
@@ -519,7 +572,7 @@ Instruction* Instruction_init_d(ErrorCode* ec, uint16_t opcode, const uint8_t* b
     ErrorCode ret_ec;
     // Check if mnemonic exists in instruction table
     if(it_index == 0){
-        Context.error_code = INVALID_MNEMONIC;
+        Context.error_code = INVALID_OPCODE;
         sprintf((char*)&Context.msg_extras[0], "%ld", Context.bin_offset);
         sprintf((char*)&Context.msg_extras[1], "%x", opcode);
         *ec = Context.error_code;

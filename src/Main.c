@@ -5,13 +5,15 @@
 #define OPTS_MAX_LEN 4
 #define ASSEMBLE_OPT 0x1
 #define DISASSEMBLE_OPT 0x2
-#define PRINT_OPT 0x4
+#define HEXIN_OPT 0x4
+#define PRINT_OPT 0x8
 
 void print_usage(){
     printf("USAGE: ./zhlasmdis [-OPTIONS] [INPUT_FILE] [OUTPUT_FILE]\n");
     printf("OPTIONS:\n");
     printf("d: disassemble binary into source file\n");
     printf("a: assemble binary from source file\n");
+    printf("h: required with -d option only if input file contains ASCII hexadecimal text\n");
     printf("p: optional - generate detailed print out from source/binary file\n");
 }
 
@@ -40,6 +42,9 @@ int main(int argc, char* argv[]){
             break;        
         case 'd':
             options = options | DISASSEMBLE_OPT;
+            break;        
+        case 'h':
+            options = options | HEXIN_OPT;
             break;        
         case 'p':
             options = options | PRINT_OPT;
@@ -75,6 +80,10 @@ int main(int argc, char* argv[]){
     }
     // Assemble or disassemble
     if((options & ASSEMBLE_OPT) == 1){
+        if((options & HEXIN_OPT) >> 2 == 1){
+            display_error();
+            return -1;
+        }
         ret_err = assemble(argv[2], argv[3]);
         if(ret_err != OK){
             display_error();
@@ -82,14 +91,19 @@ int main(int argc, char* argv[]){
         }
     }
     else if((options & DISASSEMBLE_OPT) >> 1 == 1){
-        ret_err = disassemble(argv[2], argv[3]);
+        if((options & HEXIN_OPT) >> 2 == 1){
+            ret_err = disassemble(argv[2], argv[3], true);
+        }
+        else{
+            ret_err = disassemble(argv[2], argv[3], false);
+        }
         if(ret_err != OK){
             display_error();
             return -1;
         }
     }
     // If print option selected, do it
-    if((options & PRINT_OPT) >> 2 == 1){
+    if((options & PRINT_OPT) >> 3 == 1){
         ret_err = display_stream();
         if(ret_err != OK){
             display_error();

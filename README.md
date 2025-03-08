@@ -1,6 +1,6 @@
 # ZHLASMDisassembler
 
-This project implements a Z High-Level Assembly language disassembler in C. It is capable of reading an assembly source file and generate the binary version of the instructions within it. Conversely, it can read a binary file and generate the source assembly language version of it. Additionally, it can generate a detailed output of each instruction processed, whether it is from assembling or disassembling the input instruction stream.
+This project implements a Z High-Level Assembly language disassembler in C. It is capable of reading an assembly source file and generate the binary version of the instructions within it. Conversely, it can read a binary file or ASCII hexadecimal textfile, and generate the source assembly language version of it. Additionally, it can generate a detailed output of each instruction processed, whether it is from assembling or disassembling the input instruction stream.
 
 ## Repository Structure
 
@@ -21,8 +21,10 @@ This project implements a Z High-Level Assembly language disassembler in C. It i
 3. To run the executable with the following parameters: `./zhlasmdis [flags] <input_file> <output_file>`:
     - `./zhlasmdis -a <source_assembler.hlasm> <output_binary.bin>`: Generates binary from assembler source file.
     - `./zhlasmdis -d <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source from binary file.
-    - `./zhlasmdis -ap <source_assembler.hlasm> <output_binary.bin>` Generates assembler source from binary file and prints individual instructions in detail.
-    - `./zhlasmdis -dp <source_assembler.bin> <output_binary.hlasm>`: Generates binary from assembler source file and prints individual instructions in detail.
+    - `./zhlasmdis -dh <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source from ASCII text file.
+    - `./zhlasmdis -ap <source_assembler.hlasm> <output_binary.bin>` Generates binary from assembler source file and prints individual instructions in detail.
+    - `./zhlasmdis -dp <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source file from binary file and prints individual instructions in detail.
+    - `./zhlasmdis -dhp <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source file from ASCII hexadecimal text file and prints individual instructions in detail.
 
 ## Changelog v1.0
 
