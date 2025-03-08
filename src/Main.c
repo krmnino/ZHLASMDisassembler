@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
         }
     }
     // If print option selected, do it
-    if((options & PRINT_OPT) >> 2 == 1){
+    if((options & PRINT_OPT) >> 3 == 1){
         ret_err = display_stream();
         if(ret_err != OK){
             display_error();
