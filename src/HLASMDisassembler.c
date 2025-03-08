@@ -194,8 +194,12 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename, bool a
         // If input file is ASCII, read 2 characters and convert them to binary
         if(ascii_input){
             memset(&ascii_buffer, 0, sizeof(ascii_buffer));
-            if(read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_1CHR_LEN * 2) == END_OF_FILE){
+            ret_ec = read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_1CHR_LEN * 2);
+            if(ret_ec == END_OF_FILE){
                 break;
+            }
+            else if(ret_ec != OK){
+                return ret_ec;
             }
             char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_1CHR_LEN, MAX_1CHR_LEN * 2, NO_SKIP, false);
         }
@@ -211,7 +215,13 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename, bool a
         case 0x0F:
             if(ascii_input){
                 memset(&ascii_buffer, 0, sizeof(ascii_buffer));
-                read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_5CHR_LEN * 2);
+                ret_ec = read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_5CHR_LEN * 2);
+                if(ret_ec == END_OF_FILE){
+                    break;
+                }
+                else if(ret_ec != OK){
+                    return ret_ec;
+                }
                 char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_5CHR_LEN, MAX_5CHR_LEN * 2, NO_SKIP, false);
             }
             else{
@@ -253,7 +263,13 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename, bool a
         case 0x0B:
             if(ascii_input){
                 memset(&ascii_buffer, 0, sizeof(ascii_buffer));
-                read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_3CHR_LEN * 2);
+                ret_ec = read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_3CHR_LEN * 2);
+                if(ret_ec == END_OF_FILE){
+                    break;
+                }
+                else if(ret_ec != OK){
+                    return ret_ec;
+                }
                 char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_3CHR_LEN, MAX_3CHR_LEN * 2, NO_SKIP, false);
             }
             else{
@@ -281,7 +297,13 @@ ErrorCode disassemble(const char* bin_filename, const char* src_filename, bool a
         case 0x03:
             if(ascii_input){
                 memset(&ascii_buffer, 0, sizeof(ascii_buffer));
-                read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_1CHR_LEN * 2);
+                ret_ec = read_ascii_hex(binary_file, (char*)&ascii_buffer, MAX_1CHR_LEN * 2);
+                if(ret_ec == END_OF_FILE){
+                    break;
+                }
+                else if(ret_ec != OK){
+                    return ret_ec;
+                }
                 char_str_2_hex_str((const char*)&ascii_buffer, sizeof(ascii_buffer), bin_buffer_ptr, MAX_1CHR_LEN, MAX_1CHR_LEN * 2, NO_SKIP, false);
             }
             else{
