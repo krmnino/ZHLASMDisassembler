@@ -13,7 +13,7 @@ void print_usage(){
     printf("OPTIONS:\n");
     printf("d: disassemble binary into source file\n");
     printf("a: assemble binary from source file\n");
-    printf("h: required with -d option only if input file contains ASCII hexadecimal data\n");
+    printf("h: required with -d option only if input file contains ASCII hexadecimal text\n");
     printf("p: optional - generate detailed print out from source/binary file\n");
 }
 
