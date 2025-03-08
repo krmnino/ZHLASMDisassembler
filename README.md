@@ -1,6 +1,6 @@
 # ZHLASMDisassembler
 
-This project implements a Z High-Level Assembly language disassembler in C. It is capable of reading an assembly source file and generate the binary version of the instructions within it. Conversely, it can read a binary file and generate the source assembly language version of it. Additionally, it can generate a detailed output of each instruction processed, whether it is from assembling or disassembling the input instruction stream.
+This project implements a Z High-Level Assembly language disassembler in C. It is capable of reading an assembly source file and generate the binary version of the instructions within it. Conversely, it can read a binary file or ASCII hexadecimal textfile, and generate the source assembly language version of it. Additionally, it can generate a detailed output of each instruction processed, whether it is from assembling or disassembling the input instruction stream.
 
 ## Repository Structure
 
