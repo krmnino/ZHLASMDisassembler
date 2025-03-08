@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from ProcessParms import load_parameters
@@ -5,6 +6,7 @@ from ProcessParms import pgm_parms
 from LoadTable import load_table
 from LoadTable import mnemonic_to_table_index
 from GenInstruction import generate_stream
+from Utils import gen_random_integer
 
 from LoadTable import ALTERNATIVE_INSTR_IDX
 
@@ -26,8 +28,17 @@ def main() -> int:
             print(f'!!!!! zhlasmdis -a -> ERROR IN PASS: {pass_counter} !!!!!')
             print(f'MESSAGE: {pgm_output_str}')
             break
-        pgm_output = subprocess.run(['./zhlasmdis', '-d', 'res/assembled.bin', 'res/disassembled.hlasm'], capture_output=True, text=True)
-        pgm_output_str = pgm_output.stdout
+        try_ascii_disassembler = gen_random_integer(0,100)
+        if(try_ascii_disassembler < 50):
+            conv_output = subprocess.run(['xxd', '-p', 'res/assembled.bin'], capture_output=True, text=True)
+            conv_output_str = conv_output.stdout
+            with open('res/assembled.bin', 'w') as f:
+                f.write(conv_output_str)
+            pgm_output = subprocess.run(['./zhlasmdis', '-dh', 'res/assembled.bin', 'res/disassembled.hlasm'], capture_output=True, text=True)
+            pgm_output_str = pgm_output.stdout
+        else:
+            pgm_output = subprocess.run(['./zhlasmdis', '-d', 'res/assembled.bin', 'res/disassembled.hlasm'], capture_output=True, text=True)
+            pgm_output_str = pgm_output.stdout
         if(pgm_output_str.find('ERROR') != -1):
             print(f'!!!!! zhlasmdis -d -> ERROR IN PASS: {pass_counter} !!!!!')
             print(f'MESSAGE: {pgm_output_str}')
