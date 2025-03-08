@@ -1,6 +1,6 @@
 # ZHLASMDisassembler
 
-This project implements a Z High-Level Assembly language disassembler in C. It is capable of reading an assembly source file and generate the binary version of the instructions within it. Conversely, it can read a binary file or ASCII hexadecimal textfile, and generate the source assembly language version of it. Additionally, it can generate a detailed output of each instruction processed, whether it is from assembling or disassembling the input instruction stream.
+This project implements a Z High-Level Assembly language disassembler in C based on IBM's z/Architecture [Principles of Operation](https://www.ibm.com/docs/en/module_1678991624569/pdf/SA22-7832-13.pdf?cp=SSFC5Y) publication. It is capable of reading an assembly source file and generate the binary version of the instructions within it. Conversely, it can read a binary file or ASCII hexadecimal textfile, and generate the source assembly language version of it. Additionally, it can generate a detailed output of each instruction processed, whether it is from assembling or disassembling the input instruction stream.
 
 ## Repository Structure
 
@@ -26,6 +26,14 @@ This project implements a Z High-Level Assembly language disassembler in C. It i
     - `./zhlasmdis -dp <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source file from binary file and prints individual instructions in detail.
     - `./zhlasmdis -dhp <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source file from ASCII hexadecimal text file and prints individual instructions in detail.
 
-## Changelog v1.0
+## Changelog
+
+### v1.1
+
+- Disassembler can now open an ASCII hexadecimal text input file and create its equivalent assembler source file via the new `-h` option.
+- Context structure now is static instead of dynamically allocated.
+- Miscellaneous bug fixes.
+
+### v1.0
 
 - Initial release.
