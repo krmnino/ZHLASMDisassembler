@@ -21,8 +21,10 @@ This project implements a Z High-Level Assembly language disassembler in C. It i
 3. To run the executable with the following parameters: `./zhlasmdis [flags] <input_file> <output_file>`:
     - `./zhlasmdis -a <source_assembler.hlasm> <output_binary.bin>`: Generates binary from assembler source file.
     - `./zhlasmdis -d <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source from binary file.
-    - `./zhlasmdis -ap <source_assembler.hlasm> <output_binary.bin>` Generates assembler source from binary file and prints individual instructions in detail.
-    - `./zhlasmdis -dp <source_assembler.bin> <output_binary.hlasm>`: Generates binary from assembler source file and prints individual instructions in detail.
+    - `./zhlasmdis -dh <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source from ASCII text file.
+    - `./zhlasmdis -ap <source_assembler.hlasm> <output_binary.bin>` Generates binary from assembler source file and prints individual instructions in detail.
+    - `./zhlasmdis -dp <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source file from binary file and prints individual instructions in detail.
+    - `./zhlasmdis -dhp <source_assembler.bin> <output_binary.hlasm>`: Generates assembler source file from ASCII hexadecimal text file and prints individual instructions in detail.
 
 ## Changelog v1.0
 
